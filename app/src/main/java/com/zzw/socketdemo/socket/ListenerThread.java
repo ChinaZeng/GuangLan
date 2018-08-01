@@ -56,7 +56,7 @@ public class ListenerThread extends Thread {
                     @Override
                     public void onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
                         if (!isSuccess) {
-                            //发送消息失败触发关闭
+                            //发送消息失败触发关闭  本来应该用心跳触发关闭的 。这里就不那么麻烦了
                             SocketThread s = serverThreads.remove(packet.key());
                             if (s != null) {
                                 s.exit();
