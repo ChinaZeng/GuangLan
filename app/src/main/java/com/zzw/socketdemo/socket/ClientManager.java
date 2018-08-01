@@ -24,6 +24,28 @@ public class ClientManager implements SocketThreadStatusListener {
 
         try {
             ClientThread clientThread = new ClientThread(ip, port, this);
+            clientThread.addListener(new SocketMessageListener() {
+                @Override
+                public void onReciveMsg(SocketThread socketThread, Packet packet) {
+
+                }
+
+                @Override
+                public void onSendMsgBefore(SocketThread socketThread, Packet packet) {
+
+                }
+
+                @Override
+                public void onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
+                    if (!isSuccess) {
+                        //发送消息失败触发关闭
+                        SocketThread s = serverThreads.remove(packet.key());
+                        if (s != null) {
+                            s.exit();
+                        }
+                    }
+                }
+            });
             serverThreads.put(key, clientThread);
             clientThread.start();
             return key;
