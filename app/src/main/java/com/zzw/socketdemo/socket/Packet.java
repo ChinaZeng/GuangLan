@@ -10,9 +10,15 @@ public class Packet {
         RECIVER
     }
 
+    private String id = System.currentTimeMillis() + "";
     private TYPE type;
     private final Socket socket;
     private byte[] data;
+
+
+    public String getId() {
+        return id;
+    }
 
     public boolean isSend() {
         return type == TYPE.SEND;
