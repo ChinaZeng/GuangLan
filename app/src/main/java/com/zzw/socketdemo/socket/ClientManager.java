@@ -26,17 +26,18 @@ public class ClientManager implements SocketThreadStatusListener {
             ClientThread clientThread = new ClientThread(ip, port, this);
             clientThread.addListener(new SocketMessageListener() {
                 @Override
-                public void onReciveMsg(SocketThread socketThread, Packet packet) {
+                public Packet onReciveMsg(SocketThread socketThread, Packet packet) {
 
+                    return packet;
                 }
 
                 @Override
-                public void onSendMsgBefore(SocketThread socketThread, Packet packet) {
-
+                public Packet onSendMsgBefore(SocketThread socketThread, Packet packet) {
+                    return packet;
                 }
 
                 @Override
-                public void onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
+                public Packet onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
                     if (!isSuccess) {
                         //发送消息失败触发关闭  本来应该用心跳触发关闭的 。这里就不那么麻烦了
                         SocketThread s = serverThreads.remove(packet.key());
@@ -44,6 +45,7 @@ public class ClientManager implements SocketThreadStatusListener {
                             s.exit();
                         }
                     }
+                    return packet;
                 }
             });
             serverThreads.put(key, clientThread);
@@ -55,17 +57,11 @@ public class ClientManager implements SocketThreadStatusListener {
         }
     }
 
-    public void sendData(String key, byte[] msg) {
-        ClientThread clientThread = serverThreads.get(key);
-        if (clientThread != null) {
-            clientThread.sendData(msg);
-        }
-    }
 
-    public void sendData(String key, String msg) {
+    public void sendTextData(String key, String msg) {
         ClientThread clientThread = serverThreads.get(key);
         if (clientThread != null) {
-            clientThread.sendData(msg);
+            clientThread.sendTextMsg(msg);
         }
     }
 

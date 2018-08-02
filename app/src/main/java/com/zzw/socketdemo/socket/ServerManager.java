@@ -20,17 +20,17 @@ public class ServerManager implements SocketThreadStatusListener {
     }
 
 
-    public void sendData(String msg) {
+    public void sendTextData(String msg) {
         Set<String> keys = listenerThread.getServerThreads().keySet();
         for (String key : keys) {
-            sendData(key, msg);
+            sendTextData(key, msg);
         }
     }
 
-    public void sendData(String key, String msg) {
+    public void sendTextData(String key, String msg) {
         SocketThread thread = listenerThread.getServerThreads().get(key);
         if (thread != null) {
-            thread.sendData(msg);
+            thread.sendTextMsg(msg);
         }
     }
 

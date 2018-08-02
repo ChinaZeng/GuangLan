@@ -13,7 +13,20 @@ public class Packet {
     private String id = System.currentTimeMillis() + "";
     private TYPE type;
     private final Socket socket;
-    private byte[] data;
+    public byte[] data = new byte[0];
+    public byte cmd=CMD.EMPTY;
+    public byte flog=CMD.EMPTY;
+
+
+    public int size(){
+        //xxxx(长度)+cmd+flog+realData    //4+1+1+realData.length
+        return 4+1+1+ data.length;
+    }
+
+    public int contentSize(){
+        //cmd+flog+realData
+        return size() - 4 ;
+    }
 
 
     public String getId() {
@@ -25,28 +38,30 @@ public class Packet {
     }
 
     public Packet(Socket socket, TYPE type) {
-        this(socket, type, new byte[0]);
-    }
-
-    public Packet(Socket socket, TYPE type, int len) {
-        this(socket, type, new byte[len]);
-    }
-
-    public Packet(Socket socket, TYPE type, byte[] data) {
         this.socket = socket;
         this.type = type;
-        this.data = data;
     }
 
-    public byte[] data() {
-        return data;
+    //xxxx(长度)+cmd+flog+realData    //4+1+1+realData.length
+    public byte[] realData() {
+        int size =  size();
+        byte[] realData = new byte[size];
+
+        //lenByte
+        byte[] sizeByte =  ByteUtils.getBytes(size);
+        //len
+        System.arraycopy(realData,0,sizeByte,0,sizeByte.length);
+        //cmd
+        realData[4] = cmd;
+        //flog
+        realData[5] = flog;
+        //realData
+        System.arraycopy(realData,0,data,6,data.length);
+        return realData;
     }
 
     public void putByteArray(byte[] content) {
-        byte[] dstData = new byte[data.length + content.length];
-        System.arraycopy(data, 0, dstData, 0, data.length);
-        System.arraycopy(content, 0, dstData, data.length, content.length);
-        this.data = dstData;
+        this.data = ByteUtils.mergerByte(data,content);
     }
 
     public String key() {
@@ -60,14 +75,6 @@ public class Packet {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public String hexString() {
-        return Arrays.toString(data);
-    }
-
-    public Packet clone(Packet packet) {
-        return new Packet(packet.socket, packet.type, packet.data);
     }
 
     public String ip() {

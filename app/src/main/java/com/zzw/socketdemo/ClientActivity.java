@@ -79,7 +79,7 @@ public class ClientActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(key)) return;
         String s = etSendData.getText().toString().trim();
         if (s.length() > 0)
-            manager.sendData(key, s);
+            manager.sendTextData(key, s);
     }
 
     public void connWifiHot(View view) {

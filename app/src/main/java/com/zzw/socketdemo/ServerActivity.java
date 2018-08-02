@@ -10,13 +10,10 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.zzw.socketdemo.socket.ClientManager;
-import com.zzw.socketdemo.socket.ClientThread;
 import com.zzw.socketdemo.socket.EventBusTag;
 import com.zzw.socketdemo.socket.MyLog;
 import com.zzw.socketdemo.socket.Packet;
@@ -26,8 +23,6 @@ import com.zzw.socketdemo.socket.StatusListener;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
-
-import java.io.IOException;
 
 
 public class ServerActivity extends AppCompatActivity {
@@ -114,7 +109,7 @@ public class ServerActivity extends AppCompatActivity {
     public void sendData(View view) {
         String s = etContent.getText().toString().trim();
         if (s.length() > 0)
-            serverManager.sendData(s);
+            serverManager.sendTextData(s);
     }
 
 

@@ -3,6 +3,9 @@ package com.zzw.socketdemo.socket;
 import org.simple.eventbus.EventBus;
 
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,7 +23,6 @@ public class SocketThread extends Thread {
     public final Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
-    private final static int BUFFER_SIZE = 1024;
 
     private List<SocketMessageListener> listeners = new ArrayList<>();
     private SocketThreadStatusListener socketThreadStatusListener;
@@ -37,11 +39,13 @@ public class SocketThread extends Thread {
     }
 
     private int count;
+    private SocketReader socketHelper;
 
     @Override
     public void run() {
         if (socket == null)
             return;
+        socketHelper = new SocketReader();
         init();
 
         //获取数据流
@@ -54,8 +58,7 @@ public class SocketThread extends Thread {
                 socketThreadStatusListener.onStatusChange(this, STATUS.RUNNING);
             }
 
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytes;
+
             while (flog) {
                 //5秒
                 if (count > 5 * 5) {
@@ -68,14 +71,13 @@ public class SocketThread extends Thread {
                     continue;
                 }
                 count = 0;
-
-                Packet packet = new Packet(socket, Packet.TYPE.RECIVER);
-                //读取数据 封装packet
-                bytes = inputStream.read(buffer);
-                if (bytes > 0) {
-                    packet.putByteArray(buffer);
-                    onReciveMsg(packet);
+                if(inputStream.available()>0){
+                    Packet packet= socketHelper.readData(socket,inputStream);
+                    if(packet!=null){
+                        onReciveMsg(packet);
+                    }
                 }
+
             }
 
         } catch (IOException e) {
@@ -95,21 +97,27 @@ public class SocketThread extends Thread {
         addListener(SocketMessageListener.DEF);
         addListener(new SocketMessageListener() {
             @Override
-            public void onReciveMsg(SocketThread socketThread, Packet packet) {
+            public Packet onReciveMsg(SocketThread socketThread, Packet packet) {
+                byte cmd =  packet.cmd;
+                byte flog = packet.flog;
+                byte[] data = packet.data;
+
                 //TODO 侵入式太高  这里为了省事
                 EventBus.getDefault().post(packet, EventBusTag.TAG_RECIVE_MSG);
+                return packet;
             }
 
             @Override
-            public void onSendMsgBefore(SocketThread socketThread, Packet packet) {
-
+            public Packet onSendMsgBefore(SocketThread socketThread, Packet packet) {
+                return packet;
             }
 
             @Override
-            public void onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
+            public Packet onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
                 if (isSuccess) {
                     EventBus.getDefault().post(packet, EventBusTag.TAG_SEND_MSG);
                 }
+                return packet;
             }
         });
     }
@@ -144,19 +152,44 @@ public class SocketThread extends Thread {
         return socket;
     }
 
-    public void sendData(String content) {
+    public void sendTextMsg(String content) {
+        Packet packet = PacketHelper.getTextMsgPacket(socket);
+        packet.data = ByteUtils.getBytes(content);
+        sendQueue(packet);
+    }
+
+    public void sendFileMsg(String path) {
+        InputStream is=null;
         try {
-            sendData(new Packet(socket, Packet.TYPE.SEND, content.getBytes("UTF-8")));
-        } catch (UnsupportedEncodingException e) {
+            is = new FileInputStream(new File(path));
+            byte[]buffer = new byte[2048];
+            int len =0;
+            Packet packetStart = PacketHelper.getFileMsgPacket(socket);
+            packetStart.flog=0x01;//表示开始
+            sendQueue(packetStart);
+            while ((len = is.read(buffer,0,buffer.length))>0){
+                Packet packetData = PacketHelper.getFileMsgPacket(socket);
+                if(len<buffer.length){
+                    buffer = ByteUtils.subBytes(buffer,0,len);
+                    packetData.flog = 0x02;//内容
+                }
+                packetData.data =buffer;
+                sendQueue(packetData);
+            }
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            closeCloseable(is);
+            Packet packetEnd = PacketHelper.getFileMsgPacket(socket);
+            packetEnd.flog=0x03;//表示结束
+            sendQueue(packetEnd);
         }
     }
 
-    public void sendData(byte[] data) {
-        sendData(new Packet(socket, Packet.TYPE.SEND, data));
-    }
 
-    public void sendData(Packet packet) {
+    public void sendQueue(Packet packet) {
         packetsQueue.add(packet);
     }
 
@@ -164,7 +197,7 @@ public class SocketThread extends Thread {
         if (flog && socket.isConnected() && outputStream != null) {
             try {
                 onSendMsgBefore(packet);
-                outputStream.write(packet.data());
+                outputStream.write(packet.realData());
 //                outputStream.flush();
                 onSendMsgAgo(true, packet);
             } catch (IOException e) {
@@ -181,19 +214,25 @@ public class SocketThread extends Thread {
 
     private void onSendMsgAgo(boolean sendSuccess, Packet packet) {
         for (SocketMessageListener listener : listeners) {
-            listener.onSendMsgAgo(this, sendSuccess, packet);
+            if(packet!=null){
+                packet = listener.onSendMsgAgo(this, sendSuccess, packet);
+            }
         }
     }
 
     private void onReciveMsg(Packet packet) {
         for (SocketMessageListener listener : listeners) {
-            listener.onReciveMsg(this, packet);
+            if(packet!=null){
+                packet = listener.onReciveMsg(this, packet);
+            }
         }
     }
 
     private void onSendMsgBefore(Packet packet) {
         for (SocketMessageListener listener : listeners) {
-            listener.onSendMsgBefore(this, packet);
+            if(packet!=null){
+                packet =   listener.onSendMsgBefore(this, packet);
+            }
         }
     }
 
