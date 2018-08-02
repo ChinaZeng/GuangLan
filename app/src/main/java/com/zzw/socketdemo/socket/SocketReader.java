@@ -34,26 +34,11 @@ public class SocketReader {
 
     private int getBodyLength(InputStream is) throws IOException {
         byte[] b = readIs2(is, HEADER_BUFFER_SIZE);
-        int len = 0;
-        String str = new String(b);
-        MyLog.e(TAG, "读取到包头：" + str);
-        if (isNumeric(str))
-            len = Integer.parseInt(str);
-
+        int len = ByteUtils.getInt(b);
+        MyLog.e(TAG, "读取到包头：" + len);
         return len;
     }
 
-
-    /**
-     * 判断字符串是不是全部为数字
-     *
-     * @param str
-     * @return
-     */
-    private  boolean isNumeric(String str) {
-        Pattern pattern = Pattern.compile("[0-9]*");
-        return pattern.matcher(str).matches();
-    }
 
     private  byte[] readIs2(InputStream is, int len) throws IOException {
         MyLog.e(TAG,String.format("开始读取输入流，InputStream的长度：%d，要读取的长度为：%d", is.available(), len));

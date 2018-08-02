@@ -95,31 +95,6 @@ public class SocketThread extends Thread {
 
     protected void init() {
         addListener(SocketMessageListener.DEF);
-        addListener(new SocketMessageListener() {
-            @Override
-            public Packet onReciveMsg(SocketThread socketThread, Packet packet) {
-                byte cmd =  packet.cmd;
-                byte flog = packet.flog;
-                byte[] data = packet.data;
-
-                //TODO 侵入式太高  这里为了省事
-                EventBus.getDefault().post(packet, EventBusTag.TAG_RECIVE_MSG);
-                return packet;
-            }
-
-            @Override
-            public Packet onSendMsgBefore(SocketThread socketThread, Packet packet) {
-                return packet;
-            }
-
-            @Override
-            public Packet onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
-                if (isSuccess) {
-                    EventBus.getDefault().post(packet, EventBusTag.TAG_SEND_MSG);
-                }
-                return packet;
-            }
-        });
     }
 
 
@@ -165,14 +140,12 @@ public class SocketThread extends Thread {
             byte[]buffer = new byte[2048];
             int len =0;
             Packet packetStart = PacketHelper.getFileMsgPacket(socket);
-            packetStart.flog=0x01;//表示开始
+            packetStart.flog=CMD.FLOG.FLOG_FILE_START;//表示开始
             sendQueue(packetStart);
             while ((len = is.read(buffer,0,buffer.length))>0){
                 Packet packetData = PacketHelper.getFileMsgPacket(socket);
-                if(len<buffer.length){
-                    buffer = ByteUtils.subBytes(buffer,0,len);
-                    packetData.flog = 0x02;//内容
-                }
+                buffer = ByteUtils.subBytes(buffer,0,len);
+                packetData.flog = CMD.FLOG.FLOG_FILE_DATA;//内容
                 packetData.data =buffer;
                 sendQueue(packetData);
             }
@@ -183,7 +156,7 @@ public class SocketThread extends Thread {
         }finally {
             closeCloseable(is);
             Packet packetEnd = PacketHelper.getFileMsgPacket(socket);
-            packetEnd.flog=0x03;//表示结束
+            packetEnd.flog=CMD.FLOG.FLOG_FILE_END;//表示结束
             sendQueue(packetEnd);
         }
     }

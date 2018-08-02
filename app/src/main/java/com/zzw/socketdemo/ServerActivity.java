@@ -107,9 +107,11 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     public void sendData(View view) {
-        String s = etContent.getText().toString().trim();
-        if (s.length() > 0)
-            serverManager.sendTextData(s);
+        serverManager.sendFile("/storage/emulated/0/aaa/test.txt");
+
+//        String s = etContent.getText().toString().trim();
+//        if (s.length() > 0)
+//            serverManager.sendTextData(s);
     }
 
 

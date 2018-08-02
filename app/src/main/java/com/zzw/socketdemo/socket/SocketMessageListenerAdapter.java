@@ -2,17 +2,17 @@ package com.zzw.socketdemo.socket;
 
 public class SocketMessageListenerAdapter implements SocketMessageListener {
     @Override
-    public void onReciveMsg(SocketThread socketThread, Packet packet) {
-
+    public Packet onReciveMsg(SocketThread socketThread, Packet packet) {
+        return packet;
     }
 
     @Override
-    public void onSendMsgBefore(SocketThread socketThread, Packet packet) {
-
+    public Packet onSendMsgBefore(SocketThread socketThread, Packet packet) {
+        return packet;
     }
 
     @Override
-    public void onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
-
+    public Packet onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
+        return packet;
     }
 }

@@ -24,18 +24,7 @@ public class ClientManager implements SocketThreadStatusListener {
 
         try {
             ClientThread clientThread = new ClientThread(ip, port, this);
-            clientThread.addListener(new SocketMessageListener() {
-                @Override
-                public Packet onReciveMsg(SocketThread socketThread, Packet packet) {
-
-                    return packet;
-                }
-
-                @Override
-                public Packet onSendMsgBefore(SocketThread socketThread, Packet packet) {
-                    return packet;
-                }
-
+            clientThread.addListener(new SocketMessageListenerAdapter() {
                 @Override
                 public Packet onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
                     if (!isSuccess) {

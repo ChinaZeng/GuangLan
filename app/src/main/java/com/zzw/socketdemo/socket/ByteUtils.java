@@ -99,16 +99,17 @@ public class ByteUtils {
     /**
      * 将整型数值转换为字节数组
      *
-     * @param data
+     * @param a
      * @return
      */
-    public static byte[] getBytes(int data) {
-        byte[] bytes = new byte[4];
-        bytes[0] = (byte) ((data & 0xff000000) >> 24);
-        bytes[1] = (byte) ((data & 0xff0000) >> 16);
-        bytes[2] = (byte) ((data & 0xff00) >> 8);
-        bytes[3] = (byte) (data & 0xff);
-        return bytes;
+    public static byte[] getBytes(int a) {
+        return new byte[] {
+                (byte) ((a >> 24) & 0xFF),
+                (byte) ((a >> 16) & 0xFF),
+                (byte) ((a >> 8) & 0xFF),
+                (byte) (a & 0xFF)
+        };
+
     }
 
     /**
@@ -244,12 +245,15 @@ public class ByteUtils {
     /**
      * 将字节数组前4字节转换为整型数值
      *
-     * @param bytes
+     * @param b
      * @return
      */
-    public static int getInt(byte[] bytes) {
-        return (0xff000000 & (bytes[0] << 24) | (0xff0000 & (bytes[1] << 16))
-                | (0xff00 & (bytes[2] << 8)) | (0xff & bytes[3]));
+    public static int getInt(byte[] b) {
+        return  b[3] & 0xFF |
+                (b[2] & 0xFF) << 8 |
+                (b[1] & 0xFF) << 16 |
+                (b[0] & 0xFF) << 24;
+
     }
 
     /**

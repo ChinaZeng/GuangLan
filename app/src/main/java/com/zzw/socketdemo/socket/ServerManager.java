@@ -27,6 +27,20 @@ public class ServerManager implements SocketThreadStatusListener {
         }
     }
 
+    public void sendFile(String path){
+        Set<String> keys = listenerThread.getServerThreads().keySet();
+        for (String key : keys) {
+            sendFile(key, path);
+        }
+    }
+
+    public void sendFile(String key, String path){
+        SocketThread thread = listenerThread.getServerThreads().get(key);
+        if (thread != null) {
+            thread.sendFileMsg(path);
+        }
+    }
+
     public void sendTextData(String key, String msg) {
         SocketThread thread = listenerThread.getServerThreads().get(key);
         if (thread != null) {
