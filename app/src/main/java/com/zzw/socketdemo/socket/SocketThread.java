@@ -1,7 +1,6 @@
 package com.zzw.socketdemo.socket;
 
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 
 import java.io.Closeable;
 import java.io.File;
@@ -13,15 +12,10 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class SocketThread extends Thread {
 
-    private LinkedBlockingQueue<Packet> packetsQueue = new LinkedBlockingQueue<>();
+//    private LinkedBlockingQueue<Packet> packetsQueue = new LinkedBlockingQueue<>();
 
     private volatile boolean flog = true;
     public final Socket socket;
@@ -132,7 +126,7 @@ public class SocketThread extends Thread {
     }
 
     public void sendTextMsg(final String content) {
-        Dispatcher.getInstance().executor.submit(new Runnable() {
+        Dispatcher.getInstance().submit(new Runnable() {
             @Override
             public void run() {
                 Packet packet = PacketHelper.getTextMsgPacket(socket);
@@ -146,7 +140,7 @@ public class SocketThread extends Thread {
     private final static int FILE_BUFFER = 2048;
 
     public void sendFileMsg(final String path) {
-        Dispatcher.getInstance().executor.submit(new Runnable() {
+        Dispatcher.getInstance().submit(new Runnable() {
             @Override
             public void run() {
                 InputStream is = null;
@@ -250,21 +244,21 @@ public class SocketThread extends Thread {
     }
 
 
-    class SendDataThread extends Thread {
-
-        @Override
-        public void run() {
-            while (flog) {
-                try {
-                    Packet packet = packetsQueue.take();
-                    if (packet != null) {
-                        realSendData(packet);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    }
+//    class SendDataThread extends Thread {
+//
+//        @Override
+//        public void run() {
+//            while (flog) {
+//                try {
+//                    Packet packet = packetsQueue.take();
+//                    if (packet != null) {
+//                        realSendData(packet);
+//                    }
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }
+//    }
 }

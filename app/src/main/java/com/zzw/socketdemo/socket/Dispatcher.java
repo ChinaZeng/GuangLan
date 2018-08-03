@@ -23,7 +23,7 @@ public class Dispatcher {
         private static volatile Dispatcher mInstance = new Dispatcher();
     }
 
-     ThreadPoolExecutor executor = new ThreadPoolExecutor(5, Integer.MAX_VALUE,
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(5, Integer.MAX_VALUE,
             10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(5), new ThreadFactory() {
         @Override
         public Thread newThread(@NonNull Runnable r) {
@@ -32,6 +32,9 @@ public class Dispatcher {
     });
 
 
+    public void submit(Runnable runnable) {
+        executor.submit(runnable);
+    }
 
 
 }
