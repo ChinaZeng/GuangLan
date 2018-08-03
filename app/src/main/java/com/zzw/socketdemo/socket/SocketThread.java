@@ -1,27 +1,29 @@
 package com.zzw.socketdemo.socket;
 
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class SocketThread extends Thread {
 
-    private final Object lock = new Object();
+    private LinkedBlockingQueue<Packet> packetsQueue = new LinkedBlockingQueue<>();
 
-    private ConcurrentLinkedQueue<Packet> packetsQueue = new ConcurrentLinkedQueue<>();
-
-    private boolean flog = true;
+    private volatile boolean flog = true;
     public final Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
@@ -38,28 +40,28 @@ public class SocketThread extends Thread {
         if (socketThreadStatusListener != null) {
             socketThreadStatusListener.onStatusChange(this, STATUS.INIT);
         }
+
     }
 
     private int count;
-    private SocketReader socketHelper;
+    private SocketReader socketReader;
 
     @Override
     public void run() {
         if (socket == null)
             return;
-        socketHelper = new SocketReader();
+        socketReader = new SocketReader();
         init();
 
         //获取数据流
         try {
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
-            new SendDataThread().start();
-
             if (socketThreadStatusListener != null) {
                 socketThreadStatusListener.onStatusChange(this, STATUS.RUNNING);
             }
 
+//            new SendDataThread().start();
 
             while (flog) {
                 //5秒
@@ -74,7 +76,7 @@ public class SocketThread extends Thread {
                 }
                 count = 0;
                 if (inputStream.available() > 0) {
-                    Packet packet = socketHelper.readData(socket, inputStream);
+                    Packet packet = socketReader.readData(socket, inputStream);
                     if (packet != null) {
                         onReciveMsg(packet);
                     }
@@ -129,59 +131,72 @@ public class SocketThread extends Thread {
         return socket;
     }
 
-    public void sendTextMsg(String content) {
-        Packet packet = PacketHelper.getTextMsgPacket(socket);
-        packet.data = ByteUtils.getBytes(content);
-        sendQueue(packet);
+    public void sendTextMsg(final String content) {
+        Dispatcher.getInstance().executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                Packet packet = PacketHelper.getTextMsgPacket(socket);
+                packet.data = ByteUtils.getBytes(content);
+                sendQueue(packet);
+            }
+        });
     }
 
 
     private final static int FILE_BUFFER = 2048;
 
-    public void sendFileMsg(String path) {
-        InputStream is = null;
-        try {
-            Packet packetStart = PacketHelper.getFileMsgPacket(socket);
-            packetStart.flog = CMD.FLOG.FLOG_FILE_START;//表示开始
-            sendQueue(packetStart);
+    public void sendFileMsg(final String path) {
+        Dispatcher.getInstance().executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                InputStream is = null;
+                try {
+                    Packet packetStart = PacketHelper.getFileMsgPacket(socket);
+                    packetStart.flog = CMD.FLOG.FLOG_FILE_START;//表示开始
+                    sendQueue(packetStart);
 
-            File file = new File(path);
-            is = new FileInputStream(file);
-            byte[] buffer = new byte[FILE_BUFFER];
-            int len;
-            boolean isStart = true;
-            while ((len = is.read(buffer, 0, buffer.length)) > 0) {
-                Packet packetData = PacketHelper.getFileMsgPacket(socket);
-                packetData.flog = CMD.FLOG.FLOG_FILE_DATA;//内容
+                    File file = new File(path);
+                    is = new FileInputStream(file);
+                    byte[] buffer = new byte[FILE_BUFFER];
+                    int len;
+                    while ((len = is.read(buffer, 0, buffer.length)) > 0) {
+                        Packet packetData = PacketHelper.getFileMsgPacket(socket);
+                        packetData.flog = CMD.FLOG.FLOG_FILE_DATA;//内容
 
-                byte[] data = buffer;
-                if (len < buffer.length) {
-                    data = ByteUtils.subBytes(buffer, 0, len);
+                        byte[] data = buffer;
+                        if (len < buffer.length) {
+                            data = ByteUtils.subBytes(buffer, 0, len);
+                        }
+                        packetData.data = data;
+                        sendQueue(packetData);
+                    }
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    closeCloseable(is);
+                    Packet packetEnd = PacketHelper.getFileMsgPacket(socket);
+                    packetEnd.flog = CMD.FLOG.FLOG_FILE_END;//表示结束
+                    sendQueue(packetEnd);
                 }
-                packetData.data = data;
-                sendQueue(packetData);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            closeCloseable(is);
-            Packet packetEnd = PacketHelper.getFileMsgPacket(socket);
-            packetEnd.flog = CMD.FLOG.FLOG_FILE_END;//表示结束
-            sendQueue(packetEnd);
-        }
+        });
     }
 
 
     public void sendQueue(Packet packet) {
-        synchronized (lock) {
-            packetsQueue.add(packet);
-            lock.notifyAll();
-        }
+        realSendData(packet);
+
+//        try {
+//            packetsQueue.put(packet);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
-    private void realSendData(Packet packet) {
+    public void realSendData(Packet packet) {
         if (flog && socket.isConnected() && outputStream != null) {
             try {
                 onSendMsgBefore(packet);
@@ -192,8 +207,11 @@ public class SocketThread extends Thread {
                 e.printStackTrace();
                 onSendMsgAgo(false, packet);
             }
+        } else {
+            onSendMsgAgo(false, packet);
         }
     }
+
 
     public void exit() {
         flog = false;
@@ -233,25 +251,19 @@ public class SocketThread extends Thread {
 
 
     class SendDataThread extends Thread {
+
         @Override
         public void run() {
             while (flog) {
-                synchronized (lock) {
-                    if (!packetsQueue.isEmpty()) {
-                        Packet packet = packetsQueue.poll();
-                        if (packet != null) {
-                            realSendData(packet);
-                        }
-                    } else {
-                        try {
-                            lock.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                try {
+                    Packet packet = packetsQueue.take();
+                    if (packet != null) {
+                        realSendData(packet);
                     }
-
-                    lock.notifyAll();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
             }
         }
     }

@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.zzw.socketdemo.socket.ByteUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                     srcFis = new FileInputStream(new File(src));
                     dstFis = new FileInputStream(new File(dst));
                     srcFos = new FileOutputStream(new File(text));
-                   dstFos = new FileOutputStream(new File(text2));
+                    dstFos = new FileOutputStream(new File(text2));
                     if (srcFis.available() == dstFis.available()) {
                         Log.e("zzz", "长度相同:" + srcFis.available());
                     }
@@ -54,12 +56,20 @@ public class MainActivity extends AppCompatActivity {
                     int len = 0;
                     Log.e("zzz", "------------------------------");
                     while ((len = srcFis.read(buffer1, 0, buffer1.length)) > 0) {
-                        srcFos.write((Arrays.toString(buffer1)+"\n").getBytes("UTF-8"));
+                        byte[] data = buffer1;
+                        if (len < buffer1.length) {
+                            data = ByteUtils.subBytes(buffer1, 0, len);
+                        }
+                        srcFos.write((Arrays.toString(data)+"\n").getBytes("UTF-8"));
                     }
                     srcFos.flush();
 
                     while ((len = dstFis.read(buffer2, 0, buffer2.length)) > 0) {
-                        dstFos.write((Arrays.toString(buffer2)+"\n").getBytes("UTF-8"));
+                        byte[] data = buffer2;
+                        if (len < buffer2.length) {
+                            data = ByteUtils.subBytes(buffer2, 0, len);
+                        }
+                        dstFos.write((Arrays.toString(data)+"\n").getBytes("UTF-8"));
                     }
                     dstFos.flush();
                     Log.e("zzz", "------------------------------");

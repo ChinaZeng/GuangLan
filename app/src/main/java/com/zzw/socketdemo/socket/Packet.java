@@ -19,12 +19,12 @@ public class Packet {
 
 
     public int size() {
-        //xxxx(内容长度)+cmd+flog+realData    //4+1+1+realData.length
+        //xxxx(内容长度)+cmd+flog+data    //4+1+1+data.length
         return 4 + 1 + 1 + data.length;
     }
 
     public int contentSize() {
-        //cmd+flog+realData
+        //cmd+flog+data
         return size() - 4;
     }
 
@@ -45,7 +45,7 @@ public class Packet {
         this.type = type;
     }
 
-    //xxxx(内容长度)+cmd+flog+realData    //4+1+1+realData.length
+    //xxxx(内容长度)+cmd+flog+data    //4+1+1+data.length
     public byte[] realData() {
         int size = size();
         byte[] realData = new byte[size];
