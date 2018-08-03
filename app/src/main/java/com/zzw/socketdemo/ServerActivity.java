@@ -125,7 +125,7 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     public void sendData(View view) {
-        serverManager.sendFile("/storage/emulated/0/ocr/card.jpg");
+        serverManager.sendFile("/storage/emulated/0/aaa/src.mp4");
 
 //        String s = etContent.getText().toString().trim();
 //        if (s.length() > 0)

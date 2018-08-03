@@ -137,7 +137,7 @@ public class SocketThread extends Thread {
     }
 
 
-    private final static int FILE_BUFFER = 2048;
+    private final static int FILE_BUFFER = 4096;
 
     public void sendFileMsg(final String path) {
         Dispatcher.getInstance().submit(new Runnable() {
