@@ -10,10 +10,12 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.zzw.socketdemo.socket.CMD;
 import com.zzw.socketdemo.socket.EventBusTag;
 import com.zzw.socketdemo.socket.MyLog;
 import com.zzw.socketdemo.socket.Packet;
@@ -95,19 +97,35 @@ public class ServerActivity extends AppCompatActivity {
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
     public void reciverMsg(Packet packet) {
         String s = tvContent.getText().toString();
-        String content = s + "\n" + "来自" + packet.ip() + "的消息：" + packet.string();
+        byte cmd = packet.cmd;
+        byte flog = packet.flog;
+        int dataLen = packet.data.length;
+        String content = s + "\n" + "来自" + packet.ip() + "的消息：" + "cmd:" + cmd + "  flog:" + flog + " len=" + dataLen;
+        if (cmd == CMD.CMD_TEXT_MSG) {
+            content = content + "\n" + packet.string();
+        } else if (cmd == CMD.CMD_FILE_MSG) {
+            content = content + "\n" + "文件消息";
+        }
         tvContent.setText(content);
     }
 
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
+//        String s = tvContent.getText().toString();
+//        String content = s + "\n" + "发送到" + packet.ip() + "的消息：" + packet.string();
+//        tvContent.setText(content);
+
         String s = tvContent.getText().toString();
-        String content = s + "\n" + "发送到" + packet.ip() + "的消息：" + packet.string();
+        byte cmd = packet.cmd;
+        byte flog = packet.flog;
+        int dataLen = packet.data.length;
+//            String content = s + "\n" + "来自" + packet.ip() + "的消息：" + packet.string();
+        String content = s + "\n" + "发到到" + packet.ip() + "的消息：" + "cmd:" + cmd + "  flog:" + flog + " len=" + dataLen;
         tvContent.setText(content);
     }
 
     public void sendData(View view) {
-        serverManager.sendFile("/storage/emulated/0/aaa/test.txt");
+        serverManager.sendFile("/storage/emulated/0/ocr/card.jpg");
 
 //        String s = etContent.getText().toString().trim();
 //        if (s.length() > 0)
@@ -118,6 +136,7 @@ public class ServerActivity extends AppCompatActivity {
     public void startWifiHot(View view) {
         wifiAPManager.startWifiAp(hotName, "1234567890", true);
     }
+
 
 
     private class HotBroadcastReceiver extends BroadcastReceiver {

@@ -10,24 +10,27 @@ public class Packet {
         RECIVER
     }
 
-    private String id = System.currentTimeMillis() + "";
+    private String id = UUIDUtils.creatUUID();
     private TYPE type;
     private final Socket socket;
     public byte[] data = new byte[0];
-    public byte cmd=CMD.EMPTY;
-    public byte flog=CMD.EMPTY;
+    public byte cmd = CMD.EMPTY;
+    public byte flog = CMD.EMPTY;
 
 
-    public int size(){
+    public int size() {
         //xxxx(内容长度)+cmd+flog+realData    //4+1+1+realData.length
-        return 4+1+1+ data.length;
+        return 4 + 1 + 1 + data.length;
     }
 
-    public int contentSize(){
+    public int contentSize() {
         //cmd+flog+realData
-        return size() - 4 ;
+        return size() - 4;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getId() {
         return id;
@@ -44,24 +47,24 @@ public class Packet {
 
     //xxxx(内容长度)+cmd+flog+realData    //4+1+1+realData.length
     public byte[] realData() {
-        int size =  size();
+        int size = size();
         byte[] realData = new byte[size];
 
         //lenByte
-        byte[] sizeByte =  ByteUtils.getBytes(contentSize());
+        byte[] sizeByte = ByteUtils.getBytes(contentSize());
         //len
-        System.arraycopy(sizeByte,0,realData,0,sizeByte.length);
+        System.arraycopy(sizeByte, 0, realData, 0, sizeByte.length);
         //cmd
         realData[4] = cmd;
         //flog
         realData[5] = flog;
         //realData
-        System.arraycopy(data,0,realData,6,data.length);
+        System.arraycopy(data, 0, realData, 6, data.length);
         return realData;
     }
 
     public void putByteArray(byte[] content) {
-        this.data = ByteUtils.mergerByte(data,content);
+        this.data = ByteUtils.mergerByte(data, content);
     }
 
     public String key() {

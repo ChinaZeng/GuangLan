@@ -6,7 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,7 +22,54 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},5);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 5);
+
+
+    }
+
+    public void compile(View view) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String src = "/storage/emulated/0/ocr/card.jpg";
+                String dst = "/storage/emulated/0/ocr/cardn.jpg";
+                String text = "/storage/emulated/0/ocr/c1.text";
+                String text2 = "/storage/emulated/0/ocr/c2.text";
+
+                FileInputStream srcFis = null;
+                FileInputStream dstFis = null;
+                FileOutputStream srcFos = null;
+                FileOutputStream dstFos = null;
+                try {
+                    srcFis = new FileInputStream(new File(src));
+                    dstFis = new FileInputStream(new File(dst));
+                    srcFos = new FileOutputStream(new File(text));
+                   dstFos = new FileOutputStream(new File(text2));
+                    if (srcFis.available() == dstFis.available()) {
+                        Log.e("zzz", "长度相同:" + srcFis.available());
+                    }
+
+                    byte[] buffer1 = new byte[2048];
+                    byte[] buffer2 = new byte[2048];
+                    int len = 0;
+                    Log.e("zzz", "------------------------------");
+                    while ((len = srcFis.read(buffer1, 0, buffer1.length)) > 0) {
+                        srcFos.write((Arrays.toString(buffer1)+"\n").getBytes("UTF-8"));
+                    }
+                    srcFos.flush();
+
+                    while ((len = dstFis.read(buffer2, 0, buffer2.length)) > 0) {
+                        dstFos.write((Arrays.toString(buffer2)+"\n").getBytes("UTF-8"));
+                    }
+                    dstFos.flush();
+                    Log.e("zzz", "------------------------------");
+                } catch (java.io.IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }).start();
 
     }
 

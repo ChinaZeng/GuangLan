@@ -15,6 +15,8 @@ public class ClientThread extends SocketThread {
         super("client-" + KeyUtils.getKey(socket), socket, socketThreadStatusListener);
     }
 
+    int len = 0;
+
     @Override
     protected void init() {
         super.init();
@@ -23,20 +25,25 @@ public class ClientThread extends SocketThread {
             @Override
             public Packet onReciveMsg(SocketThread socketThread, Packet packet) {
                 byte cmd = packet.cmd;
-                if(cmd == CMD.CMD_FILE_MSG){
-                    byte flog =  packet.flog;
-                    if(packet.data.length==0)
-                        return packet;
-
-                    if(flog == CMD.FLOG.FLOG_FILE_START){
-                        FileHelper.saveUserImageToLocation(packet.data,true,"text.txt");
-                    }else if(flog == CMD.FLOG.FLOG_FILE_DATA){
-                        FileHelper.saveUserImageToLocation(packet.data,false,"text.txt");
+                if (cmd == CMD.CMD_FILE_MSG) {
+                    byte flog = packet.flog;
+                    if (flog == CMD.FLOG.FLOG_FILE_START) {
+                        len = 0;
+                        FileHelper.saveFileToLocal(packet.data, true, "card.jpg");
+                    } else if (flog == CMD.FLOG.FLOG_FILE_DATA) {
+                        FileHelper.saveFileToLocal(packet.data, false, "card.jpg");
+                        len += packet.data.length;
+                    }else {
+                        //TODO 侵入式太高  这里为了省事
+                        EventBus.getDefault().post(len, EventBusTag.TAG_RECIVE_MSG);
                     }
                 }else {
+
                     //TODO 侵入式太高  这里为了省事
                     EventBus.getDefault().post(packet, EventBusTag.TAG_RECIVE_MSG);
                 }
+
+
                 return packet;
             }
 

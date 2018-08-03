@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.zzw.socketdemo.socket.CMD;
 import com.zzw.socketdemo.socket.ClientManager;
 import com.zzw.socketdemo.socket.EventBusTag;
 import com.zzw.socketdemo.socket.Packet;
@@ -61,19 +62,38 @@ public class ClientActivity extends AppCompatActivity {
     public void reciverMsg(Packet packet) {
         if (TextUtils.equals(packet.key(), key)) {
             String s = tvContent.getText().toString();
-            String content = s + "\n" + "来自" + packet.ip() + "的消息：" + packet.string();
+            byte cmd = packet.cmd;
+            byte flog = packet.flog;
+            int dataLen = packet.data.length;
+            String content = s + "\n" + "来自" + packet.ip() + "的消息：" + "cmd:" + cmd + "  flog:" + flog + " len=" + dataLen;
+            if (cmd == CMD.CMD_TEXT_MSG) {
+                content = content + "\n" + packet.string();
+            } else if (cmd == CMD.CMD_FILE_MSG) {
+                content = content + "\n" + "文件消息";
+            }
             tvContent.setText(content);
         }
     }
+
+    @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
+    public void reciverMsg(int len) {
+        tvContent.setText("收到文件 大小：len=" + len);
+    }
+
 
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
         if (TextUtils.equals(packet.key(), key)) {
             String s = tvContent.getText().toString();
-            String content = s + "\n" + "发送到" + packet.ip() + "的消息：" + packet.string();
+            byte cmd = packet.cmd;
+            byte flog = packet.flog;
+            int dataLen = packet.data.length;
+//            String content = s + "\n" + "来自" + packet.ip() + "的消息：" + packet.string();
+            String content = s + "\n" + "发到到" + packet.ip() + "的消息：" + "cmd:" + cmd + "  flog:" + flog + " len=" + dataLen;
             tvContent.setText(content);
         }
     }
+
 
     public void sendData(View view) {
         if (TextUtils.isEmpty(key)) return;

@@ -1,21 +1,23 @@
 package com.zzw.socketdemo.socket;
 
-import org.simple.eventbus.EventBus;
+import android.os.SystemClock;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SocketThread extends Thread {
+
+    private final Object lock = new Object();
 
     private ConcurrentLinkedQueue<Packet> packetsQueue = new ConcurrentLinkedQueue<>();
 
@@ -64,16 +66,16 @@ public class SocketThread extends Thread {
                 if (count > 5 * 5) {
                     break;
                 }
-
+                SystemClock.sleep(5);
                 if (!socket.isConnected()) {
                     Thread.sleep(200);
                     count++;
                     continue;
                 }
                 count = 0;
-                if(inputStream.available()>0){
-                    Packet packet= socketHelper.readData(socket,inputStream);
-                    if(packet!=null){
+                if (inputStream.available() > 0) {
+                    Packet packet = socketHelper.readData(socket, inputStream);
+                    if (packet != null) {
                         onReciveMsg(packet);
                     }
                 }
@@ -133,37 +135,50 @@ public class SocketThread extends Thread {
         sendQueue(packet);
     }
 
+
+    private final static int FILE_BUFFER = 2048;
+
     public void sendFileMsg(String path) {
-        InputStream is=null;
+        InputStream is = null;
         try {
-            is = new FileInputStream(new File(path));
-            byte[]buffer = new byte[2048];
-            int len =0;
             Packet packetStart = PacketHelper.getFileMsgPacket(socket);
-            packetStart.flog=CMD.FLOG.FLOG_FILE_START;//表示开始
+            packetStart.flog = CMD.FLOG.FLOG_FILE_START;//表示开始
             sendQueue(packetStart);
-            while ((len = is.read(buffer,0,buffer.length))>0){
+
+            File file = new File(path);
+            is = new FileInputStream(file);
+            byte[] buffer = new byte[FILE_BUFFER];
+            int len;
+            boolean isStart = true;
+            while ((len = is.read(buffer, 0, buffer.length)) > 0) {
                 Packet packetData = PacketHelper.getFileMsgPacket(socket);
-                buffer = ByteUtils.subBytes(buffer,0,len);
                 packetData.flog = CMD.FLOG.FLOG_FILE_DATA;//内容
-                packetData.data =buffer;
+
+                byte[] data = buffer;
+                if (len < buffer.length) {
+                    data = ByteUtils.subBytes(buffer, 0, len);
+                }
+                packetData.data = data;
                 sendQueue(packetData);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             closeCloseable(is);
             Packet packetEnd = PacketHelper.getFileMsgPacket(socket);
-            packetEnd.flog=CMD.FLOG.FLOG_FILE_END;//表示结束
+            packetEnd.flog = CMD.FLOG.FLOG_FILE_END;//表示结束
             sendQueue(packetEnd);
         }
     }
 
 
     public void sendQueue(Packet packet) {
-        packetsQueue.add(packet);
+        synchronized (lock) {
+            packetsQueue.add(packet);
+            lock.notifyAll();
+        }
     }
 
     private void realSendData(Packet packet) {
@@ -187,7 +202,7 @@ public class SocketThread extends Thread {
 
     private void onSendMsgAgo(boolean sendSuccess, Packet packet) {
         for (SocketMessageListener listener : listeners) {
-            if(packet!=null){
+            if (packet != null) {
                 packet = listener.onSendMsgAgo(this, sendSuccess, packet);
             }
         }
@@ -195,7 +210,7 @@ public class SocketThread extends Thread {
 
     private void onReciveMsg(Packet packet) {
         for (SocketMessageListener listener : listeners) {
-            if(packet!=null){
+            if (packet != null) {
                 packet = listener.onReciveMsg(this, packet);
             }
         }
@@ -203,8 +218,8 @@ public class SocketThread extends Thread {
 
     private void onSendMsgBefore(Packet packet) {
         for (SocketMessageListener listener : listeners) {
-            if(packet!=null){
-                packet =   listener.onSendMsgBefore(this, packet);
+            if (packet != null) {
+                packet = listener.onSendMsgBefore(this, packet);
             }
         }
     }
@@ -216,15 +231,26 @@ public class SocketThread extends Thread {
         listeners.add(listener);
     }
 
+
     class SendDataThread extends Thread {
         @Override
         public void run() {
             while (flog) {
-                if (!packetsQueue.isEmpty()) {
-                    Packet packet = packetsQueue.poll();
-                    if (packet != null) {
-                        realSendData(packet);
+                synchronized (lock) {
+                    if (!packetsQueue.isEmpty()) {
+                        Packet packet = packetsQueue.poll();
+                        if (packet != null) {
+                            realSendData(packet);
+                        }
+                    } else {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
+
+                    lock.notifyAll();
                 }
             }
         }
