@@ -61,17 +61,7 @@ public class ClientActivity extends AppCompatActivity {
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
     public void reciverMsg(Packet packet) {
         if (TextUtils.equals(packet.key(), key)) {
-            String s = tvContent.getText().toString();
-            byte cmd = packet.cmd;
-            byte flog = packet.flog;
-            int dataLen = packet.data.length;
-            String content = s + "\n" + "来自" + packet.ip() + "的消息：" + "cmd:" + cmd + "  flog:" + flog + " len=" + dataLen;
-            if (cmd == CMD.CMD_TEXT_MSG) {
-                content = content + "\n" + packet.string();
-            } else if (cmd == CMD.CMD_FILE_MSG) {
-                content = content + "\n" + "文件消息";
-            }
-            tvContent.setText(content);
+
         }
     }
 
@@ -84,23 +74,11 @@ public class ClientActivity extends AppCompatActivity {
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
         if (TextUtils.equals(packet.key(), key)) {
-            String s = tvContent.getText().toString();
-            byte cmd = packet.cmd;
-            byte flog = packet.flog;
-            int dataLen = packet.data.length;
-//            String content = s + "\n" + "来自" + packet.ip() + "的消息：" + packet.string();
-            String content = s + "\n" + "发到到" + packet.ip() + "的消息：" + "cmd:" + cmd + "  flog:" + flog + " len=" + dataLen;
-            tvContent.setText(content);
+
         }
     }
 
 
-    public void sendData(View view) {
-        if (TextUtils.isEmpty(key)) return;
-        String s = etSendData.getText().toString().trim();
-        if (s.length() > 0)
-            manager.sendTextData(key, s);
-    }
 
     public void connWifiHot(View view) {
         tvContent.setText("连接中...");

@@ -1,30 +1,42 @@
 package com.zzw.socketdemo.socket;
 
-import android.annotation.SuppressLint;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
-import java.util.regex.Pattern;
 
 public class SocketReader {
     private static final String TAG = "SocketReader";
 
-    private final static int BUFFER_SIZE = 4096;
-    private final static int HEADER_BUFFER_SIZE = 4;
+    private static final int BUFFER_SIZE = 4096;
+    private static final int HEADER_BUFFER_SIZE = 4;
 
-    public Packet readData(Socket socket,InputStream inputStream) {
+    public static Packet readPktData(Socket socket, InputStream inputStream) {
         //读取数据 封装packet
         try {
-            Packet packet = new Packet(socket, Packet.TYPE.RECIVER);
-            int bodyLength = getBodyLength(inputStream);
-            if(bodyLength<=0){
+            byte[] startBA = readIs2(inputStream, 4);
+            int start = ByteUtil.bytesToInt(startBA);
+            if (start != Packet.START_FRAME) {
                 return null;
             }
-            byte[] bodyBuffer = readIs2(inputStream, bodyLength);
-            packet.cmd = bodyBuffer[0];
-            packet.flog = bodyBuffer[1];
-            packet.data = ByteUtils.subBytes(bodyBuffer,2,bodyBuffer.length-2);
+            Packet packet = new Packet(socket, Packet.TYPE.RECIVER);
+            packet.pkAllLen = ByteUtil.bytesToInt(readIs2(inputStream, 4));
+            packet.rev = ByteUtil.bytesToInt(readIs2(inputStream, 4));
+            packet.src = ByteUtil.bytesToInt(readIs2(inputStream, 4));
+            packet.dst = ByteUtil.bytesToInt(readIs2(inputStream, 4));
+            packet.pkType = ByteUtil.bytesToShort(readIs2(inputStream, 2));
+            packet.pktId = ByteUtil.bytesToShort(readIs2(inputStream, 2));
+            packet.keep = ByteUtil.bytesToInt(readIs2(inputStream, 4));
+            packet.cmd = ByteUtil.bytesToInt(readIs2(inputStream, 4));
+            packet.cmdDataLength = ByteUtil.bytesToInt(readIs2(inputStream, 4));
+            int dataLen = packet.cmdDataLength - 4 * 2;
+            packet.data = readIs2(inputStream, dataLen);
+
+            byte[] endBA = readIs2(inputStream, 4);
+            int end = ByteUtil.bytesToInt(endBA);
+            if (end != Packet.END_FRAME) {
+                return null;
+            }
+
             return packet;
         } catch (IOException e) {
             e.printStackTrace();
@@ -32,16 +44,8 @@ public class SocketReader {
         return null;
     }
 
-    private int getBodyLength(InputStream is) throws IOException {
-        byte[] b = readIs2(is, HEADER_BUFFER_SIZE);
-        int len = ByteUtils.getInt(b);
-        MyLog.e(TAG, "读取到包头：" + len);
-        return len;
-    }
-
-
-    private  byte[] readIs2(InputStream is, int len) throws IOException {
-        MyLog.e(TAG,String.format("开始读取输入流，InputStream的长度：%d，要读取的长度为：%d", is.available(), len));
+    private static byte[] readIs2(InputStream is, int len) throws IOException {
+        MyLog.e(TAG, String.format("开始读取输入流，InputStream的长度：%d，要读取的长度为：%d", is.available(), len));
 
         byte[] data = new byte[len];
         int i = 0;
@@ -52,14 +56,14 @@ public class SocketReader {
 
             i = i + r;
         }
-        MyLog.e(TAG,"---------------读取结束---------------");
+        MyLog.e(TAG, "---------------读取结束---------------");
         return data;
     }
 
 
-    @SuppressLint("DefaultLocale")
+    @Deprecated
     private byte[] readIs(InputStream is, int len) throws IOException {
-        MyLog.e(TAG,String.format("开始读取输入流，InputStream的长度：%d，要读取的长度为：%d", is.available(), len));
+        MyLog.e(TAG, String.format("开始读取输入流，InputStream的长度：%d，要读取的长度为：%d", is.available(), len));
 
         int tempBuffSize = len;
         if (len > BUFFER_SIZE) {
@@ -86,17 +90,17 @@ public class SocketReader {
                     tempBuff = new byte[tempBuffSize];
                 }
                 int readLen = is.read(tempBuff, 0, tempBuffSize);
-                System.arraycopy(tempBuff,0,data,readLength,readLen);
+                System.arraycopy(tempBuff, 0, data, readLength, readLen);
                 readLength += tempBuff.length;
                 MyLog.e(String.format("第%d次读取数据，长度:%d", i, readLen));
             }
         } else {
             readLength = is.read(data, 0, len);
         }
-        if(readLength<len){
+        if (readLength < len) {
             System.arraycopy(data, 0, data, 0, readLength);
         }
-        MyLog.e(TAG,String.format("本次需要读取长度%d,实际读取到的长度%d",len, readLength));
+        MyLog.e(TAG, String.format("本次需要读取长度%d,实际读取到的长度%d", len, readLength));
         return data;
     }
 

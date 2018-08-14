@@ -7,7 +7,6 @@ import java.util.HashMap;
 public class ClientManager implements SocketThreadStatusListener {
     private HashMap<String, ClientThread> serverThreads = new HashMap<>();
 
-
     private StatusListener listener;
 
 
@@ -46,13 +45,6 @@ public class ClientManager implements SocketThreadStatusListener {
         }
     }
 
-
-    public void sendTextData(String key, String msg) {
-        ClientThread clientThread = serverThreads.get(key);
-        if (clientThread != null) {
-            clientThread.sendTextMsg(msg);
-        }
-    }
 
     public void exit() {
         Collection<ClientThread> socketThreads = serverThreads.values();

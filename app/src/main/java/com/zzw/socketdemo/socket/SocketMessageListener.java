@@ -13,21 +13,19 @@ public interface SocketMessageListener {
         @Override
         public Packet onReciveMsg(SocketThread socketThread, Packet packet) {
             MyLog.e("from" + socketThread.socket.getInetAddress() + ":" + socketThread.socket.getPort()
-                    + ":\n", "id="+packet.getId()+" cmd :"+packet.cmd+ " flog="+packet.flog);
+                    + ":\n", "id=" + packet.pktId + " cmd :" + packet.cmd);
             return packet;
         }
 
 
         @Override
         public Packet onSendMsgBefore(SocketThread socketThread, Packet packet) {
-//            MyLog.e("to before " + socketThread.socket.getInetAddress() + ":" + socketThread.socket.getPort()
-//                    + ":\n", "id="+packet.getId()+" cmd :"+packet.cmd+ " flog="+packet.flog);
             return packet;
         }
 
         @Override
         public Packet onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
-            MyLog.e("to ago "+"id="+packet.getId() + (isSuccess ? "成功" : "失败"));
+            MyLog.e("to ago " + "id=" + packet.pktId + " cmd: " + packet.cmd + (isSuccess ? "成功" : "失败"));
             return packet;
         }
     };

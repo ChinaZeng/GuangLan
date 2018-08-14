@@ -3,9 +3,6 @@ package com.zzw.socketdemo.socket;
 import android.os.SystemClock;
 
 import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,13 +35,13 @@ public class SocketThread extends Thread {
     }
 
     private int count;
-    private SocketReader socketReader;
+    public SocketSender socketSender;
 
     @Override
     public void run() {
         if (socket == null)
             return;
-        socketReader = new SocketReader();
+        socketSender = new SocketSender(this);
         init();
 
         //获取数据流
@@ -70,14 +67,12 @@ public class SocketThread extends Thread {
                 }
                 count = 0;
                 if (inputStream.available() > 0) {
-                    Packet packet = socketReader.readData(socket, inputStream);
+                    Packet packet = SocketReader.readPktData(socket, inputStream);
                     if (packet != null) {
                         onReciveMsg(packet);
                     }
                 }
-
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -125,60 +120,6 @@ public class SocketThread extends Thread {
         return socket;
     }
 
-    public void sendTextMsg(final String content) {
-        Dispatcher.getInstance().submit(new Runnable() {
-            @Override
-            public void run() {
-                Packet packet = PacketHelper.getTextMsgPacket(socket);
-                packet.data = ByteUtils.getBytes(content);
-                sendQueue(packet);
-            }
-        });
-    }
-
-
-    private final static int FILE_BUFFER = 4096;
-
-    public void sendFileMsg(final String path) {
-        Dispatcher.getInstance().submit(new Runnable() {
-            @Override
-            public void run() {
-                InputStream is = null;
-                try {
-                    Packet packetStart = PacketHelper.getFileMsgPacket(socket);
-                    packetStart.flog = CMD.FLOG.FLOG_FILE_START;//表示开始
-                    sendQueue(packetStart);
-
-                    File file = new File(path);
-                    is = new FileInputStream(file);
-                    byte[] buffer = new byte[FILE_BUFFER];
-                    int len;
-                    while ((len = is.read(buffer, 0, buffer.length)) > 0) {
-                        Packet packetData = PacketHelper.getFileMsgPacket(socket);
-                        packetData.flog = CMD.FLOG.FLOG_FILE_DATA;//内容
-
-                        byte[] data = buffer;
-                        if (len < buffer.length) {
-                            data = ByteUtils.subBytes(buffer, 0, len);
-                        }
-                        packetData.data = data;
-                        sendQueue(packetData);
-                    }
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    closeCloseable(is);
-                    Packet packetEnd = PacketHelper.getFileMsgPacket(socket);
-                    packetEnd.flog = CMD.FLOG.FLOG_FILE_END;//表示结束
-                    sendQueue(packetEnd);
-                }
-            }
-        });
-    }
-
 
     public void sendQueue(Packet packet) {
         realSendData(packet);
@@ -194,7 +135,7 @@ public class SocketThread extends Thread {
         if (flog && socket.isConnected() && outputStream != null) {
             try {
                 onSendMsgBefore(packet);
-                outputStream.write(packet.realData());
+                outputStream.write(packet.sendPktData());
 //                outputStream.flush();
                 onSendMsgAgo(true, packet);
             } catch (IOException e) {

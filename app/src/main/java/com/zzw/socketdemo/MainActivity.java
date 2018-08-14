@@ -9,13 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.zzw.socketdemo.socket.ByteUtils;
+import com.zzw.socketdemo.socket.ByteUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
@@ -58,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     while ((len = srcFis.read(buffer1, 0, buffer1.length)) > 0) {
                         byte[] data = buffer1;
                         if (len < buffer1.length) {
-                            data = ByteUtils.subBytes(buffer1, 0, len);
+                            data = ByteUtil.subBytes(buffer1, 0, len);
                         }
                         srcFos.write((Arrays.toString(data)+"\n").getBytes("UTF-8"));
                     }
@@ -67,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                     while ((len = dstFis.read(buffer2, 0, buffer2.length)) > 0) {
                         byte[] data = buffer2;
                         if (len < buffer2.length) {
-                            data = ByteUtils.subBytes(buffer2, 0, len);
+                            data = ByteUtil.subBytes(buffer2, 0, len);
                         }
                         dstFos.write((Arrays.toString(data)+"\n").getBytes("UTF-8"));
                     }
@@ -76,11 +74,8 @@ public class MainActivity extends AppCompatActivity {
                 } catch (java.io.IOException e) {
                     e.printStackTrace();
                 }
-
-
             }
         }).start();
-
     }
 
     public void server(View view) {

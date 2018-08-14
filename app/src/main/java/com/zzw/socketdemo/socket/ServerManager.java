@@ -1,7 +1,5 @@
 package com.zzw.socketdemo.socket;
 
-import java.util.Set;
-
 public class ServerManager implements SocketThreadStatusListener {
     private ListenerThread listenerThread;
     private StatusListener listener;
@@ -19,34 +17,20 @@ public class ServerManager implements SocketThreadStatusListener {
         listenerThread.start();
     }
 
-
-    public void sendTextData(String msg) {
-        Set<String> keys = listenerThread.getServerThreads().keySet();
-        for (String key : keys) {
-            sendTextData(key, msg);
-        }
-    }
-
-    public void sendFile(String path){
-        Set<String> keys = listenerThread.getServerThreads().keySet();
-        for (String key : keys) {
-            sendFile(key, path);
-        }
-    }
-
-    public void sendFile(String key, String path){
+    public void getDeviceSerialNumber(String key) {
         SocketThread thread = listenerThread.getServerThreads().get(key);
         if (thread != null) {
-            thread.sendFileMsg(path);
+            thread.socketSender.getDeviceSerialNumber();
         }
     }
 
-    public void sendTextData(String key, String msg) {
+    public void sendTestArgsAndStartTestPacket(String key) {
         SocketThread thread = listenerThread.getServerThreads().get(key);
         if (thread != null) {
-            thread.sendTextMsg(msg);
+            thread.socketSender.sendTestArgsAndStartTest();
         }
     }
+
 
     public void close() {
         listenerThread.exit();

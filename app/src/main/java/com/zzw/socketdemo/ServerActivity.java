@@ -35,10 +35,11 @@ public class ServerActivity extends AppCompatActivity {
 
 
     private TextView tv, tvContent;
-    private EditText etContent;
     private HotBroadcastReceiver receiver;
     private ServerManager serverManager;
     private final int PORT = 8825;
+
+    private String key;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,6 @@ public class ServerActivity extends AppCompatActivity {
         EventBus.getDefault().register(this);
 
         tv = findViewById(R.id.tv);
-        etContent = findViewById(R.id.et_content);
         tvContent = findViewById(R.id.content);
 
         wifiAPManager = new WifiAPManager(this);
@@ -74,10 +74,13 @@ public class ServerActivity extends AppCompatActivity {
                             String s = tvContent.getText().toString();
                             String content = s + "\n" + key + "断开连接";
                             tvContent.setText(content);
+                            ServerActivity.this.key = key;
                         } else if (status == STATUS.INIT) {
                             String s = tvContent.getText().toString();
                             String content = s + "\n" + key + "连接";
                             tvContent.setText(content);
+
+                            ServerActivity.this.key = null;
                         }
                     }
                 });
@@ -96,47 +99,26 @@ public class ServerActivity extends AppCompatActivity {
 
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
     public void reciverMsg(Packet packet) {
-        String s = tvContent.getText().toString();
-        byte cmd = packet.cmd;
-        byte flog = packet.flog;
-        int dataLen = packet.data.length;
-        String content = s + "\n" + "来自" + packet.ip() + "的消息：" + "cmd:" + cmd + "  flog:" + flog + " len=" + dataLen;
-        if (cmd == CMD.CMD_TEXT_MSG) {
-            content = content + "\n" + packet.string();
-        } else if (cmd == CMD.CMD_FILE_MSG) {
-            content = content + "\n" + "文件消息";
-        }
-        tvContent.setText(content);
+
     }
 
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
-//        String s = tvContent.getText().toString();
-//        String content = s + "\n" + "发送到" + packet.ip() + "的消息：" + packet.string();
-//        tvContent.setText(content);
-
-        String s = tvContent.getText().toString();
-        byte cmd = packet.cmd;
-        byte flog = packet.flog;
-        int dataLen = packet.data.length;
-//            String content = s + "\n" + "来自" + packet.ip() + "的消息：" + packet.string();
-        String content = s + "\n" + "发到到" + packet.ip() + "的消息：" + "cmd:" + cmd + "  flog:" + flog + " len=" + dataLen;
-        tvContent.setText(content);
+        if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
+            tvContent.setText("发送获取设备号命令成功");
+        }
     }
 
-    public void sendData(View view) {
-        serverManager.sendFile("/storage/emulated/0/aaa/src.mp4");
-
-//        String s = etContent.getText().toString().trim();
-//        if (s.length() > 0)
-//            serverManager.sendTextData(s);
+    public void click1(View view) {
+        if (key != null) {
+            serverManager.getDeviceSerialNumber(key);
+        }
     }
 
 
     public void startWifiHot(View view) {
         wifiAPManager.startWifiAp(hotName, "1234567890", true);
     }
-
 
 
     private class HotBroadcastReceiver extends BroadcastReceiver {

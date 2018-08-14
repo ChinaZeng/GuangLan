@@ -24,9 +24,9 @@ public class ServerThread extends SocketThread {
 
             @Override
             public Packet onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
-//                if (isSuccess) {
-//                    EventBus.getDefault().post(packet, EventBusTag.TAG_SEND_MSG);
-//                }
+                if (isSuccess) {
+                    EventBus.getDefault().post(packet, EventBusTag.TAG_SEND_MSG);
+                }
                 return packet;
             }
         });
