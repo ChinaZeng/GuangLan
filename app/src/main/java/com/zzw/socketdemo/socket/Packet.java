@@ -54,10 +54,6 @@ public class Packet {
         return 4 * 5 + 2 * 2 + 4 * 3 + data.length + 4;
     }
 
-    public int getDataLen() {
-        return cmdDataLength - 4 - 4;
-    }
-
     public boolean isSend() {
         return type == TYPE.SEND;
     }

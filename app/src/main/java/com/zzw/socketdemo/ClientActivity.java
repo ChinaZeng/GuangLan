@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.zzw.socketdemo.socket.ByteUtil;
 import com.zzw.socketdemo.socket.CMD;
 import com.zzw.socketdemo.socket.ClientManager;
 import com.zzw.socketdemo.socket.EventBusTag;
@@ -17,6 +18,8 @@ import com.zzw.socketdemo.socket.StatusListener;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
+
+import java.util.Arrays;
 
 public class ClientActivity extends AppCompatActivity {
 
@@ -62,7 +65,21 @@ public class ClientActivity extends AppCompatActivity {
     public void reciverMsg(Packet packet) {
         if (TextUtils.equals(packet.key(), key)) {
             if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
-                tvContent.setText("接收到设备命令");
+                StringBuilder builder = new StringBuilder();
+                builder.append("接收到设备命令\n");
+                builder.append("起始值:" + Arrays.toString(ByteUtil.intToBytes(Packet.START_FRAME)) + "\n");
+                builder.append("总帧长度:" + Arrays.toString(ByteUtil.intToBytes(packet.pkAllLen)) + "\n");
+                builder.append("版本号:" + Arrays.toString(ByteUtil.intToBytes(packet.rev)) + "\n");
+                builder.append("源地址:" + Arrays.toString(ByteUtil.intToBytes(packet.src)) + "\n");
+                builder.append("目标地址:" + Arrays.toString(ByteUtil.intToBytes(packet.dst)) + "\n");
+                builder.append("帧类型:" + Arrays.toString(ByteUtil.shortToBytes(packet.pkType)) + "\n");
+                builder.append("流水号:" + Arrays.toString(ByteUtil.shortToBytes((short) packet.pktId)) + "\n");
+                builder.append("保留字节:" + Arrays.toString(ByteUtil.intToBytes(packet.keep)) + "\n");
+                builder.append("cmd:" + Arrays.toString(ByteUtil.intToBytes(packet.cmd)) + "\n");
+                builder.append("数据长度:" + Arrays.toString(ByteUtil.intToBytes(packet.cmdDataLength)) + "\n");
+                builder.append("数据:" + Arrays.toString(packet.data) + "\n");
+                builder.append("结尾值:" + Arrays.toString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
+                tvContent.setText(builder.toString());
             }
         }
     }
