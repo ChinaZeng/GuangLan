@@ -61,13 +61,10 @@ public class ClientActivity extends AppCompatActivity {
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
     public void reciverMsg(Packet packet) {
         if (TextUtils.equals(packet.key(), key)) {
-
+            if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
+                tvContent.setText("接收到设备命令");
+            }
         }
-    }
-
-    @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
-    public void reciverMsg(int len) {
-        tvContent.setText("收到文件 大小：len=" + len);
     }
 
 
@@ -77,7 +74,6 @@ public class ClientActivity extends AppCompatActivity {
 
         }
     }
-
 
 
     public void connWifiHot(View view) {

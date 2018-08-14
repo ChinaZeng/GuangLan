@@ -40,7 +40,7 @@ public class ClientThread extends SocketThread {
 //                } else {
 //
 //                    //TODO 侵入式太高  这里为了省事
-//                    EventBus.getDefault().post(packet, EventBusTag.TAG_RECIVE_MSG);
+                    EventBus.getDefault().post(packet, EventBusTag.TAG_RECIVE_MSG);
 //                }
 
 

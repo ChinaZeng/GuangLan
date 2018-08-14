@@ -55,7 +55,7 @@ public class ByteUtil {
         byte[] data = new byte[len];
         int temp=0;
         for (byte[] aByte : bytes) {
-            System.arraycopy(data, 0, aByte, temp, aByte.length);
+            System.arraycopy(aByte, 0, data, temp, aByte.length);
             temp+=aByte.length;
         }
         return data;

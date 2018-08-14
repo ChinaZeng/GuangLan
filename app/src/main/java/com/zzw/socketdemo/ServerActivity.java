@@ -74,13 +74,13 @@ public class ServerActivity extends AppCompatActivity {
                             String s = tvContent.getText().toString();
                             String content = s + "\n" + key + "断开连接";
                             tvContent.setText(content);
-                            ServerActivity.this.key = key;
+                            ServerActivity.this.key = null;
                         } else if (status == STATUS.INIT) {
                             String s = tvContent.getText().toString();
                             String content = s + "\n" + key + "连接";
                             tvContent.setText(content);
+                            ServerActivity.this.key = key;
 
-                            ServerActivity.this.key = null;
                         }
                     }
                 });
