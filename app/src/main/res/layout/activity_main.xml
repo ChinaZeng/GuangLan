@@ -7,26 +7,23 @@
     android:orientation="vertical"
     tools:context=".ServerActivity">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:onClick="server"
-        android:text="服务端" />
 
-    <Button
+    <FrameLayout
+        android:id="@+id/frame_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:onClick="client"
-        android:text="客户端" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    <Button
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:onClick="compile"
-        android:text="比较图片" />
+        android:layout_height="1px"
+        android:background="@color/colorDivider" />
+
+
+    <com.zzw.socketdemo.bottomtab.TabBottomNavigation
+        android:id="@+id/tab_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

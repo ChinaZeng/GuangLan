@@ -66,15 +66,34 @@ public class TabBottomNavigation extends LinearLayout {
             @Override
             public void onClick(View v) {
                 if (mCurrentIndex != position) {
+
+                    int oldPos = mCurrentIndex;
+                    int newPos = position;
+
                     // 原来的标为非选中
                     mTabItems.get(mCurrentIndex).setSelected(false);
                     // 把当前设置为选中
                     mCurrentIndex = position;
                     mTabItems.get(mCurrentIndex).setSelected(true);
                     // 把点击的为用接口回调出去供外部使用，调整显示
+
+                    if (mOnCheckChangeListener != null) {
+                        mOnCheckChangeListener.onCheckChange(oldPos, newPos);
+                    }
                 }
             }
         });
+    }
+
+
+    private OnCheckChangeListener mOnCheckChangeListener;
+
+    public void setOnCheckChangeListener(OnCheckChangeListener onCheckChangeListener) {
+        this.mOnCheckChangeListener = onCheckChangeListener;
+    }
+
+    public interface OnCheckChangeListener {
+        void onCheckChange(int oldPos, int newPos);
     }
 
 }

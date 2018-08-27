@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MultiFunctionEditText">
+        <attr name="letterSpaceEnable" format="boolean" />
+        <attr name="clearButtonEnable" format="boolean" />
+        <attr name="togglePasswordEnable" format="boolean" />
+        <attr name="letterSpaceRule" format="string" />
+        <attr name="clearButtonIcon" format="reference" />
+        <attr name="togglePasswordVisibleIcon" format="reference" />
+        <attr name="togglePasswordHideIcon" format="reference" />
+        <attr name="iconPadding" format="dimension" />
+        <attr name="startZero" format="boolean" />
+        <attr name="onlyTextBold" format="boolean" />
+    </declare-styleable>
+
+</resources>
