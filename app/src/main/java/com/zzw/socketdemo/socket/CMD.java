@@ -5,10 +5,22 @@ public interface CMD {
 
     //APP询问设备序列号
     int GET_DEVICE_SERIAL_NUMBER = 0x83000001;
+
+    //OTDR上报设备序列号给APP
+    int RECIVE_DEVICE_SERIAL_NUMBER = 0x83000002;
+
     //APP给设备下发OTDR测试参数并启动测试
     int SEND_TEST_ARGS_AND_START_TEST = 0x83000003;
+
+    //设备向APP反馈sor文件信息
+    int RECIVE_TEST_ARGS_AND_START_TEST = 0x83000004;
+
     // APP向设备请求传输sor文件
     int GET_SOR_FILE = 0x83000005;
+
+    //设备向APP发送OTDR测试结果文件
+    int RECIVE_SOR_FILE = 0x83000006;
+
     //心跳
     int HEART_SEND = 0x10000000;
     //心跳回复

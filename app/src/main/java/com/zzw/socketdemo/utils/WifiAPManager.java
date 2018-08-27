@@ -42,7 +42,6 @@ public class WifiAPManager {
     public boolean startWifiAp(String mSSID, String mPasswd, boolean isOpen) {
         Method method1 = null;
         try {
-
             method1 = mWifiManager.getClass().getMethod("setWifiApEnabled",
                     WifiConfiguration.class, boolean.class);
             WifiConfiguration netConfig = new WifiConfiguration();

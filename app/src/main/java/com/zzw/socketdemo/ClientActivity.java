@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.zzw.socketdemo.socket.utils.ByteUtil;
 import com.zzw.socketdemo.socket.CMD;
 import com.zzw.socketdemo.socket.manager.ClientManager;
-import com.zzw.socketdemo.socket.listener.EventBusTag;
+import com.zzw.socketdemo.socket.EventBusTag;
 import com.zzw.socketdemo.socket.resolve.Packet;
 import com.zzw.socketdemo.socket.listener.STATUS;
 import com.zzw.socketdemo.socket.listener.StatusListener;

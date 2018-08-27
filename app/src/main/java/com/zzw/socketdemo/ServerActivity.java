@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.zzw.socketdemo.socket.utils.ByteUtil;
 import com.zzw.socketdemo.socket.CMD;
-import com.zzw.socketdemo.socket.listener.EventBusTag;
+import com.zzw.socketdemo.socket.EventBusTag;
 import com.zzw.socketdemo.socket.utils.MyLog;
 import com.zzw.socketdemo.socket.resolve.Packet;
 import com.zzw.socketdemo.socket.listener.STATUS;
@@ -82,7 +82,6 @@ public class ServerActivity extends AppCompatActivity {
                             String content = s + "\n" + key + "连接";
                             tvContent.setText(content);
                             ServerActivity.this.key = key;
-
                         }
                     }
                 });

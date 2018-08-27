@@ -1,4 +1,4 @@
-package com.zzw.socketdemo.socket.listener;
+package com.zzw.socketdemo.socket;
 
 public interface EventBusTag {
 
