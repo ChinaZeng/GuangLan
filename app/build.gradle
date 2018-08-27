@@ -22,12 +22,15 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation rootProject.ext.dependencies["androideventbus"]
     implementation rootProject.ext.dependencies["butterknife"]
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.android.support:support-v4:27.1.1'
     annotationProcessor rootProject.ext.dependencies["butterknife-implementationr"]
     //ui
     implementation rootProject.ext.dependencies["appcompat-v7"]
+    implementation rootProject.ext.dependencies["support-v4"]
+    implementation rootProject.ext.dependencies["design"]
+    implementation rootProject.ext.dependencies["constraint-layout"]
     implementation rootProject.ext.dependencies["recyclerview-v7"]
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.41'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
     //network
     implementation rootProject.ext.dependencies["okhttp3"]
     implementation(rootProject.ext.dependencies["retrofit"]) {

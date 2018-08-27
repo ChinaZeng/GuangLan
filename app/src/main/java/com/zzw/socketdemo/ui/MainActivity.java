@@ -10,6 +10,7 @@ import com.zzw.socketdemo.bottomtab.TabBottomNavigation;
 import com.zzw.socketdemo.bottomtab.iterator.TabListIterator;
 import com.zzw.socketdemo.ui.home.HomeFragment;
 import com.zzw.socketdemo.ui.me.MeFragment;
+import com.zzw.socketdemo.ui.workorder.WorkOrderFragment;
 import com.zzw.socketdemo.ui.workorder.WorkOrderListFragment;
 import com.zzw.socketdemo.utils.FragmentHelper;
 
@@ -47,6 +48,7 @@ public class MainActivity extends BaseActivity implements TabBottomNavigation.On
         listIterator.addItem(new MainBottomTabItem.Builder(this)
                 .resIcon(R.drawable.selector_icon_me).text("我的").create());
         tabBottom.addTabItem(listIterator);
+        tabBottom.setOnCheckChangeListener(this);
 
         fragmentHelper = new FragmentHelper(getSupportFragmentManager(), R.id.frame_layout);
         onCheckChange(0, 0);
@@ -64,7 +66,7 @@ public class MainActivity extends BaseActivity implements TabBottomNavigation.On
 
             case 1:
                 if (workOrderFragment == null) {
-                    workOrderFragment = WorkOrderListFragment.newInstance();
+                    workOrderFragment = WorkOrderFragment.newInstance();
                 }
                 fragmentHelper.switchFragment(workOrderFragment);
                 break;
