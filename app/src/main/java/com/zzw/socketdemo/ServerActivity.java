@@ -10,9 +10,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.zzw.socketdemo.socket.ByteUtil;
@@ -23,6 +21,7 @@ import com.zzw.socketdemo.socket.Packet;
 import com.zzw.socketdemo.socket.STATUS;
 import com.zzw.socketdemo.socket.ServerManager;
 import com.zzw.socketdemo.socket.StatusListener;
+import com.zzw.socketdemo.utils.WifiAPManager;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;

@@ -1,4 +1,4 @@
-package com.zzw.socketdemo;
+package com.zzw.socketdemo.utils;
 
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
