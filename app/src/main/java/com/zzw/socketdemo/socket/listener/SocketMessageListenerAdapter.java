@@ -1,4 +1,7 @@
-package com.zzw.socketdemo.socket;
+package com.zzw.socketdemo.socket.listener;
+
+import com.zzw.socketdemo.socket.resolve.Packet;
+import com.zzw.socketdemo.socket.thread.SocketThread;
 
 public class SocketMessageListenerAdapter implements SocketMessageListener {
     @Override

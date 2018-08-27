@@ -1,4 +1,7 @@
-package com.zzw.socketdemo.socket;
+package com.zzw.socketdemo.socket.resolve;
+
+import com.zzw.socketdemo.socket.utils.MyLog;
+import com.zzw.socketdemo.socket.utils.ByteUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

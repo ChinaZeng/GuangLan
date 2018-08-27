@@ -13,14 +13,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.zzw.socketdemo.socket.ByteUtil;
+import com.zzw.socketdemo.socket.utils.ByteUtil;
 import com.zzw.socketdemo.socket.CMD;
-import com.zzw.socketdemo.socket.EventBusTag;
-import com.zzw.socketdemo.socket.MyLog;
-import com.zzw.socketdemo.socket.Packet;
-import com.zzw.socketdemo.socket.STATUS;
-import com.zzw.socketdemo.socket.ServerManager;
-import com.zzw.socketdemo.socket.StatusListener;
+import com.zzw.socketdemo.socket.listener.EventBusTag;
+import com.zzw.socketdemo.socket.utils.MyLog;
+import com.zzw.socketdemo.socket.resolve.Packet;
+import com.zzw.socketdemo.socket.listener.STATUS;
+import com.zzw.socketdemo.socket.manager.ServerManager;
+import com.zzw.socketdemo.socket.listener.StatusListener;
 import com.zzw.socketdemo.utils.WifiAPManager;
 
 import org.simple.eventbus.EventBus;

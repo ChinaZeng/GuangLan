@@ -1,8 +1,10 @@
-package com.zzw.socketdemo.socket;
+package com.zzw.socketdemo.socket.resolve;
+
+import com.zzw.socketdemo.socket.utils.ByteUtil;
+import com.zzw.socketdemo.socket.utils.KeyUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class Packet {
     enum TYPE {

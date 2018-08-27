@@ -1,4 +1,11 @@
-package com.zzw.socketdemo.socket;
+package com.zzw.socketdemo.socket.manager;
+
+import com.zzw.socketdemo.socket.thread.ListenerThread;
+import com.zzw.socketdemo.socket.listener.STATUS;
+import com.zzw.socketdemo.socket.listener.SocketThreadStatusListener;
+import com.zzw.socketdemo.socket.listener.StatusListener;
+import com.zzw.socketdemo.socket.thread.SocketThread;
+import com.zzw.socketdemo.socket.utils.KeyUtils;
 
 public class ServerManager implements SocketThreadStatusListener {
     private ListenerThread listenerThread;

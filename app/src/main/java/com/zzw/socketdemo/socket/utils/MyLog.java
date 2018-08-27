@@ -1,4 +1,4 @@
-package com.zzw.socketdemo.socket;
+package com.zzw.socketdemo.socket.utils;
 
 import android.util.Log;
 

@@ -2,11 +2,10 @@ package com.zzw.socketdemo.utils;
 
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
-import com.zzw.socketdemo.socket.MyLog;
+import com.zzw.socketdemo.socket.utils.MyLog;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;

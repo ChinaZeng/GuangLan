@@ -1,6 +1,14 @@
-package com.zzw.socketdemo.socket;
+package com.zzw.socketdemo.socket.thread;
 
 import android.os.SystemClock;
+
+import com.zzw.socketdemo.socket.utils.MyLog;
+import com.zzw.socketdemo.socket.resolve.Packet;
+import com.zzw.socketdemo.socket.listener.STATUS;
+import com.zzw.socketdemo.socket.resolve.SocketReader;
+import com.zzw.socketdemo.socket.resolve.SocketSender;
+import com.zzw.socketdemo.socket.listener.SocketMessageListener;
+import com.zzw.socketdemo.socket.listener.SocketThreadStatusListener;
 
 import java.io.Closeable;
 import java.io.IOException;

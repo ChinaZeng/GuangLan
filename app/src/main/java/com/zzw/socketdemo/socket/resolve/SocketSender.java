@@ -1,4 +1,6 @@
-package com.zzw.socketdemo.socket;
+package com.zzw.socketdemo.socket.resolve;
+
+import com.zzw.socketdemo.socket.thread.SocketThread;
 
 public class SocketSender {
 

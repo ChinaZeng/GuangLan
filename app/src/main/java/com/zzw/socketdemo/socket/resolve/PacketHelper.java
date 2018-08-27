@@ -1,4 +1,7 @@
-package com.zzw.socketdemo.socket;
+package com.zzw.socketdemo.socket.resolve;
+
+import com.zzw.socketdemo.socket.CMD;
+import com.zzw.socketdemo.socket.utils.ByteUtil;
 
 import java.net.Socket;
 

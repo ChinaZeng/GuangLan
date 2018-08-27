@@ -1,8 +1,7 @@
-package com.zzw.socketdemo.socket;
+package com.zzw.socketdemo.socket.resolve;
 
 import android.support.annotation.NonNull;
 
-import java.io.OutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;

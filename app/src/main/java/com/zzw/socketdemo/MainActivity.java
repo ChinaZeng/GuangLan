@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.zzw.socketdemo.socket.ByteUtil;
+import com.zzw.socketdemo.socket.utils.ByteUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

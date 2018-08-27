@@ -31,6 +31,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".service.HeartService" />
+        <service android:name=".service.SocketService" />
     </application>
 
 </manifest>
