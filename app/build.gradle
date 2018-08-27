@@ -10,9 +10,28 @@ android {
         versionCode rootProject.ext.android["versionCode"]
         versionName rootProject.ext.android["versionName"]
     }
+
+    signingConfigs {
+        signingConfig {
+            keyAlias 'guanglan'
+            keyPassword 'guanglan'
+            storeFile file('guanglan.jks')
+            storePassword 'guanglan'
+        }
+
+    }
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.signingConfig
+            minifyEnabled true
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            signingConfig signingConfigs.signingConfig
+            minifyEnabled true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -22,7 +41,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation rootProject.ext.dependencies["androideventbus"]
     implementation rootProject.ext.dependencies["butterknife"]
-    annotationProcessor rootProject.ext.dependencies["butterknife-implementationr"]
+    annotationProcessor rootProject.ext.dependencies["butterknife-compiler"]
     //ui
     implementation rootProject.ext.dependencies["appcompat-v7"]
     implementation rootProject.ext.dependencies["support-v4"]
@@ -44,6 +63,7 @@ dependencies {
     }
     //image
     implementation rootProject.ext.dependencies["glide"]
+    annotationProcessor  rootProject.ext.dependencies["glide-compiler"]
     //解析
     implementation rootProject.ext.dependencies["gson"]
     //rx
