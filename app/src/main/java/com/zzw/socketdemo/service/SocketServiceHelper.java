@@ -19,7 +19,7 @@ public class SocketServiceHelper {
         Intent intent = new Intent(this.context, SocketService.class);
         this.serviceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
-                SocketServiceHelper.this.updateService = ((SocketService.ServerBinder) service).getService();
+//                SocketServiceHelper.this.updateService = ((SocketService.ServerBinder) service).getService();
             }
 
             public void onServiceDisconnected(ComponentName name) {

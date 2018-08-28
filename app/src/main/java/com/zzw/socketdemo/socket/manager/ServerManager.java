@@ -1,5 +1,8 @@
 package com.zzw.socketdemo.socket.manager;
 
+import com.zzw.socketdemo.socket.event.GetSorFileBean;
+import com.zzw.socketdemo.socket.event.ReBean;
+import com.zzw.socketdemo.socket.event.TestArgsAndStartBean;
 import com.zzw.socketdemo.socket.thread.ListenerThread;
 import com.zzw.socketdemo.socket.listener.STATUS;
 import com.zzw.socketdemo.socket.listener.SocketThreadStatusListener;
@@ -31,13 +34,40 @@ public class ServerManager implements SocketThreadStatusListener {
         }
     }
 
-    public void sendTestArgsAndStartTestPacket(String key) {
+    public void sendTestArgsAndStartTestPacket(String key, TestArgsAndStartBean bean) {
         SocketThread thread = listenerThread.getServerThreads().get(key);
         if (thread != null) {
-            thread.socketSender.sendTestArgsAndStartTest();
+            thread.socketSender.sendTestArgsAndStartTest(bean.rang, bean.wl, bean.pw, bean.time, bean.mode, bean.gi);
         }
     }
 
+    public void getSorFile(String key, GetSorFileBean bean) {
+        SocketThread thread = listenerThread.getServerThreads().get(key);
+        if (thread != null) {
+            thread.socketSender.getSorFile(bean.fileName, bean.fileDir);
+        }
+    }
+
+    public void sendRe(String key, ReBean bean) {
+        SocketThread thread = listenerThread.getServerThreads().get(key);
+        if (thread != null) {
+            thread.socketSender.sendRe(bean.errorCode, bean.cmdCode);
+        }
+    }
+
+    public void sendHeart(String key) {
+        SocketThread thread = listenerThread.getServerThreads().get(key);
+        if (thread != null) {
+            thread.socketSender.sendHeart();
+        }
+    }
+
+    public void reHeart(String key) {
+        SocketThread thread = listenerThread.getServerThreads().get(key);
+        if (thread != null) {
+            thread.socketSender.reHeart();
+        }
+    }
 
     public void close() {
         listenerThread.exit();

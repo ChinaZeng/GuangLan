@@ -2,12 +2,15 @@ package com.zzw.socketdemo.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.zzw.socketdemo.socket.CMD;
 import com.zzw.socketdemo.socket.EventBusTag;
+import com.zzw.socketdemo.socket.event.ConnBean;
+import com.zzw.socketdemo.socket.event.GetSorFileBean;
+import com.zzw.socketdemo.socket.event.ReBean;
+import com.zzw.socketdemo.socket.event.TestArgsAndStartBean;
 import com.zzw.socketdemo.socket.listener.STATUS;
 import com.zzw.socketdemo.socket.listener.StatusListener;
 import com.zzw.socketdemo.socket.manager.ServerManager;
@@ -25,6 +28,7 @@ public class SocketService extends Service implements StatusListener {
     private ServerManager serverManager;
 
     private final int PORT = 8825;
+    private String key;
 
     @Override
     public void onCreate() {
@@ -47,30 +51,74 @@ public class SocketService extends Service implements StatusListener {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return new SocketService.ServerBinder();
-    }
-
-
-    public class ServerBinder extends Binder {
-        public ServerBinder() {
-        }
-
-        public SocketService getService() {
-            return SocketService.this;
-        }
+        return null;
     }
 
     @Override
     public void statusChange(String key, STATUS status) {
+
         if (status == STATUS.END) {
-            String content = "\n" + key + "断开连接";
+            String content = key + "断开连接";
             MyLog.e(content);
+            this.key = null;
         } else if (status == STATUS.INIT) {
-            String content = "\n" + key + "建立连接";
+            String content = key + "初始化接收线程";
             MyLog.e(content);
+        } else if (status == STATUS.RUNNING) {
+            String content = key + "建立连接,开始运行";
+            MyLog.e(content);
+            this.key = key;
+        }
+
+        ConnBean event = new ConnBean();
+        event.status = status;
+        event.key = key;
+        EventBus.getDefault().post(event);
+    }
+
+
+    @Subscriber(tag = EventBusTag.GET_DEVICE_SERIAL_NUMBER)
+    public void getDeviceSerialNumber(int cmd) {
+        if (key != null) {
+            serverManager.getDeviceSerialNumber(key);
         }
     }
 
+
+    @Subscriber(tag = EventBusTag.SEND_TEST_ARGS_AND_START_TEST)
+    public void sendTestArgsAndStartTest(TestArgsAndStartBean bean) {
+        if (key != null) {
+            serverManager.sendTestArgsAndStartTestPacket(key, bean);
+        }
+    }
+
+    @Subscriber(tag = EventBusTag.GET_SOR_FILE)
+    public void getSorFile(GetSorFileBean bean) {
+        if (key != null) {
+            serverManager.getSorFile(key, bean);
+        }
+    }
+
+    @Subscriber(tag = EventBusTag.SEND_RE)
+    public void getSorFile(ReBean bean) {
+        if (key != null) {
+            serverManager.sendRe(key, bean);
+        }
+    }
+
+    @Subscriber(tag = EventBusTag.SEND_HEART)
+    public void sendHeart(int flog) {
+        if (key != null) {
+            serverManager.sendHeart(key);
+        }
+    }
+
+    @Subscriber(tag = EventBusTag.RE_HEART)
+    public void reHeart(int flog) {
+        if (key != null) {
+            serverManager.reHeart(key);
+        }
+    }
 
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
     public void reciverMsg(Packet packet) {
@@ -110,4 +158,6 @@ public class SocketService extends Service implements StatusListener {
         builder.append("结尾值:" + Arrays.toString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
         MyLog.e(builder.toString());
     }
+
+
 }

@@ -1,10 +1,10 @@
 package com.zzw.socketdemo.socket.thread;
 
-import com.zzw.socketdemo.socket.utils.MyLog;
-import com.zzw.socketdemo.socket.resolve.Packet;
 import com.zzw.socketdemo.socket.listener.SocketMessageListenerAdapter;
 import com.zzw.socketdemo.socket.listener.SocketThreadStatusListener;
+import com.zzw.socketdemo.socket.resolve.Packet;
 import com.zzw.socketdemo.socket.utils.KeyUtils;
+import com.zzw.socketdemo.socket.utils.MyLog;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -55,6 +55,7 @@ public class ListenerThread extends Thread {
                 if (serverThreads.containsKey(key)) {
                     SocketThread t = serverThreads.get(key);
                     t.exit();
+                    Thread.sleep(500);
                 }
 
                 ServerThread serverThread = new ServerThread(socket, socketThreadStatusListener);
@@ -75,6 +76,8 @@ public class ListenerThread extends Thread {
                 serverThreads.put(key, serverThread);
             } catch (IOException e) {
                 MyLog.e(TAG, " error:" + e.getMessage());
+                e.printStackTrace();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
