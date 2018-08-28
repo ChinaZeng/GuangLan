@@ -9,11 +9,11 @@ public class ToastUtils {
     private static Toast mToast;
 
     public static void init(Context context) {
-        mToast = new Toast(context.getApplicationContext());
+        mToast = Toast.makeText(context.getApplicationContext(), "", Toast.LENGTH_SHORT);
     }
 
 
-    public static void showToast( String text) {
+    public static void showToast(String text) {
         if (TextUtils.isEmpty(text))
             return;
         if (mToast == null) {
