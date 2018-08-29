@@ -4,8 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
@@ -20,12 +23,15 @@ import com.zzw.socketdemo.socket.event.ReBean;
 import com.zzw.socketdemo.socket.event.TestArgsAndStartBean;
 import com.zzw.socketdemo.socket.listener.STATUS;
 import com.zzw.socketdemo.socket.resolve.Packet;
+import com.zzw.socketdemo.socket.utils.ByteUtil;
 import com.zzw.socketdemo.socket.utils.MyLog;
 import com.zzw.socketdemo.utils.ToastUtils;
 import com.zzw.socketdemo.utils.WifiAPManager;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
+
+import java.util.Arrays;
 
 import butterknife.BindView;
 
@@ -41,11 +47,23 @@ public class TestActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // 判断是否有WRITE_SETTINGS权限if(!Settings.System.canWrite(this))
+            if (!Settings.System.canWrite(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 1);
+            }
+        }
+
         super.initView();
         wifiAPManager = new WifiAPManager(this);
         receiver = new HotBroadcastReceiver();
         IntentFilter mIntentFilter = new IntentFilter("android.net.wifi.WIFI_AP_STATE_CHANGED");
         registerReceiver(receiver, mIntentFilter);
+
+
+        startWifiHot();
     }
 
     //开启热点
@@ -133,19 +151,35 @@ public class TestActivity extends BaseActivity {
 
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
+        StringBuilder builder = new StringBuilder();
         if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
-            hintS = "发送获取设备号命令成功";
+            builder.append("发送获取设备号命令成功\n");
         } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_START_TEST) {
-            hintS = "发送APP给设备下发OTDR测试参数并启动测试命令成功";
+            builder.append("发送APP给设备下发OTDR测试参数并启动测试命令成功\n");
         } else if (packet.cmd == CMD.GET_SOR_FILE) {
-            hintS = "发送APP向设备请求传输sor文件命令成功";
+            builder.append("发送APP向设备请求传输sor文件命令成功\n");
         } else if (packet.cmd == CMD.HEART_SEND) {
-            hintS = "发送心跳包命令成功";
+            builder.append("发送心跳包命令成功\n");
         } else if (packet.cmd == CMD.HEART_RE) {
-            hintS = "发送回复心跳包命令成功";
+            builder.append("发送回复心跳包命令成功\n");
         } else if (packet.cmd == CMD._RE) {
-            hintS = "发送错误代码命令成功";
+            builder.append("发送错误代码命令成功\n");
         }
+        builder.append("起始值:" + Arrays.toString(ByteUtil.intToBytes(Packet.START_FRAME)) + "\n");
+        builder.append("总帧长度:" + Arrays.toString(ByteUtil.intToBytes(packet.pkAllLen)) + "\n");
+        builder.append("版本号:" + Arrays.toString(ByteUtil.intToBytes(packet.rev)) + "\n");
+        builder.append("源地址:" + Arrays.toString(ByteUtil.intToBytes(packet.src)) + "\n");
+        builder.append("目标地址:" + Arrays.toString(ByteUtil.intToBytes(packet.dst)) + "\n");
+        builder.append("帧类型:" + Arrays.toString(ByteUtil.shortToBytes(packet.pkType)) + "\n");
+        builder.append("流水号:" + Arrays.toString(ByteUtil.shortToBytes((short) packet.pktId)) + "\n");
+        builder.append("保留字节:" + Arrays.toString(ByteUtil.intToBytes(packet.keep)) + "\n");
+        builder.append("cmd:" + Arrays.toString(ByteUtil.intToBytes(packet.cmd)) + "\n");
+        builder.append("数据长度:" + Arrays.toString(ByteUtil.intToBytes(packet.cmdDataLength)) + "\n");
+        builder.append("数据:" + Arrays.toString(packet.data) + "\n");
+        builder.append("结尾值:" + Arrays.toString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
+
+        hintS = builder.toString();
+
         hint();
     }
 
