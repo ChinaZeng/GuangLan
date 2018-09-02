@@ -10,6 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -31,14 +33,22 @@ import com.zzw.socketdemo.utils.WifiAPManager;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.BindView;
 
 public class TestActivity extends BaseActivity {
 
-    @BindView(R.id.hint)
-    TextView hint;
+
+    @BindView(R.id.recy1)
+    RecyclerView recy1;
+    @BindView(R.id.recy2)
+    RecyclerView recy2;
+    private PacketAdapter sendAdapter, reciveAdapter;
+
+    @BindView(R.id.ip)
+    TextView ip;
 
     private WifiAPManager wifiAPManager;
     private HotBroadcastReceiver receiver;
@@ -64,6 +74,26 @@ public class TestActivity extends BaseActivity {
 
 
         startWifiHot();
+
+        recy1.setLayoutManager(new LinearLayoutManager(this));
+        recy2.setLayoutManager(new LinearLayoutManager(this));
+
+        sendAdapter = new PacketAdapter();
+        reciveAdapter = new PacketAdapter();
+
+        recy1.setAdapter(sendAdapter);
+        recy1.setAdapter(reciveAdapter);
+
+    }
+
+    //清空发送数据
+    public void clear1(View view) {
+        sendAdapter.replaceData(new ArrayList<Packet>());
+    }
+
+    //清空接收数据
+    public void clear2(View view) {
+        reciveAdapter.replaceData(new ArrayList<Packet>());
     }
 
     //开启热点
@@ -146,41 +176,12 @@ public class TestActivity extends BaseActivity {
 
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
     public void reciverMsg(Packet packet) {
-//        hint();
+        reciveAdapter.addData(packet);
     }
 
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
-        StringBuilder builder = new StringBuilder();
-        if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
-            builder.append("发送获取设备号命令成功\n");
-        } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_START_TEST) {
-            builder.append("发送APP给设备下发OTDR测试参数并启动测试命令成功\n");
-        } else if (packet.cmd == CMD.GET_SOR_FILE) {
-            builder.append("发送APP向设备请求传输sor文件命令成功\n");
-        } else if (packet.cmd == CMD.HEART_SEND) {
-            builder.append("发送心跳包命令成功\n");
-        } else if (packet.cmd == CMD.HEART_RE) {
-            builder.append("发送回复心跳包命令成功\n");
-        } else if (packet.cmd == CMD._RE) {
-            builder.append("发送错误代码命令成功\n");
-        }
-        builder.append("起始值:" + Arrays.toString(ByteUtil.intToBytes(Packet.START_FRAME)) + "\n");
-        builder.append("总帧长度:" + Arrays.toString(ByteUtil.intToBytes(packet.pkAllLen)) + "\n");
-        builder.append("版本号:" + Arrays.toString(ByteUtil.intToBytes(packet.rev)) + "\n");
-        builder.append("源地址:" + Arrays.toString(ByteUtil.intToBytes(packet.src)) + "\n");
-        builder.append("目标地址:" + Arrays.toString(ByteUtil.intToBytes(packet.dst)) + "\n");
-        builder.append("帧类型:" + Arrays.toString(ByteUtil.shortToBytes(packet.pkType)) + "\n");
-        builder.append("流水号:" + Arrays.toString(ByteUtil.shortToBytes((short) packet.pktId)) + "\n");
-        builder.append("保留字节:" + Arrays.toString(ByteUtil.intToBytes(packet.keep)) + "\n");
-        builder.append("cmd:" + Arrays.toString(ByteUtil.intToBytes(packet.cmd)) + "\n");
-        builder.append("数据长度:" + Arrays.toString(ByteUtil.intToBytes(packet.cmdDataLength)) + "\n");
-        builder.append("数据:" + Arrays.toString(packet.data) + "\n");
-        builder.append("结尾值:" + Arrays.toString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
-
-        hintS = builder.toString();
-
-        hint();
+        sendAdapter.addData(packet);
     }
 
 
@@ -215,7 +216,7 @@ public class TestActivity extends BaseActivity {
                         hintS = "热点正在开启";
                         MyLog.e("热点正在开启");
                         //设置个延迟 不然会拿不到
-                        hint.postDelayed(new Runnable() {
+                        ip.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 String serverIp = wifiAPManager.getLocalIpAddress();
@@ -265,7 +266,7 @@ public class TestActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                hint.setText(hintS);
+                ip.setText(hintS);
             }
         });
     }
