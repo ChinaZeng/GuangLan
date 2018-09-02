@@ -132,7 +132,7 @@ public class ServerActivity extends AppCompatActivity {
 
 
     public void startWifiHot(View view) {
-        wifiAPManager.startWifiAp(hotName, "1234567890", true);
+        wifiAPManager.startWifiAp1(hotName, "1234567890", true);
     }
 
 

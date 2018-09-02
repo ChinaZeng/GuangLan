@@ -78,4 +78,11 @@ public class ClientManager implements SocketThreadStatusListener {
         this.listener = listener;
     }
 
+    public void sendHeart(String key) {
+        ClientThread thread = serverThreads.get(key);
+        if (thread != null) {
+            thread.socketSender.sendHeart();
+        }
+    }
+
 }

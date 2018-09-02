@@ -4,12 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
-import android.os.Build;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.view.View;
 
 import com.zzw.socketdemo.R;
 import com.zzw.socketdemo.base.BaseActivity;
@@ -20,7 +16,6 @@ import com.zzw.socketdemo.socket.utils.MyLog;
 import com.zzw.socketdemo.ui.home.HomeFragment;
 import com.zzw.socketdemo.ui.me.MeFragment;
 import com.zzw.socketdemo.ui.workorder.WorkOrderFragment;
-import com.zzw.socketdemo.ui.workorder.WorkOrderListFragment;
 import com.zzw.socketdemo.utils.FragmentHelper;
 import com.zzw.socketdemo.utils.ToastUtils;
 import com.zzw.socketdemo.utils.WifiAPManager;
@@ -158,6 +153,6 @@ public class MainActivity extends BaseActivity implements TabBottomNavigation.On
     }
 
     private void startWifiHot() {
-        wifiAPManager.startWifiAp(hotName, "1234567890", true);
+        wifiAPManager.startWifiAp1(hotName, "1234567890", true);
     }
 }

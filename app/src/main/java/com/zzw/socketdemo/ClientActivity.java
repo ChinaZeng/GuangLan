@@ -102,6 +102,12 @@ public class ClientActivity extends AppCompatActivity {
         }
     }
 
+    public void sendData(View view) {
+        if(key!=null){
+            manager.sendHeart(key);
+        }
+    }
+
 
     public void connWifiHot(View view) {
         tvContent.setText("连接中...");

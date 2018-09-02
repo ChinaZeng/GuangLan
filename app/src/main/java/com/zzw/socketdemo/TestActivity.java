@@ -1,7 +1,9 @@
 package com.zzw.socketdemo;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -10,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -25,7 +28,6 @@ import com.zzw.socketdemo.socket.event.ReBean;
 import com.zzw.socketdemo.socket.event.TestArgsAndStartBean;
 import com.zzw.socketdemo.socket.listener.STATUS;
 import com.zzw.socketdemo.socket.resolve.Packet;
-import com.zzw.socketdemo.socket.utils.ByteUtil;
 import com.zzw.socketdemo.socket.utils.MyLog;
 import com.zzw.socketdemo.utils.ToastUtils;
 import com.zzw.socketdemo.utils.WifiAPManager;
@@ -34,7 +36,6 @@ import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import butterknife.BindView;
 
@@ -57,7 +58,7 @@ public class TestActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             // 判断是否有WRITE_SETTINGS权限if(!Settings.System.canWrite(this))
             if (!Settings.System.canWrite(this)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
@@ -72,9 +73,6 @@ public class TestActivity extends BaseActivity {
         IntentFilter mIntentFilter = new IntentFilter("android.net.wifi.WIFI_AP_STATE_CHANGED");
         registerReceiver(receiver, mIntentFilter);
 
-
-        startWifiHot();
-
         recy1.setLayoutManager(new LinearLayoutManager(this));
         recy2.setLayoutManager(new LinearLayoutManager(this));
 
@@ -82,7 +80,7 @@ public class TestActivity extends BaseActivity {
         reciveAdapter = new PacketAdapter();
 
         recy1.setAdapter(sendAdapter);
-        recy1.setAdapter(reciveAdapter);
+        recy2.setAdapter(reciveAdapter);
 
     }
 
@@ -100,6 +98,7 @@ public class TestActivity extends BaseActivity {
     public void click0(View view) {
         startWifiHot();
     }
+
 
     //APP询问设备序列号
     public void click1(View view) {
@@ -215,22 +214,28 @@ public class TestActivity extends BaseActivity {
                         //开启成功
                         hintS = "热点正在开启";
                         MyLog.e("热点正在开启");
-                        //设置个延迟 不然会拿不到
-                        ip.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                String serverIp = wifiAPManager.getLocalIpAddress();
-                                hintS = "共享开启成功，请先连接热点，然后socket连接。ip:" + serverIp + "端口:" + 8825;
-                                MyLog.e("热点已开启 ip=" + serverIp);
-                                startSocketServer();
-                                hint();
-                            }
-                        }, 2000);
+                        getIp();
                         break;
                 }
                 hint();
             }
         }
+    }
+
+
+    private void getIp() {
+
+        //设置个延迟 不然会拿不到
+        ip.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String serverIp = wifiAPManager.getLocalIpAddress();
+                hintS = "共享开启成功，请先连接热点，然后socket连接。ip:" + serverIp + "端口:" + 8825;
+                MyLog.e("热点已开启 ip=" + serverIp);
+                startSocketServer();
+                hint();
+            }
+        }, 2000);
     }
 
 
@@ -259,8 +264,56 @@ public class TestActivity extends BaseActivity {
     }
 
     private void startWifiHot() {
-        wifiAPManager.startWifiAp(hotName, "1234567890", true);
+        //7.0之前
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            wifiAPManager.startWifiAp1(hotName, "1234567890", true);
+            //8.0以后
+        }
+//        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            //7.0
+//        }
+        else {
+            showRequestApDialogOnN_MR1();
+        }
     }
+
+    private void showRequestApDialogOnN_MR1() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("android7.1系统以上不支持自动开启热点,需要手动开启热点");
+        builder.setPositiveButton("去开启", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                openAP();
+            }
+        });
+        builder.create().show();
+    }
+
+    //打开系统的便携式热点界面
+    private void openAP() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_MAIN);
+        ComponentName com = new ComponentName("com.android.settings", "com.android.settings.TetherSettings");
+        intent.setComponent(com);
+        startActivityForResult(intent, 1000);
+    }
+
+    //判断用户是否开启热点 getWiFiAPConfig(); 这个方法去获取本机的wifi热点的信息就不贴了
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000) {
+            if (!wifiAPManager.isWifiApEnabled()) {
+                showRequestApDialogOnN_MR1();
+            } else {
+                hintS = "共享开启成功，正在获取ip...";
+                hint();
+                getIp();
+            }
+        }
+    }
+
 
     private void hint() {
         runOnUiThread(new Runnable() {

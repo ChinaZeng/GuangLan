@@ -1,8 +1,12 @@
 package com.zzw.socketdemo.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 
 import com.zzw.socketdemo.socket.utils.MyLog;
@@ -33,16 +37,16 @@ public class WifiAPManager {
 
 
     /**
-     * 创建热点
+     * 7.0之前创建热点
      *
      * @param mSSID   热点名称
      * @param mPasswd 热点密码
      * @param isOpen  是否是开放热点
      */
-    public boolean startWifiAp(String mSSID, String mPasswd, boolean isOpen) {
-        Method method1 = null;
+    public boolean startWifiAp1(String mSSID, String mPasswd, boolean isOpen) {
         try {
-            method1 = mWifiManager.getClass().getMethod("setWifiApEnabled",
+
+            Method method1 = mWifiManager.getClass().getMethod("setWifiApEnabled",
                     WifiConfiguration.class, boolean.class);
             WifiConfiguration netConfig = new WifiConfiguration();
 
@@ -197,4 +201,84 @@ public class WifiAPManager {
     }
 
 
+    public static int WIFICIPHER_NOPASS = 0;
+    public static int WIFICIPHER_WEP = 0;
+    public static int WIFICIPHER_WPA = 0;
+
+    public static WifiConfiguration createWifiCfg(String ssid, String password, int type) {
+        WifiConfiguration config = new WifiConfiguration();
+        config.allowedAuthAlgorithms.clear();
+        config.allowedGroupCiphers.clear();
+        config.allowedKeyManagement.clear();
+        config.allowedPairwiseCiphers.clear();
+        config.allowedProtocols.clear();
+        config.SSID = "\"" + ssid + "\"";
+        if (type == WIFICIPHER_NOPASS) {
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        } else if (type == WIFICIPHER_WEP) {
+            config.hiddenSSID = true;
+            config.wepKeys[0] = "\"" + password + "\"";
+            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            config.wepTxKeyIndex = 0;
+        } else if (type == WIFICIPHER_WPA) {// WPA/WPA2 PSK的加密方式都可以通过此方法连上热点 也就是说我们连接热点只用分为有密码和无密码情况
+            config.preSharedKey = "\"" + password + "\"";
+            config.hiddenSSID = true;
+            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+            config.status = WifiConfiguration.Status.ENABLED;
+        }
+        return config;
+    }
+
+
+    /**
+     * 8.0创建热点
+     *
+     * @param mSSID   热点名称
+     * @param mPasswd 热点密码
+     * @param isOpen  是否是开放热点
+     */
+    public void startWifiAp2(String mSSID, String mPasswd, boolean isOpen, Handler handler) {
+//        WifiConfiguration configuration = createWifiCfg(mSSID, mPasswd, isOpen ? WIFICIPHER_NOPASS : WIFICIPHER_WPA);
+//
+//        ConnectivityManager connectivityManager = (ConnectivityManager) mContext
+//                .getSystemService(Context.CONNECTIVITY_SERVICE);
+//
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            mWifiManager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
+//                @TargetApi(Build.VERSION_CODES.O)
+//                @Override
+//                public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+//                    super.onStarted(reservation);
+//                    WifiConfiguration wifiConfiguration = reservation.getWifiConfiguration();
+//                    ssid = wifiConfiguration.SSID;
+//                    mHandler.obtainMessage(2018, wifiConfiguration).sendToTarget();
+//                }
+//
+//                @Override
+//                public void onStopped() {
+//                    super.onStopped();
+//                }
+//
+//                @Override
+//                public void onFailed(int reason) {
+//                    super.onFailed(reason);
+//                }
+//
+//
+//            }, handler);
+//        }
+    }
 }
+
+
