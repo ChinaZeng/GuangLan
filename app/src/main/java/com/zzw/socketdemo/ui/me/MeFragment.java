@@ -39,7 +39,7 @@ public class MeFragment extends BaseFragment {
                 startActivity(new Intent(getContext(), TestActivity.class));
                 break;
             case R.id.tv_change_pwd:
-                startActivity(new Intent(getContext(), ClientActivity.class));
+//                startActivity(new Intent(getContext(), ClientActivity.class));
                 break;
             case R.id.tv_setting:
                 break;
