@@ -42,18 +42,18 @@ public class PacketAdapter extends BaseQuickAdapter<Packet, BaseViewHolder> {
         } else if (packet.cmd == CMD.RECIVE_SOR_FILE) {
             builder.append("设备向APP发送OTDR测试结果文件命令\n");
         }
-        builder.append("起始值:" + Arrays.toString(ByteUtil.intToBytes(Packet.START_FRAME)) + " ");
-        builder.append("总帧长度:" + Arrays.toString(ByteUtil.intToBytes(packet.pkAllLen)) + " ");
-        builder.append("版本号:" + Arrays.toString(ByteUtil.intToBytes(packet.rev)) + " ");
-        builder.append("源地址:" + Arrays.toString(ByteUtil.intToBytes(packet.src)) + "");
-        builder.append("目标地址:" + Arrays.toString(ByteUtil.intToBytes(packet.dst)) + " ");
-        builder.append("帧类型:" + Arrays.toString(ByteUtil.shortToBytes(packet.pkType)) + " ");
-        builder.append("流水号:" + Arrays.toString(ByteUtil.shortToBytes((short) packet.pktId)) + " ");
-        builder.append("保留字节:" + Arrays.toString(ByteUtil.intToBytes(packet.keep)) + " ");
-        builder.append("cmd:" + Arrays.toString(ByteUtil.intToBytes(packet.cmd)) + " ");
-        builder.append("数据长度:" + Arrays.toString(ByteUtil.intToBytes(packet.cmdDataLength)) + " ");
-        builder.append("数据:" + Arrays.toString(packet.data) + " ");
-        builder.append("结尾值:" + Arrays.toString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
+        builder.append("起始值:" + ByteUtil.bytesToHexString(ByteUtil.intToBytes(Packet.START_FRAME)) + " ");
+        builder.append("总帧长度:" + ByteUtil.bytesToHexString(ByteUtil.intToBytes(packet.pkAllLen)) + " ");
+        builder.append("版本号:" + ByteUtil.bytesToHexString(ByteUtil.intToBytes(packet.rev)) + " ");
+        builder.append("源地址:" + ByteUtil.bytesToHexString(ByteUtil.intToBytes(packet.src)) + "");
+        builder.append("目标地址:" + ByteUtil.bytesToHexString(ByteUtil.intToBytes(packet.dst)) + " ");
+        builder.append("帧类型:" + ByteUtil.bytesToHexString(ByteUtil.shortToBytes(packet.pkType)) + " ");
+        builder.append("流水号:" + ByteUtil.bytesToHexString(ByteUtil.shortToBytes((short) packet.pktId)) + " ");
+        builder.append("保留字节:" + ByteUtil.bytesToHexString(ByteUtil.intToBytes(packet.keep)) + " ");
+        builder.append("cmd:" + ByteUtil.bytesToHexString(ByteUtil.intToBytes(packet.cmd)) + " ");
+        builder.append("数据长度:" + ByteUtil.bytesToHexString(ByteUtil.intToBytes(packet.cmdDataLength)) + " ");
+        builder.append("数据:" + ByteUtil.bytesToHexString(packet.data) + " ");
+        builder.append("结尾值:" + ByteUtil.bytesToHexString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
         builder.append("---------------");
 
         helper.setText(R.id.tv, builder.toString());
