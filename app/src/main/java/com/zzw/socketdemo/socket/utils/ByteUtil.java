@@ -123,6 +123,21 @@ public class ByteUtil {
         return bcd;
     }
 
+    public static String bytes2Str(byte[] buffer) {
+        try {
+            int length = 0;
+            for (int i = 0; i < buffer.length; ++i) {
+                if (buffer[i] == 0) {
+                    length = i;
+                    break;
+                }
+            }
+            return new String(buffer, 0, length, "UTF-8");
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     public static String bcd2Str(byte[] bytes) {
         char temp[] = new char[bytes.length * 2], val;
 

@@ -41,6 +41,14 @@ public class ServerManager implements SocketThreadStatusListener {
         }
     }
 
+    public void sendTestArgsAndStopTestPacket(String key) {
+        SocketThread thread = listenerThread.getServerThreads().get(key);
+        if (thread != null) {
+            thread.socketSender.sendTestArgsAndStopTest();
+        }
+    }
+
+
     public void getSorFile(String key, GetSorFileBean bean) {
         SocketThread thread = listenerThread.getServerThreads().get(key);
         if (thread != null) {

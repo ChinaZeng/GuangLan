@@ -11,6 +11,8 @@ public interface CMD {
 
     //APP给设备下发OTDR测试参数并启动测试
     int SEND_TEST_ARGS_AND_START_TEST = 0x83000003;
+    //APP向设备发送停止OTDR测试命令
+    int SEND_TEST_ARGS_AND_STOP_TEST = 0x83000007;
 
     //设备向APP反馈sor文件信息
     int RECIVE_TEST_ARGS_AND_START_TEST = 0x83000004;

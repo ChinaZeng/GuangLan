@@ -28,6 +28,7 @@ import com.zzw.socketdemo.socket.event.ReBean;
 import com.zzw.socketdemo.socket.event.TestArgsAndStartBean;
 import com.zzw.socketdemo.socket.listener.STATUS;
 import com.zzw.socketdemo.socket.resolve.Packet;
+import com.zzw.socketdemo.socket.utils.ByteUtil;
 import com.zzw.socketdemo.socket.utils.MyLog;
 import com.zzw.socketdemo.utils.ToastUtils;
 import com.zzw.socketdemo.utils.WifiAPManager;
@@ -105,7 +106,6 @@ public class TestActivity extends BaseActivity {
         EventBus.getDefault().post(0, EventBusTag.GET_DEVICE_SERIAL_NUMBER);
     }
 
-
     //OTDR上报设备序列号给APP
     public void click2(View view) {
         ToastUtils.showToast("未接入");
@@ -123,6 +123,11 @@ public class TestActivity extends BaseActivity {
         EventBus.getDefault().post(bean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
     }
 
+    //APP向设备发送停止OTDR测试命令
+    public void click10(View view) {
+        EventBus.getDefault().post(0, EventBusTag.SEND_TEST_ARGS_AND_STOP_TEST);
+    }
+
     //设备向APP反馈sor文件信息
     public void click4(View view) {
         ToastUtils.showToast("未接入");
@@ -130,10 +135,15 @@ public class TestActivity extends BaseActivity {
 
     //APP向设备请求传输sor文件
     public void click5(View view) {
-        GetSorFileBean bean = new GetSorFileBean();
-        bean.fileDir = "fileDir";
-        bean.fileName = "fileName.txt";
-        EventBus.getDefault().post(bean, EventBusTag.GET_SOR_FILE);
+        if(fileName != null && fileLoc!=null ){
+            GetSorFileBean bean = new GetSorFileBean();
+            bean.fileDir = fileLoc;
+            bean.fileName = fileName;
+            bean.fileSize = fileSize;
+            EventBus.getDefault().post(bean, EventBusTag.GET_SOR_FILE);
+        }else {
+            ToastUtils.showToast("请先设备向APP反馈sor文件信息");
+        }
     }
 
     //设备向APP发送OTDR测试结果文件
@@ -176,8 +186,24 @@ public class TestActivity extends BaseActivity {
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
     public void reciverMsg(Packet packet) {
         reciveAdapter.addData(packet);
+
+        if(packet.cmd == CMD.RECIVE_TEST_ARGS_AND_START_TEST && packet.data.length>(32+16+4)){
+            byte[]fileNameB =  ByteUtil.subBytes(packet.data,0,32);
+            byte[]fileLocB =  ByteUtil.subBytes(packet.data,32,16);
+            byte[]fileSizeB =  ByteUtil.subBytes(packet.data,32+16,4);
+            fileName =   ByteUtil.bytes2Str(fileNameB);
+            fileLoc =   ByteUtil.bytes2Str(fileLocB);
+            fileSize =   ByteUtil.bytesToInt(fileSizeB);
+            MyLog.e("fileName = "+fileName+"  fileLoc = "+fileLoc+" fileSize = "+fileSize);
+        }else if(packet.cmd ==CMD.HEART_SEND){
+            EventBus.getDefault().post(0, EventBusTag.RE_HEART);
+        }
     }
 
+
+    private String fileName;
+    private String fileLoc;
+    private int fileSize;
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
         sendAdapter.addData(packet);

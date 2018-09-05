@@ -38,6 +38,20 @@ public class SocketSender {
     }
 
     /**
+     * APP向设备发送停止OTDR测试命令
+     */
+    public void sendTestArgsAndStopTest() {
+        Dispatcher.getInstance().submit(new Runnable() {
+            @Override
+            public void run() {
+                Packet packet = PacketHelper.getTestArgsAndStopTestPacket(socketThread.socket);
+                socketThread.sendQueue(packet);
+            }
+        });
+    }
+
+
+    /**
      * @param fileName 文件名称  16
      * @param fileDir  文件存放位置 48
      */

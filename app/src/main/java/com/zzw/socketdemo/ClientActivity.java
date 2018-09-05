@@ -77,6 +77,8 @@ public class ClientActivity extends AppCompatActivity {
                 builder.append("接收到回复心跳包命令\n");
             } else if (packet.cmd == CMD._RE) {
                 builder.append("接收到错误代码命令\n");
+            }else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_STOP_TEST) {
+                builder.append("接收到APP向设备发送停止OTDR测试命令\n");
             }
             builder.append("起始值:" + Arrays.toString(ByteUtil.intToBytes(Packet.START_FRAME)) + "\n");
             builder.append("总帧长度:" + Arrays.toString(ByteUtil.intToBytes(packet.pkAllLen)) + "\n");

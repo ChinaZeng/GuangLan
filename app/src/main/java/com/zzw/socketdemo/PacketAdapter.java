@@ -41,6 +41,8 @@ public class PacketAdapter extends BaseQuickAdapter<Packet, BaseViewHolder> {
             builder.append("设备向APP反馈sor文件信息命令\n");
         } else if (packet.cmd == CMD.RECIVE_SOR_FILE) {
             builder.append("设备向APP发送OTDR测试结果文件命令\n");
+        }else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_STOP_TEST) {
+            builder.append("APP向设备发送停止OTDR测试命令\n");
         }
         builder.append("起始值:" + ByteUtil.bytesToHexSpaceString(ByteUtil.intToBytes(Packet.START_FRAME)) + " ");
         builder.append("总帧长度:" + ByteUtil.bytesToHexSpaceString(ByteUtil.intToBytes(packet.pkAllLen)) + " ");
