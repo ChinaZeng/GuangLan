@@ -102,7 +102,6 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content" />
         <TextView
-            android:text="s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
