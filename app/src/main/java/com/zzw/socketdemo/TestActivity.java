@@ -15,7 +15,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.zzw.socketdemo.base.BaseActivity;
@@ -111,16 +113,65 @@ public class TestActivity extends BaseActivity {
         ToastUtils.showToast("未接入");
     }
 
+    private AlertDialog dialog;
     //APP给设备下发OTDR测试参数并启动测试
     public void click3(View view) {
-        TestArgsAndStartBean bean = new TestArgsAndStartBean();
-        bean.rang = 10;
-        bean.wl = 10;
-        bean.pw = 10;
-        bean.time = 10;
-        bean.mode = 1;
-        bean.gi = 146850;
-        EventBus.getDefault().post(bean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
+
+        if(dialog==null){
+            View dialogView = LayoutInflater.from(this).inflate(R.layout.layout_edit_args,null);
+            final EditText range = dialogView.findViewById(R.id.et_range);
+            final  EditText wl = dialogView.findViewById(R.id.et_wl);
+            final  EditText pw = dialogView.findViewById(R.id.et_pw);
+            final  EditText time = dialogView.findViewById(R.id.et_time);
+            final  EditText mode = dialogView.findViewById(R.id.et_mode);
+            final  EditText gi = dialogView.findViewById(R.id.et_gi);
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            builder.setView(dialogView);
+            dialog = builder.create();
+            dialogView.findViewById(R.id.start_test).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try{
+                        String rangeStr = range.getText().toString().trim();
+                        String wlStr = wl.getText().toString().trim();
+                        String pwStr = pw.getText().toString().trim();
+                        String timeStr = time.getText().toString().trim();
+                        String modeStr = mode.getText().toString().trim();
+                        String giStr = gi.getText().toString().trim();
+                        if(rangeStr.length()==0 || wlStr.length()==0
+                                || pwStr.length()==0 || timeStr.length()==0
+                                ||modeStr.length()==0 || giStr.length()==0){
+                            ToastUtils.showToast("请先填取参数");
+                            return;
+                        }
+                        int r = Integer.parseInt(rangeStr);
+                        int w = Integer.parseInt(wlStr);
+                        int p = Integer.parseInt(pwStr);
+                        int t = Integer.parseInt(timeStr);
+                        int m = Integer.parseInt(modeStr);
+                        int g = Integer.parseInt(giStr);
+
+                        TestArgsAndStartBean bean = new TestArgsAndStartBean();
+                        bean.rang = r;
+                        bean.wl = w;
+                        bean.pw = p;
+                        bean.time = t;
+                        bean.mode = m;
+                        bean.gi = g;
+                        EventBus.getDefault().post(bean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        ToastUtils.showToast("出现异常了，请填取数值");
+                    }
+
+                    dialog.dismiss();
+                }
+            });
+
+        }
+        dialog.show();
+
     }
 
     //APP向设备发送停止OTDR测试命令
@@ -185,7 +236,7 @@ public class TestActivity extends BaseActivity {
 
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
     public void reciverMsg(Packet packet) {
-        reciveAdapter.addData(packet);
+        reciveAdapter.addData(0,packet);
 
         if(packet.cmd == CMD.RECIVE_TEST_ARGS_AND_START_TEST && packet.data.length>(32+16+4)){
             byte[]fileNameB =  ByteUtil.subBytes(packet.data,0,32);
@@ -200,13 +251,12 @@ public class TestActivity extends BaseActivity {
         }
     }
 
-
     private String fileName;
     private String fileLoc;
     private int fileSize;
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
-        sendAdapter.addData(packet);
+        sendAdapter.addData(0,packet);
     }
 
 
