@@ -6,8 +6,6 @@ import com.zzw.socketdemo.socket.CMD;
 import com.zzw.socketdemo.socket.resolve.Packet;
 import com.zzw.socketdemo.socket.utils.ByteUtil;
 
-import java.util.Arrays;
-
 /**
  * Created by zzw on 2018/9/2.
  * 描述:
@@ -37,7 +35,7 @@ public class PacketAdapter extends BaseQuickAdapter<Packet, BaseViewHolder> {
             builder.append("错误代码命令\n");
         } else if (packet.cmd == CMD.RECIVE_DEVICE_SERIAL_NUMBER) {
             builder.append("OTDR上报设备序列号给APP命令\n");
-        } else if (packet.cmd == CMD.RECIVE_TEST_ARGS_AND_START_TEST) {
+        } else if (packet.cmd == CMD.RECIVE_SOR_INFO) {
             builder.append("设备向APP反馈sor文件信息命令\n");
         } else if (packet.cmd == CMD.RECIVE_SOR_FILE) {
             builder.append("设备向APP发送OTDR测试结果文件命令\n");

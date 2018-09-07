@@ -15,7 +15,7 @@ public interface CMD {
     int SEND_TEST_ARGS_AND_STOP_TEST = 0x83000007;
 
     //设备向APP反馈sor文件信息
-    int RECIVE_TEST_ARGS_AND_START_TEST = 0x83000004;
+    int RECIVE_SOR_INFO = 0x83000004;
 
     // APP向设备请求传输sor文件
     int GET_SOR_FILE = 0x83000005;

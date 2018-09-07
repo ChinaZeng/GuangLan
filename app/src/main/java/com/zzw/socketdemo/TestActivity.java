@@ -238,7 +238,7 @@ public class TestActivity extends BaseActivity {
     public void reciverMsg(Packet packet) {
         reciveAdapter.addData(0,packet);
 
-        if(packet.cmd == CMD.RECIVE_TEST_ARGS_AND_START_TEST && packet.data.length>(32+16+4)){
+        if(packet.cmd == CMD.RECIVE_SOR_INFO && packet.data.length>=(32+16+4)){
             byte[]fileNameB =  ByteUtil.subBytes(packet.data,0,32);
             byte[]fileLocB =  ByteUtil.subBytes(packet.data,32,16);
             byte[]fileSizeB =  ByteUtil.subBytes(packet.data,32+16,4);
