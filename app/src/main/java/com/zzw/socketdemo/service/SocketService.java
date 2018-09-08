@@ -16,6 +16,7 @@ import com.zzw.socketdemo.socket.listener.StatusListener;
 import com.zzw.socketdemo.socket.manager.ServerManager;
 import com.zzw.socketdemo.socket.resolve.Packet;
 import com.zzw.socketdemo.socket.utils.ByteUtil;
+import com.zzw.socketdemo.socket.utils.FileHelper;
 import com.zzw.socketdemo.socket.utils.MyLog;
 
 import org.simple.eventbus.EventBus;
@@ -144,6 +145,18 @@ public class SocketService extends Service implements StatusListener {
         builder.append("数据:" + ByteUtil.bytesToHexSpaceString(packet.data) + "\n");
         builder.append("结尾值:" + ByteUtil.bytesToHexSpaceString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
         MyLog.e(builder.toString());
+
+        if(packet.cmd == CMD.RECIVE_SOR_FILE) {
+
+//            if (flog == CMD.FLOG.FLOG_FILE_START) {
+//                len = 0;
+//                FileHelper.saveFileToLocal(packet.data, true, "src.mp4");
+//            } else if (flog == CMD.FLOG.FLOG_FILE_DATA) {
+//                FileHelper.saveFileToLocal(packet.data, false, "src.mp4");
+//                len += packet.data.length;
+//            }
+
+        }
 
 
     }

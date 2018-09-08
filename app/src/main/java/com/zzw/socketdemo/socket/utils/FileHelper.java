@@ -1,16 +1,19 @@
 package com.zzw.socketdemo.socket.utils;
 
+import android.os.Environment;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileHelper {
+    private final static String SAVE_FILE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"guanglan";
 
 
     public static void saveFileToLocal(byte[] data, boolean isBegin, String name) {
         //文件存放的目录
-        File filePath = new File("/storage/emulated/0/ocr");
+        File filePath = new File(SAVE_FILE_DIR);
 
         if (!filePath.exists())
             filePath.mkdirs();
