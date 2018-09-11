@@ -125,14 +125,16 @@ public class ByteUtil {
 
     public static String bytes2Str(byte[] buffer) {
         try {
+            boolean flog = false;
             int length = 0;
             for (int i = 0; i < buffer.length; ++i) {
                 if (buffer[i] == 0) {
+                    flog = true;
                     length = i;
                     break;
                 }
             }
-            if (length == 0) length = buffer.length;
+            if (length == 0 && !flog) length = buffer.length;
 
             return new String(buffer, 0, length, "UTF-8");
         } catch (Exception e) {
