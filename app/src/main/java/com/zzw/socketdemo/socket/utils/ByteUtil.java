@@ -20,7 +20,7 @@ public class ByteUtil {
      * @param length   结束位置
      * @return
      */
-    public static  byte[] subBytes(byte[] original, int start, int length) {
+    public static byte[] subBytes(byte[] original, int start, int length) {
         byte[] b = new byte[length];
         System.arraycopy(original, start, b, 0, length);
         return b;
@@ -34,7 +34,7 @@ public class ByteUtil {
      * @param byte_2
      * @return
      */
-    public static  byte[] mergerByte(byte[] byte_1, byte[] byte_2) {
+    public static byte[] mergerByte(byte[] byte_1, byte[] byte_2) {
         byte[] byte_3 = new byte[byte_1.length + byte_2.length];
         System.arraycopy(byte_1, 0, byte_3, 0, byte_1.length);
         System.arraycopy(byte_2, 0, byte_3, byte_1.length, byte_2.length);
@@ -47,16 +47,16 @@ public class ByteUtil {
      * @param bytes
      * @return
      */
-    public static  byte[] mergerBytes(byte[]... bytes) {
-        int len =0;
+    public static byte[] mergerBytes(byte[]... bytes) {
+        int len = 0;
         for (byte[] aByte : bytes) {
-            len+=aByte.length;
+            len += aByte.length;
         }
         byte[] data = new byte[len];
-        int temp=0;
+        int temp = 0;
         for (byte[] aByte : bytes) {
             System.arraycopy(aByte, 0, data, temp, aByte.length);
-            temp+=aByte.length;
+            temp += aByte.length;
         }
         return data;
     }
@@ -132,6 +132,8 @@ public class ByteUtil {
                     break;
                 }
             }
+            if (length == 0) length = buffer.length;
+
             return new String(buffer, 0, length, "UTF-8");
         } catch (Exception e) {
             return "";
@@ -331,6 +333,7 @@ public class ByteUtil {
 
     /**
      * 转换成无符号数
+     *
      * @param data
      * @return
      */

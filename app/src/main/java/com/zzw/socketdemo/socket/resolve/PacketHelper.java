@@ -43,6 +43,7 @@ public class PacketHelper {
 
     /**
      * APP向设备发送停止OTDR测试命令
+     *
      * @param socket
      * @return
      */
@@ -105,5 +106,34 @@ public class PacketHelper {
         return packet;
     }
 
+
+    /**
+     * 回复
+     *
+     * @param socket
+     * @return
+     */
+    public static Packet getSendSorFilePacket(Socket socket, String fileName, String md5, int fileSize, byte[] data) {
+        Packet packet = new Packet(socket, Packet.TYPE.SEND);
+        packet.cmd = CMD._FILE;
+
+        byte[] fileNameBA = new byte[32];
+        byte[] ft = ByteUtil.stringToUTF8Bytes(fileName);
+        System.arraycopy(ft, 0, fileNameBA, 0, ft.length <= 32 ? ft.length : 32);
+
+        packet.putData(fileNameBA);
+
+        packet.putData(ByteUtil.intToBytes(fileSize));
+
+        byte[] md5BA = new byte[32];
+        byte[] md5B = ByteUtil.stringToUTF8Bytes(md5);
+        System.arraycopy(md5B, 0, md5BA, 0, md5B.length <= 32 ? md5B.length : 32);
+        ByteUtil.bytes2Str(md5B);
+        packet.putData(md5BA);
+
+        packet.putData(data);
+
+        return packet;
+    }
 
 }

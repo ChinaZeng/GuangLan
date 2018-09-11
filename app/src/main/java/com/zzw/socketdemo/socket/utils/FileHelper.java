@@ -21,7 +21,6 @@ public class FileHelper {
         File file = new File(fileName);
 
         appendFile(data, isBegin, file);
-
         return file;
     }
 
@@ -30,6 +29,9 @@ public class FileHelper {
 
         FileOutputStream os = null;
         try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
             os = new FileOutputStream(file, !isBegin);
             os.write(data);
             os.flush();

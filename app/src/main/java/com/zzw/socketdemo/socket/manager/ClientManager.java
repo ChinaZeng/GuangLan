@@ -85,4 +85,11 @@ public class ClientManager implements SocketThreadStatusListener {
         }
     }
 
+    public void sendFile(String key,String file) {
+        ClientThread thread = serverThreads.get(key);
+        if (thread != null) {
+            thread.socketSender.sendFileMsg(file);
+        }
+    }
+
 }

@@ -31,6 +31,9 @@ public interface CMD {
     int _RE = 0x8e000000;
 
 
+    int _FILE = 0x83000006;
+
+
     interface _CODE {
         //成功
         int SUCCESS = 0;

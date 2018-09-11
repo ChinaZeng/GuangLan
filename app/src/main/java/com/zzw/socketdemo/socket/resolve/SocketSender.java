@@ -1,6 +1,17 @@
 package com.zzw.socketdemo.socket.resolve;
 
+import android.util.Log;
+
 import com.zzw.socketdemo.socket.thread.SocketThread;
+import com.zzw.socketdemo.socket.utils.ByteUtil;
+import com.zzw.socketdemo.utils.MD5Utils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 
 public class SocketSender {
 
@@ -111,43 +122,44 @@ public class SocketSender {
     private final static int FILE_BUFFER = 4096;
 
     public void sendFileMsg(final String path) {
-//        Dispatcher.getInstance().submit(new Runnable() {
-//            @Override
-//            public void run() {
-//                InputStream is = null;
-//                try {
-//                    Packet packetStart = PacketHelper.getFileMsgPacket(socket);
-//                    packetStart.flog = CMD.FLOG.FLOG_FILE_START;//表示开始
-//                    sendQueue(packetStart);
-//
-//                    File file = new File(path);
-//                    is = new FileInputStream(file);
-//                    byte[] buffer = new byte[FILE_BUFFER];
-//                    int len;
-//                    while ((len = is.read(buffer, 0, buffer.length)) > 0) {
-//                        Packet packetData = PacketHelper.getFileMsgPacket(socket);
-//                        packetData.flog = CMD.FLOG.FLOG_FILE_DATA;//内容
-//
-//                        byte[] data = buffer;
-//                        if (len < buffer.length) {
-//                            data = ByteUtils.subBytes(buffer, 0, len);
-//                        }
-//                        packetData.data = data;
-//                        sendQueue(packetData);
-//                    }
-//
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    closeCloseable(is);
-//                    Packet packetEnd = PacketHelper.getFileMsgPacket(socket);
-//                    packetEnd.flog = CMD.FLOG.FLOG_FILE_END;//表示结束
-//                    sendQueue(packetEnd);
-//                }
-//            }
-//        });
+        Dispatcher.getInstance().submit(new Runnable() {
+            @Override
+            public void run() {
+                InputStream is = null;
+                try {
+                    File file = new File(path);
+                    is = new FileInputStream(file);
+                    byte[] buffer = new byte[FILE_BUFFER];
+                    int len;
+                    String md5 = MD5Utils.getFileMD5(file);
+                    String name = file.getName();
+                    int fileSize = (int) file.length();
+                    while ((len = is.read(buffer, 0, buffer.length)) > 0) {
+                        byte[] data = buffer;
+                        if (len < buffer.length) {
+                            data = ByteUtil.subBytes(buffer, 0, len);
+                        }
+                        Packet packetData = PacketHelper.getSendSorFilePacket(socketThread.socket, name, md5, fileSize, data);
+                        socketThread.sendQueue(packetData);
+                    }
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
     }
 
 

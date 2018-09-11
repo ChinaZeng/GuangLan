@@ -1,6 +1,7 @@
 package com.zzw.socketdemo;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import com.zzw.socketdemo.socket.listener.StatusListener;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
+import java.io.File;
 import java.util.Arrays;
 
 public class ClientActivity extends AppCompatActivity {
@@ -77,7 +79,7 @@ public class ClientActivity extends AppCompatActivity {
                 builder.append("接收到回复心跳包命令\n");
             } else if (packet.cmd == CMD._RE) {
                 builder.append("接收到错误代码命令\n");
-            }else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_STOP_TEST) {
+            } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_STOP_TEST) {
                 builder.append("接收到APP向设备发送停止OTDR测试命令\n");
             }
             builder.append("起始值:" + Arrays.toString(ByteUtil.intToBytes(Packet.START_FRAME)) + "\n");
@@ -105,8 +107,9 @@ public class ClientActivity extends AppCompatActivity {
     }
 
     public void sendData(View view) {
-        if(key!=null){
-            manager.sendHeart(key);
+        if (key != null) {
+            String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "test.txt";
+            manager.sendFile(key, name);
         }
     }
 

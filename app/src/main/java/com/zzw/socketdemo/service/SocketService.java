@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.zzw.socketdemo.socket.CMD;
 import com.zzw.socketdemo.socket.EventBusTag;
@@ -157,7 +158,7 @@ public class SocketService extends Service implements StatusListener {
             String fileName = ByteUtil.bytes2Str(ByteUtil.subBytes(packet.data, 0, 32));
             int fileSize = ByteUtil.bytesToInt(ByteUtil.subBytes(packet.data, 32, 4));
             String MD5 = ByteUtil.bytes2Str(ByteUtil.subBytes(packet.data, 32 + 4, 32));
-            byte[] data = ByteUtil.subBytes(packet.data, 32 + 4 + 32, packet.data.length);
+            byte[] data = ByteUtil.subBytes(packet.data, 32 + 4 + 32, packet.data.length - (32 + 4 + 32));
 
             File file = FileHelper.saveFileToLocal(data, false, fileName);
             if (file.length() >= fileSize) {
@@ -167,6 +168,8 @@ public class SocketService extends Service implements StatusListener {
                     bean.fileName = fileName;
                     bean.fileSize = fileSize;
                     bean.MD5 = MD5;
+                    Log.e("zzz", "sermd5 = " + MD5 + " serfilesize = " + fileSize
+                            + " file:" + file.getAbsolutePath()+" filesize = "+file.length()+"  fileMd5="+fileMD5);
                     if (TextUtils.equals(MD5, fileMD5)) {
                         EventBus.getDefault().post(bean, EventBusTag.SOR_RECIVE_SUCCESS);
                     } else {
