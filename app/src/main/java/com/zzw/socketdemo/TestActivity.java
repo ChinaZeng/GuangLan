@@ -1,5 +1,6 @@
 package com.zzw.socketdemo;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +27,7 @@ import com.zzw.socketdemo.service.SocketService;
 import com.zzw.socketdemo.socket.CMD;
 import com.zzw.socketdemo.socket.EventBusTag;
 import com.zzw.socketdemo.socket.event.ConnBean;
-import com.zzw.socketdemo.socket.event.GetSorFileBean;
+import com.zzw.socketdemo.socket.event.SorFileBean;
 import com.zzw.socketdemo.socket.event.ReBean;
 import com.zzw.socketdemo.socket.event.TestArgsAndStartBean;
 import com.zzw.socketdemo.socket.listener.STATUS;
@@ -61,6 +63,11 @@ public class TestActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.CHANGE_WIFI_STATE,
+                        Manifest.permission.WRITE_SETTINGS,}, 5);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             // 判断是否有WRITE_SETTINGS权限if(!Settings.System.canWrite(this))
             if (!Settings.System.canWrite(this)) {
@@ -114,33 +121,34 @@ public class TestActivity extends BaseActivity {
     }
 
     private AlertDialog dialog;
+
     //APP给设备下发OTDR测试参数并启动测试
     public void click3(View view) {
 
-        if(dialog==null){
-            View dialogView = LayoutInflater.from(this).inflate(R.layout.layout_edit_args,null);
+        if (dialog == null) {
+            View dialogView = LayoutInflater.from(this).inflate(R.layout.layout_edit_args, null);
             final EditText range = dialogView.findViewById(R.id.et_range);
-            final  EditText wl = dialogView.findViewById(R.id.et_wl);
-            final  EditText pw = dialogView.findViewById(R.id.et_pw);
-            final  EditText time = dialogView.findViewById(R.id.et_time);
-            final  EditText mode = dialogView.findViewById(R.id.et_mode);
-            final  EditText gi = dialogView.findViewById(R.id.et_gi);
-            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            final EditText wl = dialogView.findViewById(R.id.et_wl);
+            final EditText pw = dialogView.findViewById(R.id.et_pw);
+            final EditText time = dialogView.findViewById(R.id.et_time);
+            final EditText mode = dialogView.findViewById(R.id.et_mode);
+            final EditText gi = dialogView.findViewById(R.id.et_gi);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setView(dialogView);
             dialog = builder.create();
             dialogView.findViewById(R.id.start_test).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    try{
+                    try {
                         String rangeStr = range.getText().toString().trim();
                         String wlStr = wl.getText().toString().trim();
                         String pwStr = pw.getText().toString().trim();
                         String timeStr = time.getText().toString().trim();
                         String modeStr = mode.getText().toString().trim();
                         String giStr = gi.getText().toString().trim();
-                        if(rangeStr.length()==0 || wlStr.length()==0
-                                || pwStr.length()==0 || timeStr.length()==0
-                                ||modeStr.length()==0 || giStr.length()==0){
+                        if (rangeStr.length() == 0 || wlStr.length() == 0
+                                || pwStr.length() == 0 || timeStr.length() == 0
+                                || modeStr.length() == 0 || giStr.length() == 0) {
                             ToastUtils.showToast("请先填取参数");
                             return;
                         }
@@ -160,7 +168,7 @@ public class TestActivity extends BaseActivity {
                         bean.gi = g;
                         EventBus.getDefault().post(bean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                         ToastUtils.showToast("出现异常了，请填取数值");
                     }
@@ -186,13 +194,17 @@ public class TestActivity extends BaseActivity {
 
     //APP向设备请求传输sor文件
     public void click5(View view) {
-        if(fileName != null && fileLoc!=null ){
-            GetSorFileBean bean = new GetSorFileBean();
-            bean.fileDir = fileLoc;
-            bean.fileName = fileName;
-            bean.fileSize = fileSize;
+        getSorFile();
+    }
+
+    private void getSorFile() {
+        if (Contacts.fileName != null && Contacts.fileDir != null && Contacts.fileSize != 0) {
+            SorFileBean bean = new SorFileBean();
+            bean.fileDir = Contacts.fileDir;
+            bean.fileName = Contacts.fileName;
+            bean.fileSize = Contacts.fileSize;
             EventBus.getDefault().post(bean, EventBusTag.GET_SOR_FILE);
-        }else {
+        } else {
             ToastUtils.showToast("请先设备向APP反馈sor文件信息");
         }
     }
@@ -236,27 +248,35 @@ public class TestActivity extends BaseActivity {
 
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
     public void reciverMsg(Packet packet) {
-        reciveAdapter.addData(0,packet);
+        reciveAdapter.addData(0, packet);
 
-        if(packet.cmd == CMD.RECIVE_SOR_INFO && packet.data.length>=(32+16+4)){
-            byte[]fileNameB =  ByteUtil.subBytes(packet.data,0,32);
-            byte[]fileLocB =  ByteUtil.subBytes(packet.data,32,16);
-            byte[]fileSizeB =  ByteUtil.subBytes(packet.data,32+16,4);
-            fileName =   ByteUtil.bytes2Str(fileNameB);
-            fileLoc =   ByteUtil.bytes2Str(fileLocB);
-            fileSize =   ByteUtil.bytesToInt(fileSizeB);
-            MyLog.e("fileName = "+fileName+"  fileLoc = "+fileLoc+" fileSize = "+fileSize);
-        }else if(packet.cmd ==CMD.HEART_SEND){
+        if (packet.cmd == CMD.RECIVE_SOR_INFO && packet.data.length >= (32 + 16 + 4)) {
+            byte[] fileNameB = ByteUtil.subBytes(packet.data, 0, 32);
+            byte[] fileLocB = ByteUtil.subBytes(packet.data, 32, 16);
+            byte[] fileSizeB = ByteUtil.subBytes(packet.data, 32 + 16, 4);
+            Contacts.fileName = ByteUtil.bytes2Str(fileNameB);
+            Contacts.fileDir = ByteUtil.bytes2Str(fileLocB);
+            Contacts.fileSize = ByteUtil.bytesToInt(fileSizeB);
+            MyLog.e("fileName = " + Contacts.fileName + "  fileLoc = " + Contacts.fileDir + " fileSize = " + Contacts.fileSize);
+        } else if (packet.cmd == CMD.HEART_SEND) {
             EventBus.getDefault().post(0, EventBusTag.RE_HEART);
         }
     }
 
-    private String fileName;
-    private String fileLoc;
-    private int fileSize;
+    @Subscriber(tag = EventBusTag.SOR_RECIVE_SUCCESS)
+    public void reciveSorSuccess(SorFileBean bean) {
+        ToastUtils.showToast("接收sor文件成功: " + bean.fileName);
+    }
+
+    @Subscriber(tag = EventBusTag.SOR_RECIVE_FAIL)
+    public void reciveSorFail(SorFileBean bean) {
+        getSorFile();
+    }
+
+
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
-        sendAdapter.addData(0,packet);
+        sendAdapter.addData(0, packet);
     }
 
 

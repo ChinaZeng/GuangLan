@@ -12,4 +12,7 @@ public interface EventBusTag {
     String SEND_RE = "SEND_RE";
     String SEND_HEART = "SEND_HEART";
     String RE_HEART = "RE_HEART";
+
+    String SOR_RECIVE_SUCCESS = "SOR_RECIVE_SUCCESS";
+    String SOR_RECIVE_FAIL = "SOR_RECIVE_FAIL";
 }

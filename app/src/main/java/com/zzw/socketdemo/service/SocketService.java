@@ -4,11 +4,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.zzw.socketdemo.socket.CMD;
 import com.zzw.socketdemo.socket.EventBusTag;
 import com.zzw.socketdemo.socket.event.ConnBean;
-import com.zzw.socketdemo.socket.event.GetSorFileBean;
+import com.zzw.socketdemo.socket.event.SorFileBean;
 import com.zzw.socketdemo.socket.event.ReBean;
 import com.zzw.socketdemo.socket.event.TestArgsAndStartBean;
 import com.zzw.socketdemo.socket.listener.STATUS;
@@ -18,11 +19,14 @@ import com.zzw.socketdemo.socket.resolve.Packet;
 import com.zzw.socketdemo.socket.utils.ByteUtil;
 import com.zzw.socketdemo.socket.utils.FileHelper;
 import com.zzw.socketdemo.socket.utils.MyLog;
+import com.zzw.socketdemo.utils.MD5Utils;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
-import java.util.Arrays;
+import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 public class SocketService extends Service implements StatusListener {
 
@@ -102,7 +106,7 @@ public class SocketService extends Service implements StatusListener {
     }
 
     @Subscriber(tag = EventBusTag.GET_SOR_FILE)
-    public void getSorFile(GetSorFileBean bean) {
+    public void getSorFile(SorFileBean bean) {
         if (key != null) {
             serverManager.getSorFile(key, bean);
         }
@@ -146,16 +150,35 @@ public class SocketService extends Service implements StatusListener {
         builder.append("结尾值:" + ByteUtil.bytesToHexSpaceString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
         MyLog.e(builder.toString());
 
-        if(packet.cmd == CMD.RECIVE_SOR_FILE) {
 
-//            if (flog == CMD.FLOG.FLOG_FILE_START) {
-//                len = 0;
-//                FileHelper.saveFileToLocal(packet.data, true, "src.mp4");
-//            } else if (flog == CMD.FLOG.FLOG_FILE_DATA) {
-//                FileHelper.saveFileToLocal(packet.data, false, "src.mp4");
-//                len += packet.data.length;
-//            }
+        if (packet.cmd == CMD.RECIVE_SOR_FILE) {
+            if (packet.data.length < 32 + 4 + 32) return;
 
+            String fileName = ByteUtil.bytes2Str(ByteUtil.subBytes(packet.data, 0, 32));
+            int fileSize = ByteUtil.bytesToInt(ByteUtil.subBytes(packet.data, 32, 4));
+            String MD5 = ByteUtil.bytes2Str(ByteUtil.subBytes(packet.data, 32 + 4, 32));
+            byte[] data = ByteUtil.subBytes(packet.data, 32 + 4 + 32, packet.data.length);
+
+            File file = FileHelper.saveFileToLocal(data, false, fileName);
+            if (file.length() >= fileSize) {
+                try {
+                    String fileMD5 = MD5Utils.getFileMD5(file);
+                    SorFileBean bean = new SorFileBean();
+                    bean.fileName = fileName;
+                    bean.fileSize = fileSize;
+                    bean.MD5 = MD5;
+                    if (TextUtils.equals(MD5, fileMD5)) {
+                        EventBus.getDefault().post(bean, EventBusTag.SOR_RECIVE_SUCCESS);
+                    } else {
+                        EventBus.getDefault().post(bean, EventBusTag.SOR_RECIVE_FAIL);
+                        file.delete();
+                    }
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
 

@@ -8,10 +8,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileHelper {
-    private final static String SAVE_FILE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"guanglan";
+    private final static String SAVE_FILE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "guanglan";
 
 
-    public static void saveFileToLocal(byte[] data, boolean isBegin, String name) {
+    public static File saveFileToLocal(byte[] data, boolean isBegin, String name) {
         //文件存放的目录
         File filePath = new File(SAVE_FILE_DIR);
 
@@ -22,6 +22,7 @@ public class FileHelper {
 
         appendFile(data, isBegin, file);
 
+        return file;
     }
 
 

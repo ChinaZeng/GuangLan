@@ -1,6 +1,6 @@
 package com.zzw.socketdemo.socket.manager;
 
-import com.zzw.socketdemo.socket.event.GetSorFileBean;
+import com.zzw.socketdemo.socket.event.SorFileBean;
 import com.zzw.socketdemo.socket.event.ReBean;
 import com.zzw.socketdemo.socket.event.TestArgsAndStartBean;
 import com.zzw.socketdemo.socket.thread.ListenerThread;
@@ -49,7 +49,7 @@ public class ServerManager implements SocketThreadStatusListener {
     }
 
 
-    public void getSorFile(String key, GetSorFileBean bean) {
+    public void getSorFile(String key, SorFileBean bean) {
         SocketThread thread = listenerThread.getServerThreads().get(key);
         if (thread != null) {
             thread.socketSender.getSorFile(bean.fileName, bean.fileDir);
