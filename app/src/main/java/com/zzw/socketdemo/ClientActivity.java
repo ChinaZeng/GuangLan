@@ -109,7 +109,7 @@ public class ClientActivity extends AppCompatActivity {
     public void sendData(View view) {
         if (key != null) {
             String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "test.txt";
-            manager.sendFile(key, name);
+            manager.sendSorInfo(key, "test.txt", "dir", 1096);
         }
     }
 

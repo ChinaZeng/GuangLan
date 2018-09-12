@@ -73,6 +73,7 @@ public class PacketHelper {
         return packet;
     }
 
+
     /**
      * 心跳
      *
@@ -108,7 +109,7 @@ public class PacketHelper {
 
 
     /**
-     * 回复
+     * 发送sor文件流
      *
      * @param socket
      * @return
@@ -133,6 +134,28 @@ public class PacketHelper {
 
         packet.putData(data);
 
+        return packet;
+    }
+
+
+    /**
+     * @param socket
+     * @param fileName 文件名称  32
+     * @param fileDir  文件存放位置 16
+     * @return
+     */
+    public static Packet getSendSorInfo(Socket socket, String fileName, String fileDir, int size) {
+        Packet packet = new Packet(socket, Packet.TYPE.SEND);
+        packet.cmd = CMD.RECIVE_SOR_INFO;
+        byte[] fileNameBA = new byte[32];
+        byte[] ft = ByteUtil.stringToUTF8Bytes(fileName);
+        System.arraycopy(ft, 0, fileNameBA, 0, ft.length <= 32 ? ft.length : 32);
+        byte[] fileDirBA = new byte[16];
+        byte[] fdt = ByteUtil.stringToUTF8Bytes(fileDir);
+        System.arraycopy(fdt, 0, fileDirBA, 0, fdt.length <= 16 ? fdt.length : 16);
+        packet.putData(fileNameBA);
+        packet.putData(fileDirBA);
+        packet.putData(ByteUtil.intToBytes(size));
         return packet;
     }
 

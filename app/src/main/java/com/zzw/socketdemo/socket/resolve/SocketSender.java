@@ -162,5 +162,19 @@ public class SocketSender {
         });
     }
 
-
+    /**
+     * 设备向app推送sor文件信息
+     * @param name
+     * @param fileLoc
+     * @param size
+     */
+    public void sendSorInfo(final String name, final String fileLoc, final int size) {
+        Dispatcher.getInstance().submit(new Runnable() {
+            @Override
+            public void run() {
+                Packet packet = PacketHelper.getSendSorInfo(socketThread.socket, name, fileLoc,size);
+                socketThread.sendQueue(packet);
+            }
+        });
+    }
 }

@@ -92,4 +92,11 @@ public class ClientManager implements SocketThreadStatusListener {
         }
     }
 
+    public void sendSorInfo(String key,String name,String fileLoc,int size) {
+        ClientThread thread = serverThreads.get(key);
+        if (thread != null) {
+            thread.socketSender.sendSorInfo(name,fileLoc,size);
+        }
+    }
+
 }
