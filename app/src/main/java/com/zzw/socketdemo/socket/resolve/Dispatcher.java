@@ -9,26 +9,31 @@ import java.util.concurrent.TimeUnit;
 
 public class Dispatcher {
 
-    private static Dispatcher instance;
+    private ThreadPoolExecutor executor;
 
-    private Dispatcher() {
+    public Dispatcher() {
+        executor = new ThreadPoolExecutor(5, Integer.MAX_VALUE,
+                10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(5), new ThreadFactory() {
+            @Override
+            public Thread newThread(@NonNull Runnable r) {
+                return new Thread(r);
+            }
+        });
     }
 
-    public static Dispatcher getInstance() {
-        return SingletonHolder.mInstance;
-    }
+//    public static Dispatcher getInstance() {
+//        return SingletonHolder.mInstance;
+//    }
+//
+//    private static class SingletonHolder {
+//        private static volatile Dispatcher mInstance = new Dispatcher();
+//    }
 
-    private static class SingletonHolder {
-        private static volatile Dispatcher mInstance = new Dispatcher();
-    }
 
-    ThreadPoolExecutor executor = new ThreadPoolExecutor(5, Integer.MAX_VALUE,
-            10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(5), new ThreadFactory() {
-        @Override
-        public Thread newThread(@NonNull Runnable r) {
-            return new Thread(r);
-        }
-    });
+    public void shutdownNow(){
+        executor.shutdownNow();
+        executor = null;
+    }
 
 
     public void submit(Runnable runnable) {

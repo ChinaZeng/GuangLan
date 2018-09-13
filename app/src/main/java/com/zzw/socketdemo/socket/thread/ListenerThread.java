@@ -52,9 +52,9 @@ public class ListenerThread extends Thread {
                 }
                 MyLog.e(TAG, "客户端连接  ip：" + socket.getInetAddress() + " port:" + socket.getPort());
                 String key = KeyUtils.getKey(socket);
-                if (serverThreads.containsKey(key)) {
-                    SocketThread t = serverThreads.get(key);
-                    t.exit();
+                SocketThread s = serverThreads.remove(key);
+                if (s != null) {
+                    s.exit();
                     Thread.sleep(500);
                 }
 
@@ -63,7 +63,7 @@ public class ListenerThread extends Thread {
                     @Override
                     public Packet onSendMsgAgo(SocketThread socketThread, boolean isSuccess, Packet packet) {
                         if (!isSuccess) {
-                            //发送消息失败触发关闭  本来应该用心跳触发关闭的 。这里就不那么麻烦了
+                            //TODO 发送消息失败触发关闭  本来应该用心跳触发关闭的 。这里就不那么麻烦了
                             SocketThread s = serverThreads.remove(packet.key());
                             if (s != null) {
                                 s.exit();

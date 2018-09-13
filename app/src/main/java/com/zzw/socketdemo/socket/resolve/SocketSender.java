@@ -1,7 +1,5 @@
 package com.zzw.socketdemo.socket.resolve;
 
-import android.util.Log;
-
 import com.zzw.socketdemo.socket.thread.SocketThread;
 import com.zzw.socketdemo.socket.utils.ByteUtil;
 import com.zzw.socketdemo.utils.MD5Utils;
@@ -16,16 +14,20 @@ import java.security.NoSuchAlgorithmException;
 public class SocketSender {
 
     private SocketThread socketThread;
+    private Dispatcher mDispatcher;
 
     public SocketSender(SocketThread socketThread) {
         this.socketThread = socketThread;
+        mDispatcher = new Dispatcher();
     }
+
+
 
     /**
      * APP询问设备序列号
      */
     public void getDeviceSerialNumber() {
-        Dispatcher.getInstance().submit(new Runnable() {
+       mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
                 Packet packet = PacketHelper.getDeviceSerialNumberPacket(socketThread.socket);
@@ -39,7 +41,7 @@ public class SocketSender {
      * APP给设备下发OTDR测试参数并启动测试
      */
     public void sendTestArgsAndStartTest(final int... args) {
-        Dispatcher.getInstance().submit(new Runnable() {
+       mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
                 Packet packet = PacketHelper.getTestArgsAndStartTestPacket(socketThread.socket, args);
@@ -52,7 +54,7 @@ public class SocketSender {
      * APP向设备发送停止OTDR测试命令
      */
     public void sendTestArgsAndStopTest() {
-        Dispatcher.getInstance().submit(new Runnable() {
+       mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
                 Packet packet = PacketHelper.getTestArgsAndStopTestPacket(socketThread.socket);
@@ -67,7 +69,7 @@ public class SocketSender {
      * @param fileDir  文件存放位置 48
      */
     public void getSorFile(final String fileName, final String fileDir) {
-        Dispatcher.getInstance().submit(new Runnable() {
+       mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
                 Packet packet = PacketHelper.getSorFilePacket(socketThread.socket, fileName, fileDir);
@@ -80,7 +82,7 @@ public class SocketSender {
      * 发送心跳
      */
     public void sendHeart() {
-        Dispatcher.getInstance().submit(new Runnable() {
+       mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
                 Packet packet = PacketHelper.getHeartPacket(socketThread.socket, true);
@@ -93,7 +95,7 @@ public class SocketSender {
      * 回复心跳
      */
     public void reHeart() {
-        Dispatcher.getInstance().submit(new Runnable() {
+       mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
                 Packet packet = PacketHelper.getHeartPacket(socketThread.socket, false);
@@ -109,7 +111,7 @@ public class SocketSender {
      * @param cmdCode   命令码  Uint32
      */
     public void sendRe(final int errorCode, final int cmdCode) {
-        Dispatcher.getInstance().submit(new Runnable() {
+       mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
                 Packet packet = PacketHelper.getRePacket(socketThread.socket, errorCode, cmdCode);
@@ -122,7 +124,7 @@ public class SocketSender {
     private final static int FILE_BUFFER = 4096;
 
     public void sendFileMsg(final String path) {
-        Dispatcher.getInstance().submit(new Runnable() {
+       mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
                 InputStream is = null;
@@ -169,7 +171,7 @@ public class SocketSender {
      * @param size
      */
     public void sendSorInfo(final String name, final String fileLoc, final int size) {
-        Dispatcher.getInstance().submit(new Runnable() {
+       mDispatcher.submit(new Runnable() {
             @Override
             public void run() {
                 Packet packet = PacketHelper.getSendSorInfo(socketThread.socket, name, fileLoc,size);
@@ -177,4 +179,10 @@ public class SocketSender {
             }
         });
     }
+
+    public void shutdownNow(){
+        mDispatcher.shutdownNow();
+        mDispatcher = null;
+    }
+
 }

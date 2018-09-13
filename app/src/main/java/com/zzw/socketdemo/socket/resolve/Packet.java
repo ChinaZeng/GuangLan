@@ -36,8 +36,8 @@ public class Packet {
     //帧类型  2
     public short pkType = 0;
 
-    public static int id = 0;
-    //流水号 0-65536   unsigned int  (short) 依次递增 循环归0   2位
+    public static int id = -1;
+    //流水号 0-65535   unsigned int  (short) 依次递增 循环归0   2位
     public int pktId;
     //保留位
     public int keep = 0;
@@ -79,8 +79,9 @@ public class Packet {
 
         byte[] pkTypeBA = ByteUtil.shortToBytes(pkType);
 
+
         Packet.id++;
-        if (Packet.id >= 65535) {
+        if (Packet.id > 65535) {
             Packet.id = 0;
         }
 

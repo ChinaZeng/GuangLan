@@ -158,6 +158,7 @@ public class SocketThread extends Thread {
 
     public void exit() {
         flog = false;
+        socketSender.shutdownNow();
     }
 
 
