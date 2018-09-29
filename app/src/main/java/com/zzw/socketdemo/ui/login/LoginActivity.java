@@ -8,7 +8,12 @@ import android.view.View;
 
 import com.zzw.socketdemo.R;
 import com.zzw.socketdemo.base.BaseActivity;
+import com.zzw.socketdemo.http.Api;
+import com.zzw.socketdemo.http.retrofit.RetrofitHttpEngine;
+import com.zzw.socketdemo.rx.ErrorObserver;
 import com.zzw.socketdemo.ui.MainActivity;
+
+import java.util.HashMap;
 
 public class LoginActivity extends BaseActivity {
 
@@ -31,6 +36,20 @@ public class LoginActivity extends BaseActivity {
     }
 
     public void login(View view) {
-        MainActivity.open(this);
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .login(new HashMap<String, String>() {
+                    {
+                        put("staffNbr", "ADMIN");
+                        put("password", "123456");
+                    }
+                })
+                .compose(transformer())
+                .subscribe(new ErrorObserver<Object>(this) {
+                    @Override
+                    public void onNext(Object o) {
+                        MainActivity.open(LoginActivity.this);
+                    }
+                });
+
     }
 }

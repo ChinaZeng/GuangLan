@@ -17,6 +17,7 @@ ext {
             rxlifecycleSdkVersion   : "1.0",
             rxlifecycle2SdkVersion  : "2.2.2",
             espressoSdkVersion      : "2.2.2",
+            okHttpVersion           : "3.9.1",
             canarySdkVersion        : "1.5.1"
     ]
 
@@ -36,8 +37,9 @@ ext {
             "retrofit-converter-gson"  : "com.squareup.retrofit2:converter-gson:${version["retrofitSdkVersion"]}",
             "retrofit-adapter-rxjava"  : "com.squareup.retrofit2:adapter-rxjava:${version["retrofitSdkVersion"]}",
             "retrofit-adapter-rxjava2" : "com.squareup.retrofit2:adapter-rxjava2:${version["retrofitSdkVersion"]}",
-            "okhttp3"                  : "com.squareup.okhttp3:okhttp:3.11.0",
-            "okhttp-urlconnection"     : "com.squareup.okhttp:okhttp-urlconnection:2.0.0",
+            //okHttp
+            okHttp                : "com.squareup.okhttp3:okhttp:${version["okHttpVersion"]}",
+            okHttpLog             : "com.squareup.okhttp3:logging-interceptor:${version["okHttpVersion"]}",
 
             //image
             "glide"                    : "com.github.bumptech.glide:glide:4.8.0",
