@@ -79,8 +79,9 @@ public class RetrofitHttpEngine {
     private OkHttpClient configureClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(TOME_OUT, TimeUnit.SECONDS)
-                .readTimeout(TOME_OUT, TimeUnit.SECONDS)
-                .addNetworkInterceptor(new RequestIntercept(mHandler));
+                .readTimeout(TOME_OUT, TimeUnit.SECONDS);
+//                .addNetworkInterceptor(new RequestIntercept(mHandler));
+
         if (mInterceptors != null && mInterceptors.length > 0) {//如果外部提供了interceptor的数组则遍历添加
             for (Interceptor interceptor : mInterceptors) {
                 builder.addInterceptor(interceptor);

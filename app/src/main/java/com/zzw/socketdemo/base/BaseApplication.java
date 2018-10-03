@@ -11,34 +11,25 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import timber.log.Timber;
 
-public class BaseApplication extends Application implements GlobeHttpHandler {
+public class BaseApplication extends Application {
 
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Timber.plant(new Timber.DebugTree());
         RetrofitHttpEngine.builder()
                 .baseUrl("http://47.97.167.95:7088")
-                .globeHttpHandler(this)
                 .interceptors(new Interceptor[]{new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                     @Override
                     public void log(String message) {
-                        MyLog.e("okhttp", message);
+                        Timber.tag("okhttp").w(message);
                     }
-                }).setLevel(HttpLoggingInterceptor
-                        .Level.BODY)})
+                }).setLevel(HttpLoggingInterceptor.Level.BODY)})
                 .build();
         ToastUtils.init(this);
     }
 
-    @Override
-    public Response onHttpResultResponse(String httpResult, Interceptor.Chain chain, Response response) {
-        return response;
-    }
-
-    @Override
-    public Request onHttpRequestBefore(Interceptor.Chain chain, Request request) {
-        return request;
-    }
 }
