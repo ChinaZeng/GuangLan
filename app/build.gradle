@@ -41,6 +41,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation rootProject.ext.dependencies["androideventbus"]
     implementation rootProject.ext.dependencies["butterknife"]
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     annotationProcessor rootProject.ext.dependencies["butterknife-compiler"]
     //ui
     implementation rootProject.ext.dependencies["appcompat-v7"]
@@ -63,10 +64,9 @@ dependencies {
     }
     implementation rootProject.ext.dependencies["okHttpLog"]
 
-
     //image
     implementation rootProject.ext.dependencies["glide"]
-    annotationProcessor  rootProject.ext.dependencies["glide-compiler"]
+    annotationProcessor rootProject.ext.dependencies["glide-compiler"]
     //解析
     implementation rootProject.ext.dependencies["gson"]
     //rx

@@ -3,7 +3,7 @@ package com.zzw.socketdemo.rx;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
-public class ErrorObserver<T> implements Observer<T> {
+public abstract class ErrorObserver<T> implements Observer<T> {
 
     private IError error;
 
@@ -17,10 +17,6 @@ public class ErrorObserver<T> implements Observer<T> {
 
     }
 
-    @Override
-    public void onNext(T t) {
-
-    }
 
     @Override
     public void onError(Throwable e) {
@@ -33,4 +29,5 @@ public class ErrorObserver<T> implements Observer<T> {
     public void onComplete() {
 
     }
+
 }

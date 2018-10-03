@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="15dp"
+    android:layout_marginRight="15dp"
+    android:layout_marginTop="15dp"
+    android:background="@drawable/shape_work_order_item_bg"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/num"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        tools:text="id:xxxxxxx" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="3dp"
+        android:background="@color/colorDivider" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/tv_gl_d_num"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            tools:text="光缆段编码:xxxxx" />
+
+        <TextView
+            android:id="@+id/tv_gl_d_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_gl_d_num"
+            android:singleLine="true"
+            tools:text="光缆段名称:xxxxx" />
+
+
+        <TextView
+            android:id="@+id/tv_dl_name"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tv_gl_d_num"
+            android:layout_below="@+id/tv_gl_d_num"
+            android:layout_marginTop="15dp"
+            android:singleLine="true"
+            tools:text="电缆名称:xxxxx" />
+
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

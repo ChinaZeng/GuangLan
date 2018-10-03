@@ -11,11 +11,16 @@ import android.view.ViewGroup;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 import com.zzw.socketdemo.http.retrofit.error.ExceptionHandler;
 import com.zzw.socketdemo.http.retrofit.error.IExceptionHandler;
+import com.zzw.socketdemo.rx.IError;
+import com.zzw.socketdemo.rx.SchedulersIoMainTransformer;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
 
-public abstract class BaseFragment extends RxFragment {
+public abstract class BaseFragment extends RxFragment implements IError {
     protected View rootView;
     private Unbinder mUnbinder;
     private IExceptionHandler exceptionHandler;
@@ -55,6 +60,7 @@ public abstract class BaseFragment extends RxFragment {
         }
     }
 
+    @Override
     public void showError(final Throwable t) {
         final FragmentActivity activity = getActivity();
         if (t != null && activity != null) {
@@ -69,4 +75,16 @@ public abstract class BaseFragment extends RxFragment {
             });
         }
     }
+
+    public <S> ObservableTransformer<S, S> transformer() {
+        return new ObservableTransformer<S, S>() {
+            @Override
+            public ObservableSource<S> apply(Observable<S> upstream) {
+                return upstream
+                        .compose(BaseFragment.this.<S>bindToLifecycle())
+                        .compose(SchedulersIoMainTransformer.<S>create());
+            }
+        };
+    }
+
 }
