@@ -4,18 +4,10 @@ import android.view.View;
 
 import com.zzw.socketdemo.R;
 import com.zzw.socketdemo.base.BaseFragment;
-import com.zzw.socketdemo.bean.GuanLanItemBean;
-import com.zzw.socketdemo.bean.QianXinItemBean;
-import com.zzw.socketdemo.http.Api;
-import com.zzw.socketdemo.http.retrofit.RetrofitHttpEngine;
-import com.zzw.socketdemo.rx.ErrorObserver;
-import com.zzw.socketdemo.rx.LifeObservableTransformer;
-import com.zzw.socketdemo.rx.ResultRevFunction;
-import com.zzw.socketdemo.ui.guanglan.GuangLanListActivity;
+import com.zzw.socketdemo.ui.guangland.GuangLanDListActivity;
 import com.zzw.socketdemo.widgets.RingView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -60,7 +52,7 @@ public class HomeFragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.res_look:
-                GuangLanListActivity.open(getContext());
+                GuangLanDListActivity.open(getContext());
                 break;
             case R.id.com_conf:
 

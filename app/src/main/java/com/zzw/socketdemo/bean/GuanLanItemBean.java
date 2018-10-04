@@ -8,19 +8,19 @@ public class GuanLanItemBean {
 
 
     /**
-     * id : 54958747319013376
-     * cabelOpName : 11221
-     * cabelOpCode : 111
+     * id : 55592803299758080
+     * cabelOpName : 光缆段名称123
+     * cabelOpCode : 光缆段编码
      * statId : 621
      * areaId : 377
      * roomId : 496
-     * capaticy : 12
+     * capaticy : 24
      * state : 100001
-     * opString : 11
+     * opString : 12
      * orgId : null
      * orgUserName : null
      * opStartTime : null
-     * lastTime : 1567958400000
+     * lastTime : 1536508800000
      * paCableId : null
      * paEquipId : null
      * createOp : null

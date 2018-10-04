@@ -1,4 +1,4 @@
-package com.zzw.socketdemo.ui.guanglan;
+package com.zzw.socketdemo.ui.guangland;
 
 import android.support.annotation.Nullable;
 
@@ -13,8 +13,8 @@ import java.util.List;
  * Created by zzw on 2018/10/3.
  * 描述:
  */
-public class GuangLanListAdapter extends BaseQuickAdapter<GuanLanItemBean, BaseViewHolder> {
-    public GuangLanListAdapter(@Nullable List<GuanLanItemBean> data) {
+public class GuangLanDListAdapter extends BaseQuickAdapter<GuanLanItemBean, BaseViewHolder> {
+    public GuangLanDListAdapter(@Nullable List<GuanLanItemBean> data) {
         super(R.layout.item_guanglan, data);
     }
 

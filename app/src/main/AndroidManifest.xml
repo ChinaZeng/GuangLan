@@ -42,10 +42,13 @@
         <service android:name=".service.SocketService" />
 
         <activity
-            android:name=".ui.guanglan.GuangLanListActivity"
+            android:name=".ui.guangland.GuangLanDListActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.qianxin.QianXinListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.guangland.add.GuangLanDAddActivitty"
             android:screenOrientation="portrait" />
     </application>
 

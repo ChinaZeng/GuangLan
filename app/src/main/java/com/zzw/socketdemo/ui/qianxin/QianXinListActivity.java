@@ -9,14 +9,12 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zzw.socketdemo.R;
 import com.zzw.socketdemo.base.BaseActivity;
-import com.zzw.socketdemo.bean.GuanLanItemBean;
 import com.zzw.socketdemo.bean.QianXinItemBean;
 import com.zzw.socketdemo.http.Api;
 import com.zzw.socketdemo.http.retrofit.RetrofitHttpEngine;
 import com.zzw.socketdemo.rx.ErrorObserver;
 import com.zzw.socketdemo.rx.LifeObservableTransformer;
 import com.zzw.socketdemo.rx.ResultRevFunction;
-import com.zzw.socketdemo.ui.guanglan.GuangLanListAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;

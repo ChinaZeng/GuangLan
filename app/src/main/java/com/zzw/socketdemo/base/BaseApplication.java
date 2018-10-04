@@ -13,23 +13,27 @@ import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 
-public class BaseApplication extends Application {
+public class BaseApplication extends Application implements HttpLoggingInterceptor.Logger{
 
 
     @Override
     public void onCreate() {
         super.onCreate();
+
         Timber.plant(new Timber.DebugTree());
+        ToastUtils.init(this);
         RetrofitHttpEngine.builder()
                 .baseUrl("http://47.97.167.95:7088")
-                .interceptors(new Interceptor[]{new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                    @Override
-                    public void log(String message) {
-                        Timber.tag("okhttp").w(message);
-                    }
-                }).setLevel(HttpLoggingInterceptor.Level.BODY)})
+                .interceptors(new Interceptor[]{
+                        new HttpLoggingInterceptor(this)
+                                .setLevel(HttpLoggingInterceptor.Level.BODY)
+                })
                 .build();
-        ToastUtils.init(this);
+
     }
 
+    @Override
+    public void log(String message) {
+        Timber.tag("okhttp").w(message);
+    }
 }

@@ -17,4 +17,8 @@ public class ResultBooleanFunction<T> implements Function<ResultBean<T>, Boolean
         }
         return false;
     }
+
+    public static <T> ResultBooleanFunction<T> create() {
+        return new ResultBooleanFunction<>();
+    }
 }

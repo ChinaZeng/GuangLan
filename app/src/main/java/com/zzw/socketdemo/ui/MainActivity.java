@@ -70,7 +70,10 @@ public class MainActivity extends BaseActivity implements TabBottomNavigation.On
         fragmentHelper = new FragmentHelper(getSupportFragmentManager(), R.id.frame_layout);
         onCheckChange(0, 0);
 
-        startWifiHot();
+
+
+
+//        startWifiHot();
     }
 
     @Override

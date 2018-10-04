@@ -7,8 +7,10 @@ import com.zzw.socketdemo.base.BaseActivity;
 import com.zzw.socketdemo.http.Api;
 import com.zzw.socketdemo.http.retrofit.RetrofitHttpEngine;
 import com.zzw.socketdemo.rx.ErrorObserver;
+import com.zzw.socketdemo.rx.LifeObservableTransformer;
 import com.zzw.socketdemo.rx.ResultBooleanFunction;
 import com.zzw.socketdemo.ui.MainActivity;
+import com.zzw.socketdemo.utils.RequestBodyUtils;
 
 import java.util.HashMap;
 
@@ -34,14 +36,14 @@ public class LoginActivity extends BaseActivity {
 
     public void login(View view) {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .login(new HashMap<String, String>() {
+                .login(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
                         put("staffNbr", "ADMIN");
                         put("password", "123456");
                     }
-                })
-                .map(new ResultBooleanFunction())
-                .compose(transformer())
+                }))
+                .map(ResultBooleanFunction.create())
+                .compose(LifeObservableTransformer.<Boolean>create(this))
                 .subscribe(new ErrorObserver<Boolean>(this) {
                     @Override
                     public void onNext(Boolean aBoolean) {
