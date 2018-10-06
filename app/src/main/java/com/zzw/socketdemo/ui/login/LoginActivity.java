@@ -70,6 +70,7 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void onNext(Boolean aBoolean) {
                         if (aBoolean) {
+                            finish();
                             MainActivity.open(LoginActivity.this);
                         }
                     }
