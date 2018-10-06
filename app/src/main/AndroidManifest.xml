@@ -21,6 +21,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.login.LoginActivity"
+            android:label="登录"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +31,8 @@
         </activity>
         <activity
             android:name=".ui.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitle.AppTheme" />
         <activity
             android:name=".TestActivity"
             android:screenOrientation="portrait" />
@@ -42,12 +44,15 @@
         <service android:name=".service.SocketService" />
 
         <activity
+            android:label="光缆段"
             android:name=".ui.guangland.GuangLanDListActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:label="纤芯段"
             android:name=".ui.qianxin.QianXinListActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:label="新增光缆段"
             android:name=".ui.guangland.add.GuangLanDAddActivitty"
             android:screenOrientation="portrait" />
     </application>

@@ -75,16 +75,4 @@ public abstract class BaseFragment extends RxFragment implements IError {
             });
         }
     }
-
-    public <S> ObservableTransformer<S, S> transformer() {
-        return new ObservableTransformer<S, S>() {
-            @Override
-            public ObservableSource<S> apply(Observable<S> upstream) {
-                return upstream
-                        .compose(BaseFragment.this.<S>bindToLifecycle())
-                        .compose(SchedulersIoMainTransformer.<S>create());
-            }
-        };
-    }
-
 }

@@ -19,6 +19,7 @@
 
     <com.zzw.socketdemo.widgets.MultiFunctionEditText
         android:id="@+id/et_phone"
+        android:text="ADMIN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
@@ -45,6 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:text="123456"
         android:background="@android:color/transparent"
         android:hint="密码"
         android:inputType="textPassword"

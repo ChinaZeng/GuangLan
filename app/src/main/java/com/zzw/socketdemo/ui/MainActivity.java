@@ -43,6 +43,7 @@ public class MainActivity extends BaseActivity implements TabBottomNavigation.On
     }
 
 
+
     @Override
     protected int initLayoutId() {
         return R.layout.activity_main;
@@ -149,6 +150,11 @@ public class MainActivity extends BaseActivity implements TabBottomNavigation.On
                 }
             }
         }
+    }
+
+    @Override
+    protected boolean backable() {
+        return false;
     }
 
     private void startSocketServer() {

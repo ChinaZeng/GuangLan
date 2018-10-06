@@ -11,10 +11,19 @@ import com.zzw.socketdemo.rx.LifeObservableTransformer;
 import com.zzw.socketdemo.rx.ResultBooleanFunction;
 import com.zzw.socketdemo.ui.MainActivity;
 import com.zzw.socketdemo.utils.RequestBodyUtils;
+import com.zzw.socketdemo.utils.ToastUtils;
+import com.zzw.socketdemo.widgets.MultiFunctionEditText;
 
 import java.util.HashMap;
 
+import butterknife.BindView;
+
 public class LoginActivity extends BaseActivity {
+
+    @BindView(R.id.et_phone)
+    MultiFunctionEditText etPhone;
+    @BindView(R.id.et_pwd)
+    MultiFunctionEditText etPwd;
 
     @Override
     protected void initView() {
@@ -34,12 +43,25 @@ public class LoginActivity extends BaseActivity {
         return R.layout.activity_login;
     }
 
+
+
     public void login(View view) {
+
+        if (etPhone.getText().toString().trim().length() == 0) {
+            ToastUtils.showToast("请输入用户名");
+            return;
+        }
+        if (etPwd.getText().toString().trim().length() == 0) {
+            ToastUtils.showToast("请输入密码");
+            return;
+        }
+
+
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .login(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
-                        put("staffNbr", "ADMIN");
-                        put("password", "123456");
+                        put("staffNbr", etPhone.getText().toString().trim());
+                        put("password", etPwd.getText().toString().trim());
                     }
                 }))
                 .map(ResultBooleanFunction.create())
@@ -53,4 +75,11 @@ public class LoginActivity extends BaseActivity {
                     }
                 });
     }
+
+
+    @Override
+    protected boolean backable() {
+        return false;
+    }
+
 }

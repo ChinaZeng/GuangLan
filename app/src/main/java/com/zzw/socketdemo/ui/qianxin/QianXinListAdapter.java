@@ -21,9 +21,9 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
 
     @Override
     protected void convert(BaseViewHolder helper, QianXinItemBean item) {
-        helper.setText(R.id.num, item.getFiberId());
-        helper.setText(R.id.tv_gl_d_num, item.getCblOpCode());
-        helper.setText(R.id.tv_gl_d_name, item.getCblOpName());
-        helper.setText(R.id.tv_dl_name, item.getCableName());
+        helper.setText(R.id.num, "id:" + item.getFiberId());
+        helper.setText(R.id.tv_gl_d_num, "光缆段编码:" + item.getCblOpCode());
+        helper.setText(R.id.tv_gl_d_name, "光缆段名称:" + item.getCblOpName());
+        helper.setText(R.id.tv_dl_name, "电缆名称:" + item.getCableName());
     }
 }

@@ -19,11 +19,6 @@ import retrofit2.http.PartMap;
 
 public interface Api {
 
-//    @FormUrlEncoded
-//    @POST("/glcs/staffmgr/appLogin")
-//    Observable<ResultBean<Object>> login(@FieldMap Map<String, String> s);
-
-
     @Multipart
     @POST("/glcs/staffmgr/appLogin")
     Observable<ResultBean<Object>> login(@PartMap Map<String, RequestBody> s);
@@ -32,28 +27,18 @@ public interface Api {
     @GET("/glcs/bseRoom/getAreaTree")
     Observable<ResultBean<Object>> getAreaTree();
 
-
-//    @FormUrlEncoded
-//    @POST("/glcs/cblCable/getAppListDuanByPage")
-//    Observable<ListDataBean<GuanLanItemBean>> getAppListDuanByPage(@FieldMap Map<String, String> s);
-
     @Multipart
     @POST("/glcs/cblCable/getAppListDuanByPage")
     Observable<ListDataBean<GuanLanItemBean>> getAppListDuanByPage(@PartMap Map<String, RequestBody> requestBodyMap);
 
 
-    @FormUrlEncoded
-    @POST("/glcs/cblCable/getAppListByPage")
-    Observable<ListDataBean<GuanLanItemBean>> getAppListByPageCbl(@FieldMap Map<String, String> s);
-
-
-    @FormUrlEncoded
+    @Multipart
     @POST("/glcs/cblFiber/getAppListByPage")
-    Observable<ResultBean<List<QianXinItemBean>>> getAppListByPage(@FieldMap Map<String, String> s);
+    Observable<ListDataBean<QianXinItemBean>> getAppListByPage(@PartMap Map<String, RequestBody> s);
 
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/glcs/cblCable/duanAppAdd")
-    Observable<ResultBean<Object>> duanAppAdd(@FieldMap Map<String, String> s);
+    Observable<ResultBean<Object>> duanAppAdd(@PartMap Map<String, RequestBody> s);
 
 }

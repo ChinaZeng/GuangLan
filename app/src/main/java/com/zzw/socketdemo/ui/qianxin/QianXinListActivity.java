@@ -9,12 +9,14 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zzw.socketdemo.R;
 import com.zzw.socketdemo.base.BaseActivity;
+import com.zzw.socketdemo.bean.ListDataBean;
 import com.zzw.socketdemo.bean.QianXinItemBean;
 import com.zzw.socketdemo.http.Api;
 import com.zzw.socketdemo.http.retrofit.RetrofitHttpEngine;
 import com.zzw.socketdemo.rx.ErrorObserver;
 import com.zzw.socketdemo.rx.LifeObservableTransformer;
 import com.zzw.socketdemo.rx.ResultRevFunction;
+import com.zzw.socketdemo.utils.RequestBodyUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,18 +52,18 @@ public class QianXinListActivity extends BaseActivity implements BaseQuickAdapte
 
     void getData() {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .getAppListByPage(new HashMap<String, String>() {
+                .getAppListByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
                         put("model.cblOpName", "1");
                         put("model.cblOpCode", "2");
                     }
-                })
-                .map(new ResultRevFunction<List<QianXinItemBean>>())
-                .compose(LifeObservableTransformer.<List<QianXinItemBean>>create(this))
-                .subscribe(new ErrorObserver<List<QianXinItemBean>>(this) {
+                }))
+                .compose(LifeObservableTransformer.<ListDataBean<QianXinItemBean>>create(this))
+                .subscribe(new ErrorObserver<ListDataBean<QianXinItemBean>>(this) {
                     @Override
-                    public void onNext(List<QianXinItemBean> qianXinItemBeans) {
-                        setData(qianXinItemBeans);
+                    public void onNext(ListDataBean<QianXinItemBean> qianXinItemBeans) {
+                        if (qianXinItemBeans.getList() != null && qianXinItemBeans.getList().size() > 0)
+                            setData(qianXinItemBeans.getList());
                     }
                 });
     }

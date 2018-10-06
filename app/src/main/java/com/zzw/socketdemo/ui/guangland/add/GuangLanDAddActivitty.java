@@ -11,6 +11,7 @@ import com.zzw.socketdemo.http.retrofit.RetrofitHttpEngine;
 import com.zzw.socketdemo.rx.ErrorObserver;
 import com.zzw.socketdemo.rx.LifeObservableTransformer;
 import com.zzw.socketdemo.rx.ResultBooleanFunction;
+import com.zzw.socketdemo.utils.RequestBodyUtils;
 import com.zzw.socketdemo.utils.ToastUtils;
 
 import java.util.HashMap;
@@ -80,7 +81,7 @@ public class GuangLanDAddActivitty extends BaseActivity {
         final String stateS = state.getText().toString().trim();
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .duanAppAdd(new HashMap<String, String>() {
+                .duanAppAdd(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
                         put("cabelOpName", cabelOpNameS);
                         put("cabelOpCode", cabelOpCodeS);
@@ -97,7 +98,7 @@ public class GuangLanDAddActivitty extends BaseActivity {
                         put("remark", remarkS);
                         put("state", stateS);
                     }
-                })
+                }))
                 .map(ResultBooleanFunction.create())
                 .compose(LifeObservableTransformer.<Boolean>create(this))
                 .subscribe(new ErrorObserver<Boolean>(this) {

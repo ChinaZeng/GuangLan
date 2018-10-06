@@ -20,12 +20,12 @@ public class GuangLanDListAdapter extends BaseQuickAdapter<GuanLanItemBean, Base
 
     @Override
     protected void convert(BaseViewHolder helper, GuanLanItemBean item) {
-        helper.setText(R.id.tv_gl_d_name, item.getCabelOpName());
-        helper.setText(R.id.tv_gl_d_num, item.getCabelOpCode());
-        helper.setText(R.id.num, item.getId());
-        helper.setText(R.id.tv_gd_are_name, item.getAreaName());
-        helper.setText(R.id.tv_gl_name, item.getPaCableName());
-        helper.setText(R.id.tv_gl_leave, item.getPaCableLevel());
-        helper.setText(R.id.tv_gl_state, item.getStateName());
+        helper.setText(R.id.tv_gl_d_name, "光缆段名称:" + item.getCabelOpName());
+        helper.setText(R.id.tv_gl_d_num, "区域:" + item.getCabelOpCode());
+        helper.setText(R.id.num, "id:" + item.getId());
+        helper.setText(R.id.tv_gd_are_name, "区域:" + item.getAreaName());
+        helper.setText(R.id.tv_gl_name, "光缆名称:" + item.getPaCableName());
+        helper.setText(R.id.tv_gl_leave, "级别:" + item.getPaCableLevel());
+        helper.setText(R.id.tv_gl_state, "状态:" + item.getStateName());
     }
 }
