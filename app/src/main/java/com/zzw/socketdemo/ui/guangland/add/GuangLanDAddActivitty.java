@@ -8,6 +8,7 @@ import com.zzw.socketdemo.R;
 import com.zzw.socketdemo.base.BaseActivity;
 import com.zzw.socketdemo.http.Api;
 import com.zzw.socketdemo.http.retrofit.RetrofitHttpEngine;
+import com.zzw.socketdemo.manager.UserManager;
 import com.zzw.socketdemo.rx.ErrorObserver;
 import com.zzw.socketdemo.rx.LifeObservableTransformer;
 import com.zzw.socketdemo.rx.ResultBooleanFunction;
@@ -83,6 +84,7 @@ public class GuangLanDAddActivitty extends BaseActivity {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .duanAppAdd(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
+                        put("userId", UserManager.getInstance().getUserId());
                         put("cabelOpName", cabelOpNameS);
                         put("cabelOpCode", cabelOpCodeS);
                         put("areaId", areaIdS);

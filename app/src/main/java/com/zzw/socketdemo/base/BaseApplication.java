@@ -2,23 +2,22 @@ package com.zzw.socketdemo.base;
 
 import android.app.Application;
 
-import com.zzw.socketdemo.http.retrofit.GlobeHttpHandler;
 import com.zzw.socketdemo.http.retrofit.RetrofitHttpEngine;
-import com.zzw.socketdemo.socket.utils.MyLog;
 import com.zzw.socketdemo.utils.ToastUtils;
 
 import okhttp3.Interceptor;
-import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 
-public class BaseApplication extends Application implements HttpLoggingInterceptor.Logger{
+public class BaseApplication extends Application implements HttpLoggingInterceptor.Logger {
 
+
+    private static BaseApplication application;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        application = this;
 
         Timber.plant(new Timber.DebugTree());
         ToastUtils.init(this);
@@ -30,6 +29,10 @@ public class BaseApplication extends Application implements HttpLoggingIntercept
                 })
                 .build();
 
+    }
+
+    public static BaseApplication getApplication() {
+        return application;
     }
 
     @Override

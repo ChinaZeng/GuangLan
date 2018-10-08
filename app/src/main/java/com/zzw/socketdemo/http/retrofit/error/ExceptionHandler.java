@@ -9,6 +9,7 @@ public class ExceptionHandler implements IExceptionHandler {
 
     {
         handlers = new ArrayList<>();
+        handlers.add(new DefaultExceptionHandler());
     }
 
     @Override
