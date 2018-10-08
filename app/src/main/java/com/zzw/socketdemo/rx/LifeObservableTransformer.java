@@ -28,6 +28,6 @@ public class LifeObservableTransformer<S> implements ObservableTransformer<S, S>
 
 
     public static <S> LifeObservableTransformer<S> create(LifecycleProvider provider) {
-        return new LifeObservableTransformer<S>(provider);
+        return new LifeObservableTransformer<>(provider);
     }
 }

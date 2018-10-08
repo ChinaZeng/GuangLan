@@ -91,7 +91,7 @@ public class GuangLanDAddActivitty extends BaseActivity {
                         put("statId", statIdS);
                         put("roomId", roomIdS);
                         put("capaticy", capaticyS);
-                        put("opLong", opLongS);
+                        put("oplong", opLongS);
                         put("orgId", orgIdS);
                         put("orgUserName", orgUserNameS);
                         put("opStartTime", opStartTimeS);
