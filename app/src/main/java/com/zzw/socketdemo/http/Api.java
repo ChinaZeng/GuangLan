@@ -1,11 +1,13 @@
 package com.zzw.socketdemo.http;
 
+import com.zzw.socketdemo.bean.AreaBean;
 import com.zzw.socketdemo.bean.GuanLanItemBean;
 import com.zzw.socketdemo.bean.ListDataBean;
 import com.zzw.socketdemo.bean.LoginResultBean;
 import com.zzw.socketdemo.bean.QianXinItemBean;
 import com.zzw.socketdemo.bean.ResultBean;
 
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -23,7 +25,7 @@ public interface Api {
 
 
     @GET("/glcs/bseRoom/getAreaTree")
-    Observable<ResultBean<Object>> getAreaTree();
+    Observable<List<AreaBean>> getAreaTree();
 
     @Multipart
     @POST("/glcs/cblCable/getAppListDuanByPage")

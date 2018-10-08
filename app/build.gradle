@@ -85,4 +85,7 @@ dependencies {
         exclude module: 'rxandroid'
     }
     implementation rootProject.ext.dependencies["timber"]
+
+
+    api 'com.astuetz:pagerslidingtabstrip:1.0.1'
 }

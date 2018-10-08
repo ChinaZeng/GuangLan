@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -14,9 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="100dp"
@@ -68,13 +67,17 @@
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="地区id" />
+                android:text="地区" />
 
-            <EditText
+
+            <TextView
+                android:gravity="center_vertical"
                 android:id="@+id/area_id"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
+                android:textColor="@color/color333333"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:singleLine="true"
                 android:text="377" />
 
@@ -91,15 +94,20 @@
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="局站id" />
+                android:text="局站" />
 
-            <EditText
+            <TextView
+                android:gravity="center_vertical"
                 android:id="@+id/stat_id"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
+                android:textColor="@color/color333333"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:singleLine="true"
                 android:text="621" />
+
+
 
         </LinearLayout>
 
@@ -116,11 +124,17 @@
                 android:gravity="center"
                 android:text="机房id" />
 
-            <EditText
+
+
+
+            <TextView
+                android:gravity="center_vertical"
                 android:id="@+id/room_id"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
+                android:textColor="@color/color333333"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:singleLine="true"
                 android:text="496" />
 
@@ -182,15 +196,19 @@
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="维护部门id" />
+                android:text="维护部门" />
 
-            <EditText
+            <TextView
+                android:gravity="center_vertical"
                 android:id="@+id/org_id"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
+                android:textColor="@color/color333333"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:singleLine="true"
                 android:text="1" />
+
 
         </LinearLayout>
 
@@ -230,13 +248,19 @@
                 android:gravity="center"
                 android:text="启动时间" />
 
-            <EditText
+
+
+            <TextView
+                android:gravity="center_vertical"
                 android:id="@+id/op_start_time"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
+                android:textColor="@color/color333333"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:singleLine="true"
                 android:text="2018-09-01" />
+
 
         </LinearLayout>
 
@@ -253,11 +277,15 @@
                 android:gravity="center"
                 android:text="有效期限" />
 
-            <EditText
+
+            <TextView
+                android:gravity="center_vertical"
                 android:id="@+id/last_time"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
+                android:textColor="@color/color333333"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:singleLine="true"
                 android:text="2018-09-10" />
 
@@ -320,13 +348,17 @@
                 android:gravity="center"
                 android:text="状态" />
 
-            <EditText
+            <TextView
+                android:gravity="center_vertical"
                 android:id="@+id/state"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
+                android:textColor="@color/color333333"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:singleLine="true"
                 android:text="100001" />
+
 
         </LinearLayout>
 
