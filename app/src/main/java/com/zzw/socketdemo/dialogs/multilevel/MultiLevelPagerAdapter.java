@@ -19,11 +19,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class MultiLevelPagerAdapter extends PagerAdapter {
+public class MultiLevelPagerAdapter<T extends INamedEntity> extends PagerAdapter {
     private Queue<RecyclerView> pool = new LinkedBlockingQueue<>(5);
-    private List<List<INamedEntity>> entities = new ArrayList<>();
+    private List<List<T>> entities = new ArrayList<>();
     private ViewPager pager;
-    private List<INamedEntity> selectedItems = new ArrayList<>();
+    private List<T> selectedItems = new ArrayList<>();
     private List<Integer> selectedIndexs = new ArrayList<>();
     private IDataSet dataSet;
     private OnConfirmCallback onConfirmCallback;
@@ -46,9 +46,9 @@ public class MultiLevelPagerAdapter extends PagerAdapter {
         Disposable req = dataSet.provideFirstLevel()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<INamedEntity>>() {
+                .subscribe(new Consumer<List<T>>() {
                     @Override
-                    public void accept(List<INamedEntity> iNamedEntities) throws Exception {
+                    public void accept(List<T> iNamedEntities) throws Exception {
                         if (iNamedEntities != null && iNamedEntities.size() > 0) {
                             addPage(iNamedEntities);
                         } else {
@@ -99,15 +99,15 @@ public class MultiLevelPagerAdapter extends PagerAdapter {
             adapter = new MultiLevelListAdapter();
         }
 
-        List<INamedEntity> data = entities.get(position);
+        List<T> data = entities.get(position);
         adapter.setData(data);
 
         if (selectedIndexs.size() > position) {
             adapter.setSelectedIndex(selectedIndexs.get(position));
         }
-        adapter.setSelectedCallBack(new MultiLevelListAdapter.OnSelectedCallBack<INamedEntity>() {
+        adapter.setSelectedCallBack(new MultiLevelListAdapter.OnSelectedCallBack<T>() {
             @Override
-            public void onSelected(int listPosition, INamedEntity data1) {
+            public void onSelected(int listPosition, T data1) {
                 clearChildLevelData(position, listPosition, data1);
                 tryUpdateChildren(data1);
             }
@@ -117,7 +117,7 @@ public class MultiLevelPagerAdapter extends PagerAdapter {
         return recyclerView;
     }
 
-    private void clearChildLevelData(int pagePosition, int listPosition, INamedEntity data) {
+    private void clearChildLevelData(int pagePosition, int listPosition, T data) {
         entities = entities.subList(0, pagePosition + 1);
         selectedItems = selectedItems.subList(0, Math.max(0, pagePosition));
         selectedIndexs = selectedIndexs.subList(0, Math.max(0, pagePosition));
@@ -127,13 +127,13 @@ public class MultiLevelPagerAdapter extends PagerAdapter {
         notifyDataSetChanged();
     }
 
-    private void tryUpdateChildren(INamedEntity parent) {
+    private void tryUpdateChildren(T parent) {
         Disposable req = dataSet.provideChildren(selectedItems)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<INamedEntity>>() {
+                .subscribe(new Consumer<List<T>>() {
                     @Override
-                    public void accept(List<INamedEntity> iNamedEntities) throws Exception {
+                    public void accept(List<T> iNamedEntities) throws Exception {
                         if (iNamedEntities != null && iNamedEntities.size() > 0) {
                             addPage(iNamedEntities);
                         } else {
@@ -151,7 +151,7 @@ public class MultiLevelPagerAdapter extends PagerAdapter {
         }
     }
 
-    private void addPage(List<INamedEntity> datas) {
+    private void addPage(List<T> datas) {
         if (datas == null || datas.size() == 0) {
             return;
         }

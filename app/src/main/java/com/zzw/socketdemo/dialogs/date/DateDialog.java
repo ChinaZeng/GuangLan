@@ -15,23 +15,23 @@ import io.reactivex.Observable;
 
 
 public class DateDialog {
-    public static MultilLevelDialog createDateTimeDialog(String title, Calendar maxDate, OnConfirmCallback confirmCallback) {
+    public static MultilLevelDialog createDateTimeDialog(String title, Calendar maxDate, OnConfirmCallback<DateTimeBean> confirmCallback) {
         Calendar minDate = Calendar.getInstance();
         minDate.set(Calendar.YEAR, 1970);
         return _createDateTimeDialog(false, title, minDate, maxDate, confirmCallback);
     }
 
 
-    public static MultilLevelDialog createDateTimeDialog(String title, Calendar minDate, Calendar maxDate, OnConfirmCallback confirmCallback) {
+    public static MultilLevelDialog createDateTimeDialog(String title, Calendar minDate, Calendar maxDate, OnConfirmCallback<DateTimeBean> confirmCallback) {
         return _createDateTimeDialog(false, title, minDate, maxDate, confirmCallback);
     }
 
 
-    public static MultilLevelDialog createDateTimeDialog(boolean desc, String title, Calendar minDate, Calendar maxDate, OnConfirmCallback confirmCallback) {
+    public static MultilLevelDialog createDateTimeDialog(boolean desc, String title, Calendar minDate, Calendar maxDate, OnConfirmCallback<DateTimeBean> confirmCallback) {
         return _createDateTimeDialog(desc, title, minDate, maxDate, confirmCallback);
     }
 
-    public static MultilLevelDialog createDateTimeDialog(String title, OnConfirmCallback confirmCallback) {
+    public static MultilLevelDialog createDateTimeDialog(String title, OnConfirmCallback <DateTimeBean>confirmCallback) {
         Calendar calendar = Calendar.getInstance();
         int currentYear = calendar.get(Calendar.YEAR);
         calendar.clear();

@@ -18,10 +18,10 @@ import java.util.List;
  * Email:496349136@qq.com
  */
 
-public class MultiLevelListAdapter extends RecyclerView.Adapter<MultiLevelListAdapter.ViewHolder> {
+public class MultiLevelListAdapter<T extends INamedEntity> extends RecyclerView.Adapter<MultiLevelListAdapter.ViewHolder> {
     private int selectedIndex = -1;
-    private List<INamedEntity> data = new ArrayList<>();
-    private OnSelectedCallBack<INamedEntity> selectedCallBack;
+    private List<T> data = new ArrayList<>();
+    private OnSelectedCallBack<T> selectedCallBack;
 
     public MultiLevelListAdapter setSelectedIndex(int selectedIndex) {
         this.selectedIndex = selectedIndex;
@@ -32,17 +32,17 @@ public class MultiLevelListAdapter extends RecyclerView.Adapter<MultiLevelListAd
         return selectedIndex;
     }
 
-    public MultiLevelListAdapter setData(List<INamedEntity> data) {
+    public MultiLevelListAdapter setData(List<T> data) {
         this.data = data;
         this.selectedIndex = -1;
         return this;
     }
 
-    public OnSelectedCallBack<INamedEntity> getSelectedCallBack() {
+    public OnSelectedCallBack<T> getSelectedCallBack() {
         return selectedCallBack;
     }
 
-    public MultiLevelListAdapter setSelectedCallBack(OnSelectedCallBack<INamedEntity> selectedCallBack) {
+    public MultiLevelListAdapter setSelectedCallBack(OnSelectedCallBack<T> selectedCallBack) {
         this.selectedCallBack = selectedCallBack;
         return this;
     }
@@ -55,7 +55,7 @@ public class MultiLevelListAdapter extends RecyclerView.Adapter<MultiLevelListAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        final INamedEntity entity = data.get(position);
+        final T entity = data.get(position);
         holder.cbName.setText(entity._getDisplayName_());
         holder.cbName.setChecked(selectedIndex == position);
         holder.selectedTag.setVisibility(selectedIndex == position ? View.VISIBLE : View.GONE);
@@ -89,7 +89,7 @@ public class MultiLevelListAdapter extends RecyclerView.Adapter<MultiLevelListAd
         }
     }
 
-    public INamedEntity getSelectedItem() {
+    public T getSelectedItem() {
         if (selectedIndex >= getItemCount()) {
             return null;
         }

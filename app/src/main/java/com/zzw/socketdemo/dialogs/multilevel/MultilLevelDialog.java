@@ -24,7 +24,7 @@ import java.util.List;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class MultilLevelDialog extends DialogFragment {
+public class MultilLevelDialog <T extends INamedEntity>extends DialogFragment {
     private ViewPager viewPager;
     private TextView tvTitle;
     private FixPagerSlidingTabStrip pagerTitleStrip;
@@ -33,10 +33,10 @@ public class MultilLevelDialog extends DialogFragment {
     private MultiLevelPagerAdapter pagerAdapter;
     private OnConfirmCallback onConfirmCallback;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private OnConfirmCallback confirmCallback = new OnConfirmCallback<INamedEntity>() {
+    private OnConfirmCallback confirmCallback = new OnConfirmCallback<T>() {
         @SuppressWarnings("unchecked")
         @Override
-        public void onConfirm(List<INamedEntity> selectedEntities) {
+        public void onConfirm(List<T> selectedEntities) {
             if (onConfirmCallback != null) {
                 onConfirmCallback.onConfirm(selectedEntities);
             }
