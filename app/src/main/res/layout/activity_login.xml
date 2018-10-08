@@ -17,7 +17,7 @@
         android:src="@mipmap/ic_launcher_round" />
 
 
-    <com.zzw.socketdemo.widgets.MultiFunctionEditText
+    <com.zzw.guanglan.widgets.MultiFunctionEditText
         android:id="@+id/et_phone"
         android:text="ADMIN"
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
         android:background="@color/colorDivider" />
 
 
-    <com.zzw.socketdemo.widgets.MultiFunctionEditText
+    <com.zzw.guanglan.widgets.MultiFunctionEditText
         android:id="@+id/et_pwd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

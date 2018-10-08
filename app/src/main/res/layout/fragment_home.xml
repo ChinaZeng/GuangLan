@@ -15,7 +15,7 @@
         android:textSize="16dp" />
 
 
-    <com.zzw.socketdemo.widgets.RingView
+    <com.zzw.guanglan.widgets.RingView
         android:id="@+id/ring_view"
         android:layout_width="match_parent"
         android:layout_height="250dp" />

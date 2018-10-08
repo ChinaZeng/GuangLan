@@ -58,7 +58,7 @@
         android:layout_weight="1" />
 
 
-    <com.zzw.socketdemo.widgets.taglayout.TagLayout
+    <com.zzw.guanglan.widgets.taglayout.TagLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -141,7 +141,7 @@
             android:textSize="10dp" />
 
 
-    </com.zzw.socketdemo.widgets.taglayout.TagLayout>
+    </com.zzw.guanglan.widgets.taglayout.TagLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

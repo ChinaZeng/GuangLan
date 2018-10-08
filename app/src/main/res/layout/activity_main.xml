@@ -20,7 +20,7 @@
         android:background="@color/colorDivider" />
 
 
-    <com.zzw.socketdemo.bottomtab.TabBottomNavigation
+    <com.zzw.guanglan.bottomtab.TabBottomNavigation
         android:id="@+id/tab_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

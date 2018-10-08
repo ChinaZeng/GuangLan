@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zzw.socketdemo">
+    package="com.zzw.guanglan">
 
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -43,16 +43,16 @@
         <service android:name=".service.SocketService" />
 
         <activity
-            android:label="光缆段"
             android:name=".ui.guangland.GuangLanDListActivity"
+            android:label="光缆段"
             android:screenOrientation="portrait" />
         <activity
-            android:label="纤芯段"
             android:name=".ui.qianxin.QianXinListActivity"
+            android:label="纤芯段"
             android:screenOrientation="portrait" />
         <activity
-            android:label="新增光缆段"
             android:name=".ui.guangland.add.GuangLanDAddActivitty"
+            android:label="新增光缆段"
             android:screenOrientation="portrait" />
     </application>
 

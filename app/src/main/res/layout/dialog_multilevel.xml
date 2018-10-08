@@ -24,7 +24,7 @@
         android:layout_height="1px"
         android:background="#D8D8D8" />
 
-    <com.zzw.socketdemo.dialogs.multilevel.FixPagerSlidingTabStrip
+    <com.zzw.guanglan.dialogs.multilevel.FixPagerSlidingTabStrip
         android:id="@+id/pst_titles"
         android:layout_width="match_parent"
         android:layout_height="40dp"
