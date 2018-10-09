@@ -168,6 +168,8 @@ public class QianXinTestActivity extends BaseActivity {
                                 if (bo) {
                                     ToastUtils.showToast("上传成功");
                                     finish();
+                                }else {
+                                    ToastUtils.showToast("上传失败");
                                 }
                                 progressDialog.dismiss();
                             }
