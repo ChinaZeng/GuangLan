@@ -5,4 +5,5 @@ public class SorFileBean {
     public String fileDir;
     public int fileSize;
     public String MD5;
+    public String filePath;
 }

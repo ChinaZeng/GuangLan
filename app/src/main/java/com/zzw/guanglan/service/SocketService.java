@@ -167,6 +167,7 @@ public class SocketService extends Service implements StatusListener {
                     SorFileBean bean = new SorFileBean();
                     bean.fileName = fileName;
                     bean.fileSize = fileSize;
+                    bean.filePath = file.getAbsolutePath();
                     bean.MD5 = MD5;
                     MyLog.e("zzz", "sermd5 = " + MD5 + " serfilesize = " + fileSize
                             + " file:" + file.getAbsolutePath() + " filesize = " + file.length() + "  fileMd5=" + fileMD5);

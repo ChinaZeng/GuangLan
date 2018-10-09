@@ -15,10 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Query;
 
@@ -33,10 +35,10 @@ public interface Api {
     Observable<List<AreaBean>> getAreaTree();
 
     @GET("/glcs/bseRoom/getAllStation")
-    Observable<List<StationBean>> getAllStation(@Query("areaId") String areaId );
+    Observable<List<StationBean>> getAllStation(@Query("areaId") String areaId);
 
     @GET("/glcs/bseRoom/getBseRoomListByArea")
-    Observable<List<BseRoomBean>> getBseRoomListByArea(@Query("id") String id );
+    Observable<List<BseRoomBean>> getBseRoomListByArea(@Query("id") String id);
 
     @GET("/glcs/patrolScheme/getAppConstructionTeamInfo")
     Observable<ListDataBean<TeamInfoBean>> getAppConstructionTeamInfo();
@@ -56,5 +58,9 @@ public interface Api {
     @Multipart
     @POST("/glcs/cblCable/duanAppAdd")
     Observable<ResultBean<Object>> duanAppAdd(@PartMap Map<String, RequestBody> s);
+
+    @Multipart
+    @POST("/glcs/cblFiber/saveFiberFile")
+    Observable<ResultBean<Object>> saveFiberFile(@PartMap Map<String, RequestBody> s, @Part MultipartBody.Part file);
 
 }

@@ -13,6 +13,12 @@
         android:textColor="@color/color333333"
         android:textSize="16sp" />
 
+    <TextView
+        android:id="@+id/tv_hint2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
 
     <Button
         android:layout_gravity="center"
@@ -20,5 +26,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="开始测试" />
+
+    <Button
+        android:layout_gravity="center"
+        android:id="@+id/upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="上传文件" />
 
 </LinearLayout>

@@ -30,7 +30,7 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
         helper.setOnClickListener(R.id.qianxin_test, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                QianXinTestActivity.open(helper.itemView.getContext());
+                QianXinTestActivity.open(helper.itemView.getContext(), item.getFiberId());
             }
         });
 

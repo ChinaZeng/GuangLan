@@ -81,7 +81,7 @@ public class ClientActivity extends AppCompatActivity {
                     String fileName = ByteUtil.bytes2Str(fileNameB);
                     String fileDir = ByteUtil.bytes2Str(fileLocB);
                     MyLog.e("接收到APP向设备请求传输sor文件命令 fileName = " + fileName + "  fileLoc = " + fileDir);
-                    String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir" + File.separator + "test.txt";
+                    String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir" + File.separator + "test.sor";
                     sendSorFile(name);
                 }
             } else if (packet.cmd == CMD.HEART_SEND) {
@@ -129,8 +129,8 @@ public class ClientActivity extends AppCompatActivity {
 
     void sendSorInfo() {
         if (key != null) {
-            String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir" + File.separator + "test.txt";
-            manager.sendSorInfo(key, "test.txt", Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir", (int) new File(name).length());
+            String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir" + File.separator + "test.sor";
+            manager.sendSorInfo(key, "test.sor", Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir", (int) new File(name).length());
         }
     }
 

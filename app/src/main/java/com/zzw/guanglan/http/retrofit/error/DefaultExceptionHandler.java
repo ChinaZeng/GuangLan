@@ -8,6 +8,7 @@ import com.zzw.guanglan.utils.ToastUtils;
 
 import org.json.JSONException;
 
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
@@ -16,9 +17,9 @@ import retrofit2.HttpException;
 public class DefaultExceptionHandler implements IExceptionHandler {
     @Override
     public boolean handle(Activity activity, Throwable e) {
-
+        e.printStackTrace();
         String msg = "未知错误";
-        if (e instanceof UnknownHostException) {
+        if (e instanceof UnknownHostException || e instanceof ConnectException) {
             msg = "网络不可用";
         } else if (e instanceof SocketTimeoutException) {
             msg = "请求网络超时";

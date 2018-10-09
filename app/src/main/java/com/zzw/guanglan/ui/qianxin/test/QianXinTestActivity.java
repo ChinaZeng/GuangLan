@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +25,12 @@ import android.widget.TextView;
 
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.http.Api;
+import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.manager.UserManager;
+import com.zzw.guanglan.rx.ErrorObserver;
+import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.rx.ResultBooleanFunction;
 import com.zzw.guanglan.service.SocketService;
 import com.zzw.guanglan.socket.CMD;
 import com.zzw.guanglan.socket.EventBusTag;
@@ -34,14 +41,21 @@ import com.zzw.guanglan.socket.listener.STATUS;
 import com.zzw.guanglan.socket.resolve.Packet;
 import com.zzw.guanglan.socket.utils.ByteUtil;
 import com.zzw.guanglan.socket.utils.MyLog;
+import com.zzw.guanglan.utils.RequestBodyUtils;
 import com.zzw.guanglan.utils.ToastUtils;
 import com.zzw.guanglan.utils.WifiAPManager;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
+import java.io.File;
+import java.util.HashMap;
+
 import butterknife.BindView;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class QianXinTestActivity extends BaseActivity {
 
@@ -49,15 +63,20 @@ public class QianXinTestActivity extends BaseActivity {
 
     @BindView(R.id.tv_hint)
     TextView tvHint;
+    @BindView(R.id.tv_hint2)
+    TextView tvHint2;
     @BindView(R.id.start)
     Button start;
+    private static final String FIBER_ID = "FIBER_ID";
 
     private HotBroadcastReceiver receiver;
     private WifiAPManager wifiAPManager;
 
+    private String fiberId;
 
-    public static void open(Context context) {
-        context.startActivity(new Intent(context, QianXinTestActivity.class));
+
+    public static void open(Context context, String fiberId) {
+        context.startActivity(new Intent(context, QianXinTestActivity.class).putExtra(FIBER_ID, fiberId));
     }
 
     @Override
@@ -82,32 +101,86 @@ public class QianXinTestActivity extends BaseActivity {
         }
         super.initView();
 
-
+        this.fiberId = getIntent().getStringExtra(FIBER_ID);
         wifiAPManager = new WifiAPManager(this);
         receiver = new HotBroadcastReceiver();
         IntentFilter mIntentFilter = new IntentFilter("android.net.wifi.WIFI_AP_STATE_CHANGED");
         registerReceiver(receiver, mIntentFilter);
     }
 
+    private String filePath;
 
-    @OnClick(R.id.start)
-    public void onViewClicked() {
-//        RxPermissions rxPermissions = new RxPermissions(this);
-//        rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                Manifest.permission.CHANGE_WIFI_STATE,
-//                Manifest.permission.WRITE_SETTINGS)
-//                .subscribe(new Consumer<Boolean>() {
-//                    @Override
-//                    public void accept(Boolean aBoolean) throws Exception {
-//                        if (!aBoolean) {
-//                            ToastUtils.showToast("请开启相关权限");
-//                        } else {
-//                            startWifiHot();
-//                        }
-//                    }
-//                });
+    @OnClick({R.id.start, R.id.upload})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.start:
+                if (!wifiIsOpen) {
+                    startWifiHot();
+                    return;
+                }
 
-        startWifiHot();
+                if (!isConn) {
+                    ToastUtils.showToast("请设备连接手机热点");
+                    return;
+                }
+                chooseArgs();
+                break;
+            case R.id.upload:
+                if (TextUtils.isEmpty(filePath)) {
+                    ToastUtils.showToast("请先进行文件测试");
+                    return;
+                }
+
+                progressDialog = new ProgressDialog(QianXinTestActivity.this);
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.setTitle("正在上传sor文件");
+                progressDialog.show();
+
+                final File file = new File(filePath);
+                RequestBody requestFile =
+                        RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                String name = file.getName();
+                MultipartBody.Part fileBody =
+                        MultipartBody.Part.createFormData("file", name, requestFile);
+
+                String struffix = null;
+                if (name.contains(".")) {
+                    String[] split = name.split("\\.");
+                    struffix = split[split.length - 1];
+                }
+
+                final String finalStruffix = struffix;
+                RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                        .saveFiberFile(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
+                            {
+                                put("struffix", finalStruffix);
+                                put("fiberId", fiberId);
+                                put("userId", UserManager.getInstance().getUserId());
+                            }
+                        }), fileBody)
+                        .map(ResultBooleanFunction.create())
+                        .compose(LifeObservableTransformer.<Boolean>create(this))
+                        .subscribe(new ErrorObserver<Boolean>(this) {
+                            @Override
+                            public void onNext(Boolean bo) {
+                                progressDialog.dismiss();
+                                if (bo) {
+                                    ToastUtils.showToast("上传成功");
+                                    finish();
+                                }
+                                progressDialog.dismiss();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                super.onError(e);
+//                                ToastUtils.showToast("请关闭热点切换网络,保证网络连接畅通,然后点击上传");
+                                progressDialog.dismiss();
+                            }
+                        });
+
+                break;
+        }
     }
 
 
@@ -132,7 +205,10 @@ public class QianXinTestActivity extends BaseActivity {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
-        ToastUtils.showToast("接收sor文件成功: " + bean.fileName);
+        filePath = bean.filePath;
+        ToastUtils.showToast("接收sor文件成功: " + bean.filePath);
+        tvHint2.setText("测试完毕,请关闭热点切换网络,保证网络连接畅通,然后点击上传");
+        hint();
     }
 
     @Subscriber(tag = EventBusTag.SOR_RECIVE_FAIL)
@@ -160,7 +236,6 @@ public class QianXinTestActivity extends BaseActivity {
             }
 
             progressDialog = new ProgressDialog(QianXinTestActivity.this);
-            progressDialog.setCancelable(false);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setTitle("正在获取sor文件");
             progressDialog.show();
@@ -169,10 +244,15 @@ public class QianXinTestActivity extends BaseActivity {
         }
     }
 
+    boolean isConn = false;
+    boolean wifiIsOpen = false;
+
     @Subscriber
     public void conn(ConnBean connBean) {
+        isConn = false;
         if (connBean.status == STATUS.RUNNING) {
             hintS = "与" + connBean.key + "建立连接";
+            isConn = true;
             chooseArgs();
         } else if (connBean.status == STATUS.END) {
             hintS = "与" + connBean.key + "断开连接";
@@ -194,6 +274,7 @@ public class QianXinTestActivity extends BaseActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setView(dialogView);
             chooseArgsDialog = builder.create();
+            chooseArgsDialog.setCanceledOnTouchOutside(false);
             dialogView.findViewById(R.id.start_test).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -226,8 +307,8 @@ public class QianXinTestActivity extends BaseActivity {
                         bean.gi = g;
                         EventBus.getDefault().post(bean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
 
+                        tvHint2.setText("");
                         progressDialog = new ProgressDialog(QianXinTestActivity.this);
-                        progressDialog.setCancelable(false);
                         progressDialog.setCanceledOnTouchOutside(false);
                         progressDialog.setTitle("正在获取sor文件相关参数信息");
                         progressDialog.show();
@@ -283,6 +364,7 @@ public class QianXinTestActivity extends BaseActivity {
 
     String hintS;
 
+
     private class HotBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -292,9 +374,10 @@ public class QianXinTestActivity extends BaseActivity {
                 //state状态为：10---正在关闭；11---已关闭；12---正在开启；13---已开启
                 int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
                 MyLog.e("state =" + state);
-
+                wifiIsOpen = false;
                 switch (state) {
                     case 10:
+
                         hintS = "热点正在关闭";
                         MyLog.e("热点正在关闭");
                         break;
@@ -325,6 +408,8 @@ public class QianXinTestActivity extends BaseActivity {
             @Override
             public void run() {
                 String serverIp = wifiAPManager.getLocalIpAddress();
+                isConn = false;
+                wifiIsOpen = true;
                 hintS = "共享开启成功，请先连接热点，然后socket连接。ip:" + serverIp + "端口:" + 8825;
                 MyLog.e("热点已开启 ip=" + serverIp);
                 startSocketServer();
