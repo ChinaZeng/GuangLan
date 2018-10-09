@@ -22,7 +22,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.service.SocketService;
@@ -43,7 +42,6 @@ import org.simple.eventbus.Subscriber;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.reactivex.functions.Consumer;
 
 public class QianXinTestActivity extends BaseActivity {
 
@@ -69,12 +67,21 @@ public class QianXinTestActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        super.initView();
-
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.CHANGE_WIFI_STATE,
                         Manifest.permission.WRITE_SETTINGS,}, 5);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            // 判断是否有WRITE_SETTINGS权限if(!Settings.System.canWrite(this))
+            if (!Settings.System.canWrite(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 1);
+            }
+        }
+        super.initView();
+
 
         wifiAPManager = new WifiAPManager(this);
         receiver = new HotBroadcastReceiver();
