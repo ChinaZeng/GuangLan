@@ -128,7 +128,7 @@ public class QianXinTestActivity extends BaseActivity {
                 break;
             case R.id.upload:
                 if (TextUtils.isEmpty(filePath)) {
-                    ToastUtils.showToast("请先进行文件测试");
+                    ToastUtils.showToast("请先进行测试");
                     return;
                 }
 
@@ -164,7 +164,6 @@ public class QianXinTestActivity extends BaseActivity {
                         .subscribe(new ErrorObserver<Boolean>(this) {
                             @Override
                             public void onNext(Boolean bo) {
-                                progressDialog.dismiss();
                                 if (bo) {
                                     ToastUtils.showToast("上传成功");
                                     finish();
