@@ -40,6 +40,7 @@ import com.zzw.guanglan.socket.event.TestArgsAndStartBean;
 import com.zzw.guanglan.socket.listener.STATUS;
 import com.zzw.guanglan.socket.resolve.Packet;
 import com.zzw.guanglan.socket.utils.ByteUtil;
+import com.zzw.guanglan.socket.utils.FileHelper;
 import com.zzw.guanglan.socket.utils.MyLog;
 import com.zzw.guanglan.utils.RequestBodyUtils;
 import com.zzw.guanglan.utils.ToastUtils;
@@ -195,6 +196,11 @@ public class QianXinTestActivity extends BaseActivity {
             fileDir = ByteUtil.bytes2Str(fileLocB);
             fileSize = ByteUtil.bytesToInt(fileSizeB);
             MyLog.e("fileName = " + fileName + "  fileLoc = " + fileDir + " fileSize = " + fileSize);
+
+            tvHint2.setText("");
+            getSorFilecount = 0;
+            filePath = null;
+
             getSorFile();
         }
     }
@@ -219,12 +225,27 @@ public class QianXinTestActivity extends BaseActivity {
     private String fileName;
     private String fileDir;
     private int fileSize;
+    private int getSorFilecount = 0;
 
     private ProgressDialog progressDialog;
     private AlertDialog chooseArgsDialog;
 
     private void getSorFile() {
         if (fileName != null && fileDir != null && fileSize != 0) {
+            getSorFilecount++;
+            if (getSorFilecount > 3) {
+                getSorFilecount = 0;
+                ToastUtils.showToast("文件保存失败!");
+                return;
+            }
+
+            //这一步很重要，因为协议原因。请求之前必须先删除之前的文件
+            String localFileName = FileHelper.SAVE_FILE_DIR + File.separator + fileName;
+            File file = new File(localFileName);
+            if (file.exists()) {
+                file.delete();
+            }
+
             SorFileBean bean = new SorFileBean();
             bean.fileDir = fileDir;
             bean.fileName = fileName;
@@ -305,9 +326,11 @@ public class QianXinTestActivity extends BaseActivity {
                         bean.time = t;
                         bean.mode = m;
                         bean.gi = g;
+
+
                         EventBus.getDefault().post(bean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
 
-                        tvHint2.setText("");
+
                         progressDialog = new ProgressDialog(QianXinTestActivity.this);
                         progressDialog.setCanceledOnTouchOutside(false);
                         progressDialog.setTitle("正在获取sor文件相关参数信息");

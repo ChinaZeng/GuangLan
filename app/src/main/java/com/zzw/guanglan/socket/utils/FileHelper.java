@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileHelper {
-    private final static String SAVE_FILE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "guanglan";
+    public final static String SAVE_FILE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "guanglan";
 
 
     public static File saveFileToLocal(byte[] data, boolean isBegin, String name) {
@@ -19,7 +19,6 @@ public class FileHelper {
             filePath.mkdirs();
         String fileName = filePath + File.separator + name;
         File file = new File(fileName);
-
         appendFile(data, isBegin, file);
         return file;
     }

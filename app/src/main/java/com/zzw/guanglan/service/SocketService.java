@@ -175,7 +175,6 @@ public class SocketService extends Service implements StatusListener {
                         EventBus.getDefault().post(bean, EventBusTag.SOR_RECIVE_SUCCESS);
                     } else {
                         EventBus.getDefault().post(bean, EventBusTag.SOR_RECIVE_FAIL);
-                        file.delete();
                     }
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
