@@ -1,11 +1,13 @@
 package com.zzw.guanglan.ui.qianxin;
 
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.bean.QianXinItemBean;
+import com.zzw.guanglan.ui.qianxin.test.QianXinTestActivity;
 
 import java.util.List;
 
@@ -19,10 +21,20 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, QianXinItemBean item) {
+    protected void convert(final BaseViewHolder helper, final QianXinItemBean item) {
         helper.setText(R.id.num, "id:" + item.getFiberId());
         helper.setText(R.id.tv_gl_d_num, "光缆段编码:" + item.getCblOpCode());
         helper.setText(R.id.tv_gl_d_name, "光缆段名称:" + item.getCblOpName());
         helper.setText(R.id.tv_dl_name, "电缆名称:" + item.getCableName());
+
+        helper.setOnClickListener(R.id.qianxin_test, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QianXinTestActivity.open(helper.itemView.getContext());
+            }
+        });
+
     }
+
+
 }

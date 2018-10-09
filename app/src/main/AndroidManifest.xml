@@ -48,12 +48,18 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.qianxin.QianXinListActivity"
-            android:label="纤芯段"
+            android:label="纤芯"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.guangland.add.GuangLanDAddActivitty"
             android:label="新增光缆段"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.qianxin.test.QianXinTestActivity"
+            android:label="纤芯测试"
+            android:screenOrientation="portrait"
+            />
+
+
     </application>
 
 </manifest>

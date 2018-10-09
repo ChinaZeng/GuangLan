@@ -168,8 +168,8 @@ public class SocketService extends Service implements StatusListener {
                     bean.fileName = fileName;
                     bean.fileSize = fileSize;
                     bean.MD5 = MD5;
-                    Log.e("zzz", "sermd5 = " + MD5 + " serfilesize = " + fileSize
-                            + " file:" + file.getAbsolutePath()+" filesize = "+file.length()+"  fileMd5="+fileMD5);
+                    MyLog.e("zzz", "sermd5 = " + MD5 + " serfilesize = " + fileSize
+                            + " file:" + file.getAbsolutePath() + " filesize = " + file.length() + "  fileMd5=" + fileMD5);
                     if (TextUtils.equals(MD5, fileMD5)) {
                         EventBus.getDefault().post(bean, EventBusTag.SOR_RECIVE_SUCCESS);
                     } else {
@@ -182,9 +182,9 @@ public class SocketService extends Service implements StatusListener {
                     e.printStackTrace();
                 }
             }
+        } else if (packet.cmd == CMD.HEART_SEND) {
+            reHeart(1);
         }
-
-
     }
 
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)

@@ -23,7 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class QianXinListActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener {
+public class QianXinListActivity extends BaseActivity {
     @BindView(R.id.recy)
     RecyclerView recy;
 
@@ -43,7 +43,6 @@ public class QianXinListActivity extends BaseActivity implements BaseQuickAdapte
         super.initData();
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new QianXinListAdapter(new ArrayList<QianXinItemBean>());
-        adapter.setOnItemClickListener(this);
         recy.setAdapter(adapter);
 
         getData();
@@ -71,8 +70,5 @@ public class QianXinListActivity extends BaseActivity implements BaseQuickAdapte
         adapter.replaceData(datas);
     }
 
-    @Override
-    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 
-    }
 }

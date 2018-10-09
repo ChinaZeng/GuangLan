@@ -16,6 +16,7 @@ import com.zzw.guanglan.socket.EventBusTag;
 import com.zzw.guanglan.socket.resolve.Packet;
 import com.zzw.guanglan.socket.listener.STATUS;
 import com.zzw.guanglan.socket.listener.StatusListener;
+import com.zzw.guanglan.socket.utils.MyLog;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
@@ -71,8 +72,18 @@ public class ClientActivity extends AppCompatActivity {
                 builder.append("接收到APP询问设备序列号设备命令\n");
             } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_START_TEST) {
                 builder.append("接收到APP给设备下发OTDR测试参数并启动测试命令\n");
+                sendSorInfo();
             } else if (packet.cmd == CMD.GET_SOR_FILE) {
                 builder.append("接收到APP向设备请求传输sor文件命令\n");
+                if (packet.data.length >= (32 + 16)) {
+                    byte[] fileNameB = ByteUtil.subBytes(packet.data, 0, 32);
+                    byte[] fileLocB = ByteUtil.subBytes(packet.data, 32, 16);
+                    String fileName = ByteUtil.bytes2Str(fileNameB);
+                    String fileDir = ByteUtil.bytes2Str(fileLocB);
+                    MyLog.e("接收到APP向设备请求传输sor文件命令 fileName = " + fileName + "  fileLoc = " + fileDir);
+                    String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir" + File.separator + "test.txt";
+                    sendSorFile(name);
+                }
             } else if (packet.cmd == CMD.HEART_SEND) {
                 builder.append("接收到心跳包命令\n");
             } else if (packet.cmd == CMD.HEART_RE) {
@@ -107,9 +118,19 @@ public class ClientActivity extends AppCompatActivity {
     }
 
     public void sendData(View view) {
+
+    }
+
+    void sendSorFile(String path) {
         if (key != null) {
-            String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "test.txt";
-            manager.sendSorInfo(key, "test.txt", "dir", 1096);
+            manager.sendFile(key, path);
+        }
+    }
+
+    void sendSorInfo() {
+        if (key != null) {
+            String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir" + File.separator + "test.txt";
+            manager.sendSorInfo(key, "test.txt", Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir", (int) new File(name).length());
         }
     }
 
