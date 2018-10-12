@@ -2,6 +2,7 @@ package com.zzw.guanglan.ui.guangland;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -26,12 +27,18 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener {
+public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener,
+        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.recy)
     RecyclerView recy;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout refreshLayout;
 
     private GuangLanDListAdapter adapter;
 
+
+    private final static int PAGE_SIZE = 10;
+    private int pageNo = 1;
 
     public static void open(Context context) {
         context.startActivity(new Intent(context, GuangLanDListActivity.class));
@@ -49,9 +56,13 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GuangLanDListAdapter(new ArrayList<GuanLanItemBean>());
         adapter.setOnItemClickListener(this);
+        adapter.setEnableLoadMore(true);
+        adapter.setOnLoadMoreListener(this, recy);
         recy.setAdapter(adapter);
 
-        getData();
+        refreshLayout.setOnRefreshListener(this);
+
+        onRefresh();
     }
 
     void getData() {
@@ -61,6 +72,8 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
                     {
                         put("model.cabelOpCode", "1");
                         put("model.cabelOpName", "1");
+                        put("pageSize", String.valueOf(PAGE_SIZE));
+                        put("pageNo", String.valueOf(pageNo));
                     }
                 }))
                 .compose(LifeObservableTransformer.<ListDataBean<GuanLanItemBean>>create(this))
@@ -69,23 +82,46 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
                     public void onNext(ListDataBean<GuanLanItemBean> guanLanItemBeans) {
                         if (guanLanItemBeans != null && guanLanItemBeans.getList() != null) {
                             setData(guanLanItemBeans.getList());
+                            if (adapter.getData().size() >= guanLanItemBeans.getTotal()) {
+                                adapter.loadMoreEnd();
+                            }else {
+                                adapter.loadMoreComplete();
+                            }
                         }
                     }
                 });
     }
 
     void setData(List<GuanLanItemBean> datas) {
-        adapter.replaceData(datas);
+        if (pageNo == 1) {
+            adapter.replaceData(datas);
+            refreshLayout.setRefreshing(false);
+        } else {
+            adapter.addData(datas);
+        }
+
     }
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        QianXinListActivity.open(this);
+        QianXinListActivity.open(this, (GuanLanItemBean) adapter.getData().get(position));
     }
 
 
     @OnClick(R.id.add)
     public void onViewClicked() {
         GuangLanDAddActivitty.open(this);
+    }
+
+    @Override
+    public void onLoadMoreRequested() {
+        pageNo++;
+        getData();
+    }
+
+    @Override
+    public void onRefresh() {
+        pageNo = 1;
+        getData();
     }
 }
