@@ -89,6 +89,11 @@ public class ListenerThread extends Thread {
         for (SocketThread socketThread : socketThreads) {
             socketThread.exit();
         }
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public HashMap<String, SocketThread> getServerThreads() {
