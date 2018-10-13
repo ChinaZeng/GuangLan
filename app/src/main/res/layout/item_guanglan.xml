@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
     android:layout_marginLeft="15dp"
     android:layout_marginRight="15dp"
-    android:layout_marginBottom="8dp"
     android:layout_marginTop="8dp"
     android:background="@drawable/shape_work_order_item_bg"
     android:orientation="vertical"
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        tools:text="id:xxxxxxx" />
+        tools:text="光缆名称:xxxxxxx" />
 
     <View
         android:layout_width="match_parent"
@@ -27,64 +27,66 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="10dp">
 
         <TextView
             android:id="@+id/tv_gl_d_num"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            tools:text="光缆段编码:xxxxx" />
+            tools:text="所在区域:xxxxx" />
 
         <TextView
-            android:id="@+id/tv_gl_d_name"
+            android:id="@+id/tv_gl_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tv_gl_d_num"
             android:layout_toRightOf="@+id/tv_gl_d_num"
             android:singleLine="true"
-            tools:text="光缆段名称:xxxxx" />
+            tools:text="安装地址:xxxxx" />
 
-        <TextView
-            android:id="@+id/tv_gd_are_name"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/tv_gl_d_num"
-            android:layout_below="@+id/tv_gl_d_num"
-            android:layout_marginTop="15dp"
-            android:singleLine="true"
-            tools:text="区域:xxxxx" />
-
-
-        <TextView
-            android:id="@+id/tv_gl_name"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/tv_gd_are_name"
-            android:layout_below="@+id/tv_gd_are_name"
-            android:layout_marginTop="15dp"
-            android:singleLine="true"
-            tools:text="光缆名称:xxxxx" />
-
-
-        <TextView
-            android:id="@+id/tv_gl_leave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/tv_gl_name"
-            android:layout_toRightOf="@+id/tv_gl_name"
-            android:singleLine="true"
-            tools:text="级别:xxxxx" />
 
         <TextView
             android:id="@+id/tv_gl_state"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/tv_gl_name"
-            android:layout_below="@+id/tv_gl_name"
-            android:layout_marginTop="15dp"
+            android:layout_alignLeft="@+id/tv_gl_d_num"
+            android:layout_below="@+id/tv_gl_d_num"
+            android:layout_marginTop="5dp"
             android:singleLine="true"
-            tools:text="状态:xxxxx" />
+            tools:text="光缆段状态:xxxxx" />
+
+        <TextView
+            android:id="@+id/tv_gl_leave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tv_gl_state"
+            android:layout_toRightOf="@+id/tv_gl_state"
+            android:singleLine="true"
+            tools:text="当前级别:xxxxx" />
+
+
+        <TextView
+            android:id="@+id/tv_gl_len"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tv_gl_d_num"
+            android:layout_below="@+id/tv_gl_state"
+            android:layout_marginTop="5dp"
+            android:singleLine="true"
+            tools:text="长度:xxxxx" />
+
+
+        <TextView
+            android:id="@+id/tv_gl_rongliang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tv_gl_len"
+            android:layout_toRightOf="@+id/tv_gl_len"
+            android:singleLine="true"
+            tools:text="容量:xxxxx" />
+
 
     </RelativeLayout>
 

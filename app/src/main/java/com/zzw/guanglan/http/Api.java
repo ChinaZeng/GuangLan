@@ -2,7 +2,9 @@ package com.zzw.guanglan.http;
 
 import com.zzw.guanglan.bean.AreaBean;
 import com.zzw.guanglan.bean.BseRoomBean;
-import com.zzw.guanglan.bean.GuanLanItemBean;
+import com.zzw.guanglan.bean.GradeBean;
+import com.zzw.guanglan.bean.GuangLanDItemBean;
+import com.zzw.guanglan.bean.GuangLanItemBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.LoginResultBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
@@ -46,14 +48,24 @@ public interface Api {
     @GET("/glcs/pubrestrion/quertstatuslistinfo")
     Observable<List<StatusInfoBean>> quertstatuslistinfo();
 
+    @GET("/glcs/pubrestrion/quertListInfo")
+    Observable<List<GradeBean>> quertListInfo();
+
+    @Multipart
+    @POST("/glcs/cblCable/getAppListByPage")
+    Observable<ListDataBean<GuangLanItemBean>> getGuangLanByPage(@PartMap Map<String, RequestBody> s);
+
     @Multipart
     @POST("/glcs/cblCable/getAppListDuanByPage")
-    Observable<ListDataBean<GuanLanItemBean>> getAppListDuanByPage(@PartMap Map<String, RequestBody> requestBodyMap);
+    Observable<ListDataBean<GuangLanDItemBean>> getAppListDuanByPage(@PartMap Map<String, RequestBody> requestBodyMap);
 
     @Multipart
     @POST("/glcs/cblFiber/getAppListByPage")
     Observable<ListDataBean<QianXinItemBean>> getAppListByPage(@PartMap Map<String, RequestBody> s);
 
+    @Multipart
+    @POST("/glcs/cblCable/appadd")
+    Observable<ResultBean<Object>> appAdd(@PartMap Map<String, RequestBody> s);
 
     @Multipart
     @POST("/glcs/cblCable/duanAppAdd")

@@ -16,7 +16,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -54,10 +54,18 @@
             android:name=".ui.guangland.add.GuangLanDAddActivitty"
             android:label="新增光缆段"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.qianxin.test.QianXinTestActivity"
+        <activity
+            android:name=".ui.qianxin.test.QianXinTestActivity"
             android:label="纤芯测试"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.guanglan.GuangLanListActivity"
+            android:label="光缆"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.guanglan.add.GuangLanAddActivitty"
+            android:label="新增光缆"
+            android:screenOrientation="portrait" />
 
     </application>
 

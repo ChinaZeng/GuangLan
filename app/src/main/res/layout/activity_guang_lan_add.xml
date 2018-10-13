@@ -22,18 +22,45 @@
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="光缆段名称" />
+                android:text="光缆名称" />
 
             <EditText
-                android:id="@+id/cabel_op_name"
+                android:id="@+id/cabel_name"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:layout_height="50dp"
-                android:hint="请输入光缆段名称(必填)"
+                android:hint="请输入光缆名称(必填)"
                 android:textColorHint="#95A1AA"
                 android:textSize="14sp"
                 tools:text="" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="地区" />
+
+
+            <TextView
+                android:gravity="center_vertical"
+                android:id="@+id/area_id"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                tools:textColor="@color/color333333"
+                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+                android:singleLine="true"
+                android:hint="请选择所属地区"
+                tools:text="" />
+
         </LinearLayout>
 
 
@@ -47,13 +74,37 @@
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="光缆段编码" />
+                android:text="安装地址" />
 
             <EditText
-                android:id="@+id/cabel_op_code"
+                android:id="@+id/address"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:layout_height="50dp"
+                android:hint="请输入安装地址(必填)"
+                android:textColorHint="#95A1AA"
+                android:textSize="14sp"
+                tools:text="" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="光缆编码" />
+
+            <EditText
+                android:id="@+id/cabel_code"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:hint="请输入光缆段编码(必填)"
+                android:hint="请输入光缆编码(必填)"
                 android:textColorHint="#95A1AA"
                 android:textSize="14sp"
                 android:layout_weight="1"
@@ -114,6 +165,7 @@
         </LinearLayout>
 
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -124,218 +176,24 @@
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="地区" />
-
+                android:text="级别" />
 
             <TextView
                 android:gravity="center_vertical"
-                android:id="@+id/area_id"
+                android:id="@+id/grade_id"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 tools:textColor="@color/color333333"
                 android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:singleLine="true"
-                android:hint="请选择所属地区"
-                tools:text="" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="局站" />
-
-            <TextView
-                android:gravity="center_vertical"
-                android:id="@+id/stat_id"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                tools:textColor="@color/color333333"
-                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
-                android:singleLine="true"
-                android:hint="请选择所属局站"
+                android:hint="请选择级别"
                 tools:text="" />
 
 
 
         </LinearLayout>
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="机房" />
-
-
-            <TextView
-                android:gravity="center_vertical"
-                android:id="@+id/room_id"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                tools:textColor="@color/color333333"
-                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
-                android:singleLine="true"
-                android:hint="请选择所属机房"
-                tools:text="" />
-
-        </LinearLayout>
-
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="维护部门" />
-
-            <TextView
-                android:gravity="center_vertical"
-                android:id="@+id/org_id"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                tools:textColor="@color/color333333"
-                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
-                android:singleLine="true"
-                android:hint="请选择维护部门信息"
-                tools:text="" />
-
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="维护人姓名" />
-
-            <EditText
-                android:id="@+id/org_user_name"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:hint="请输入维护人姓名"
-                android:textSize="14sp"
-                tools:text="" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="启动时间" />
-
-
-            <EditText
-                android:id="@+id/op_start_time"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:hint="请输入启动时间"
-                android:textSize="14sp"
-                tools:text="" />
-
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="有效期限" />
-
-
-            <EditText
-                android:id="@+id/last_time"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:hint="请输入有效期"
-                android:textSize="14sp"
-                tools:text="" />
-
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="上级光缆" />
-
-
-            <TextView
-                android:id="@+id/pa_cable_id"
-                android:gravity="center_vertical"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                tools:textColor="@color/color333333"
-                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
-                android:singleLine="true"
-                android:hint="请选择上级光缆"
-                tools:text="" />
-
-
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

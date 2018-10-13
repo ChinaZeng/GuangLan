@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by zzw on 2018/10/3.
  * 描述:
  */
-public class GuanLanItemBean implements Serializable {
+public class GuangLanDItemBean implements Serializable {
 
 
     /**

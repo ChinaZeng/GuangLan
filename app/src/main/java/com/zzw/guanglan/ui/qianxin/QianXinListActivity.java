@@ -5,12 +5,11 @@ import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
-import com.zzw.guanglan.bean.GuanLanItemBean;
+import com.zzw.guanglan.bean.GuangLanDItemBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
 import com.zzw.guanglan.http.Api;
@@ -18,7 +17,6 @@ import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.utils.RequestBodyUtils;
-import com.zzw.guanglan.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,9 +38,9 @@ public class QianXinListActivity extends BaseActivity implements BaseQuickAdapte
 
 
     private QianXinListAdapter adapter;
-    private GuanLanItemBean bean;
+    private GuangLanDItemBean bean;
 
-    public static void open(Context context, GuanLanItemBean bean) {
+    public static void open(Context context, GuangLanDItemBean bean) {
         context.startActivity(new Intent(context, QianXinListActivity.class).putExtra(ITEM, bean));
     }
 
@@ -54,7 +52,7 @@ public class QianXinListActivity extends BaseActivity implements BaseQuickAdapte
     @Override
     protected void initData() {
         super.initData();
-        bean = (GuanLanItemBean) getIntent().getSerializableExtra(ITEM);
+        bean = (GuangLanDItemBean) getIntent().getSerializableExtra(ITEM);
 
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new QianXinListAdapter(new ArrayList<QianXinItemBean>());
@@ -72,8 +70,7 @@ public class QianXinListActivity extends BaseActivity implements BaseQuickAdapte
                     {
                         put("model.cblOpName", bean.getCabelOpName());
                         put("model.cblOpCode", bean.getCabelOpCode());
-                        put("pageSize", String.valueOf(PAGE_SIZE));
-                        put("pageNo", String.valueOf(pageNo));
+                        put("pageNum", String.valueOf(pageNo));
                     }
                 }))
                 .compose(LifeObservableTransformer.<ListDataBean<QianXinItemBean>>create(this))
