@@ -1,5 +1,8 @@
 package com.zzw.guanglan.ui.guangland.add;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -7,11 +10,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.AreaBean;
 import com.zzw.guanglan.bean.BseRoomBean;
 import com.zzw.guanglan.bean.GuangLanItemBean;
+import com.zzw.guanglan.bean.GuangLanParamBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.StationBean;
 import com.zzw.guanglan.bean.StatusInfoBean;
@@ -21,10 +26,13 @@ import com.zzw.guanglan.dialogs.area.AreaDialog;
 import com.zzw.guanglan.dialogs.multilevel.OnConfirmCallback;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.manager.LocationManager;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.rx.ResultBooleanFunction;
+import com.zzw.guanglan.ui.MainActivity;
+import com.zzw.guanglan.ui.guangland.param.GuangLanParamActivity;
 import com.zzw.guanglan.utils.RequestBodyUtils;
 import com.zzw.guanglan.utils.ToastUtils;
 
@@ -34,13 +42,14 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
 /**
  * Created by zzw on 2018/10/4.
  * 描述:
  */
-public class GuangLanDAddActivitty extends BaseActivity {
+public class GuangLanDAddActivitty extends BaseActivity implements LocationManager.OnLocationListener {
     @BindView(R.id.cabel_op_name)
     EditText cabelOpName;
     @BindView(R.id.cabel_op_code)
@@ -69,10 +78,20 @@ public class GuangLanDAddActivitty extends BaseActivity {
     EditText remark;
     @BindView(R.id.state)
     TextView state;
+    @BindView(R.id.location)
+    TextView location;
 
+
+    private LocationManager locationManager;
 
     public static void open(Context context) {
         context.startActivity(new Intent(context, GuangLanDAddActivitty.class));
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
+        startLocation();
     }
 
     @Override
@@ -89,6 +108,12 @@ public class GuangLanDAddActivitty extends BaseActivity {
     private String guanglanIdS;
 
     public void submit() {
+
+        if (locationBean == null) {
+            ToastUtils.showToast("请先获取定位!");
+            return;
+        }
+
         final String cabelOpNameS = cabelOpName.getText().toString().trim();
         final String cabelOpCodeS = cabelOpCode.getText().toString().trim();
         final String capaticyS = capaticy.getText().toString().trim();
@@ -102,6 +127,10 @@ public class GuangLanDAddActivitty extends BaseActivity {
                 .duanAppAdd(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
                         put("userId", UserManager.getInstance().getUserId());
+
+                        put("latitude", String.valueOf(locationBean.latitude));
+                        put("longitude", String.valueOf(locationBean.longitude));
+
                         put("cabelOpName", cabelOpNameS);
                         put("cabelOpCode", cabelOpCodeS);
                         put("areaId", areaIdStr);
@@ -240,39 +269,6 @@ public class GuangLanDAddActivitty extends BaseActivity {
                 });
     }
 
-    private void cableId() {
-        RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .getGuangLanByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
-                    {
-                        put("model.cableNo", "");
-                        put("model.cableName", "");
-                    }
-                }))
-                .compose(LifeObservableTransformer.<ListDataBean<GuangLanItemBean>>create(this))
-                .subscribe(new ErrorObserver<ListDataBean<GuangLanItemBean>>(this) {
-                    @Override
-                    public void onNext(ListDataBean<GuangLanItemBean> guanLanItemBeans) {
-                        if (guanLanItemBeans != null && guanLanItemBeans.getList() != null) {
-                            BottomListDialog.newInstance(guanLanItemBeans.getList(), new BottomListDialog.Convert<GuangLanItemBean>() {
-                                @Override
-                                public String convert(GuangLanItemBean data) {
-                                    return data.getCableName();
-                                }
-                            }).setCallback(new BottomListDialog.Callback<GuangLanItemBean>() {
-                                @Override
-                                public boolean onSelected(GuangLanItemBean data, int position) {
-                                    paCableId.setText(data.getCableName());
-                                    guanglanIdS = data.getCableId();
-                                    return true;
-                                }
-                            }).show(getSupportFragmentManager(), "cableId");
-                        } else {
-                            ToastUtils.showToast("没有查到光缆信息");
-                        }
-                    }
-                });
-    }
-
 
     private void state() {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
@@ -302,7 +298,7 @@ public class GuangLanDAddActivitty extends BaseActivity {
                 });
     }
 
-    @OnClick({R.id.add, R.id.area_id, R.id.stat_id, R.id.room_id, R.id.org_id, R.id.state, R.id.pa_cable_id})
+    @OnClick({R.id.add, R.id.area_id, R.id.location, R.id.stat_id, R.id.room_id, R.id.org_id, R.id.state, R.id.pa_cable_id})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.area_id:
@@ -329,13 +325,74 @@ public class GuangLanDAddActivitty extends BaseActivity {
                 state();
                 break;
             case R.id.pa_cable_id:
-                cableId();
+                GuangLanParamActivity.open(this, 5);
                 break;
             case R.id.add:
                 submit();
                 break;
+            case R.id.location:
+                startLocation();
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 5 && resultCode == Activity.RESULT_OK) {
+            GuangLanParamBean bean = (GuangLanParamBean) data.getSerializableExtra("bean");
+            if (bean != null) {
+                guanglanIdS = bean.getID();
+                paCableId.setText(bean.getNAME());
+            }
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private void startLocation() {
+        location.setText("定位中...");
+        new RxPermissions(this)
+                .request(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            stopLocation();
+                            locationManager = new LocationManager(GuangLanDAddActivitty.this,
+                                    GuangLanDAddActivitty.this);
+                            locationManager.start();
+                        } else {
+                            ToastUtils.showToast("请开启定位权限");
+                            location.setText("定位失败，点击重新定位");
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopLocation();
+    }
+
+    private void stopLocation() {
+        if (locationManager != null) {
+            locationManager.stop();
+            locationManager = null;
         }
     }
 
 
+    private LocationManager.LocationBean locationBean;
+
+    @Override
+    public void onSuccess(LocationManager.LocationBean bean) {
+        location.setText(bean.addrss);
+        this.locationBean = bean;
+    }
+
+    @Override
+    public void onError(int code, String msg) {
+        location.setText("定位失败，点击重新定位");
+    }
 }

@@ -89,6 +89,6 @@ dependencies {
     }
     implementation rootProject.ext.dependencies["timber"]
 
-
+    implementation 'com.amap.api:location:latest.integration'
     api 'com.astuetz:pagerslidingtabstrip:1.0.1'
 }

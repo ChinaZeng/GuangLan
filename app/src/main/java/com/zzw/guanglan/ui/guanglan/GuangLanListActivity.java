@@ -103,7 +103,7 @@ public class GuangLanListActivity extends BaseActivity implements BaseQuickAdapt
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        GuangLanDListActivity.open(this, (GuangLanItemBean) adapter.getData().get(position));
+        GuangLanDListActivity.open(this);
     }
 
 

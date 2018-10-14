@@ -5,6 +5,7 @@ import com.zzw.guanglan.bean.BseRoomBean;
 import com.zzw.guanglan.bean.GradeBean;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
 import com.zzw.guanglan.bean.GuangLanItemBean;
+import com.zzw.guanglan.bean.GuangLanParamBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.LoginResultBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
@@ -50,6 +51,11 @@ public interface Api {
 
     @GET("/glcs/pubrestrion/quertListInfo")
     Observable<List<GradeBean>> quertListInfo();
+
+
+    @GET("/glcs/cblCable/searchParam")
+    Observable<ListDataBean<GuangLanParamBean>> searchParam(@Query("paramName") String paramName
+            ,@Query("pageNum")String pageNum);
 
     @Multipart
     @POST("/glcs/cblCable/getAppListByPage")

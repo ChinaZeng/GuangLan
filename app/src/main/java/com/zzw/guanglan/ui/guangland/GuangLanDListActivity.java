@@ -40,11 +40,9 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
 
     private final static int PAGE_SIZE = 10;
     private int pageNo = 1;
-    private GuangLanItemBean bean;
 
-    public static void open(Context context, GuangLanItemBean bean) {
-        context.startActivity(new Intent(context, GuangLanDListActivity.class)
-                .putExtra("bean", bean));
+    public static void open(Context context) {
+        context.startActivity(new Intent(context, GuangLanDListActivity.class));
     }
 
 
@@ -56,11 +54,6 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
     @Override
     protected void initData() {
         super.initData();
-        bean = (GuangLanItemBean) getIntent().getSerializableExtra("bean");
-        if (bean == null) {
-            //TODO 这里记得要删除
-            bean = new GuangLanItemBean();
-        }
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GuangLanDListAdapter(new ArrayList<GuangLanDItemBean>());
         adapter.setOnItemClickListener(this);
@@ -78,8 +71,8 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppListDuanByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
-                        put("model.cabelOpCode", bean.getCableNo());
-                        put("model.cabelOpName", bean.getCableName());
+                        put("model.cabelOpCode", "");
+                        put("model.cabelOpName", "");
                         put("pageNum", String.valueOf(pageNo));
                     }
                 }))
