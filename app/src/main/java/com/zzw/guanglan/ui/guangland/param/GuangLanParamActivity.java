@@ -78,25 +78,31 @@ public class GuangLanParamActivity extends BaseActivity implements
 
     @OnClick(R.id.search)
     public void onViewClicked() {
-        search();
+        hideKeyWordSearch();
     }
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_SEARCH) { // 当按了搜索之后关闭软键盘
-            ((InputMethodManager) etParam.getContext()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE))
-                    .hideSoftInputFromWindow(getCurrentFocus()
-                            .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            search();
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            hideKeyWordSearch();
             return true;
         }
         return false;
     }
 
-    void search() {
-        String key = etParam.getText().toString().trim();
+    void hideKeyWordSearch() {
+        // 当按了搜索之后关闭软键盘
+        ((InputMethodManager) etParam.getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(getCurrentFocus()
+                        .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        searchKey = etParam.getText().toString().trim();
+        search(searchKey, pageNo);
+    }
 
+    private String searchKey;
+
+    void search(final String key, final int pageNo) {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .searchParam(key, String.valueOf(pageNo))
                 .compose(LifeObservableTransformer.<ListDataBean<GuangLanParamBean>>create(this))
@@ -133,12 +139,12 @@ public class GuangLanParamActivity extends BaseActivity implements
     @Override
     public void onLoadMoreRequested() {
         pageNo++;
-        search();
+        search(searchKey, pageNo);
     }
 
     @Override
     public void onRefresh() {
         pageNo = 1;
-        search();
+        search(searchKey, pageNo);
     }
 }
