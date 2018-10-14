@@ -35,6 +35,7 @@ import com.zzw.guanglan.socket.resolve.Packet;
 import com.zzw.guanglan.socket.utils.ByteUtil;
 import com.zzw.guanglan.socket.utils.FileHelper;
 import com.zzw.guanglan.socket.utils.MyLog;
+import com.zzw.guanglan.ui.HotConnActivity;
 import com.zzw.guanglan.ui.qianxin.test.QianXinTestActivity;
 import com.zzw.guanglan.utils.RequestBodyUtils;
 import com.zzw.guanglan.utils.ToastUtils;
@@ -150,7 +151,8 @@ public class QianXinListActivity extends BaseActivity implements
     @Override
     public void onTest(QianXinItemBean bean) {
         if (!SocketService.isConn()) {
-            ToastUtils.showToast("请到首页->热点链接里面和设备建立链接");
+            ToastUtils.showToast("请和设备建立链接");
+            HotConnActivity.open(this);
             return;
         }
         this.testBean = bean;
