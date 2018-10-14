@@ -54,7 +54,8 @@ public class HomeFragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.res_look:
-                GuangLanListActivity.open(getContext());
+//                GuangLanListActivity.open(getContext());
+                GuangLanDListActivity.open(getContext(), null);
                 break;
             case R.id.com_conf:
 

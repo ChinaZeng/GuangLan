@@ -57,7 +57,10 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
     protected void initData() {
         super.initData();
         bean = (GuangLanItemBean) getIntent().getSerializableExtra("bean");
-
+        if (bean == null) {
+            //TODO 这里记得要删除
+            bean = new GuangLanItemBean();
+        }
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GuangLanDListAdapter(new ArrayList<GuangLanDItemBean>());
         adapter.setOnItemClickListener(this);

@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
     android:layout_marginLeft="15dp"
     android:layout_marginRight="15dp"
     android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
     android:background="@drawable/shape_work_order_item_bg"
     android:orientation="vertical"
     android:padding="10dp">
@@ -47,27 +47,53 @@
 
 
         <!--<TextView-->
-            <!--android:id="@+id/tv_dl_name"-->
-            <!--android:layout_width="170dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignLeft="@+id/tv_gl_d_num"-->
-            <!--android:layout_below="@+id/tv_gl_d_num"-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:singleLine="true"-->
-            <!--tools:text="电缆名称:xxxxx" />-->
-
+        <!--android:id="@+id/tv_dl_name"-->
+        <!--android:layout_width="170dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignLeft="@+id/tv_gl_d_num"-->
+        <!--android:layout_below="@+id/tv_gl_d_num"-->
+        <!--android:layout_marginTop="15dp"-->
+        <!--android:singleLine="true"-->
+        <!--tools:text="电缆名称:xxxxx" />-->
 
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/qianxin_test"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@color/color1"
-        android:textColor="#fff"
-        android:text="纤芯测试" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <Button
+            android:id="@+id/qianxin_test"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/color1"
+            android:text="纤芯测试"
+            android:textColor="#fff" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/qianxin_upload"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/color1"
+            android:text="上传测试文件"
+            android:textColor="#fff" />
+
+
+    </LinearLayout>
 
 
 </LinearLayout>
