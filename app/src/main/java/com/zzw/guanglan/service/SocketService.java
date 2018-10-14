@@ -1,12 +1,17 @@
 package com.zzw.guanglan.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
+import com.zzw.guanglan.Contacts;
+import com.zzw.guanglan.TestActivity;
 import com.zzw.guanglan.socket.CMD;
 import com.zzw.guanglan.socket.EventBusTag;
 import com.zzw.guanglan.socket.event.ConnBean;
@@ -31,28 +36,61 @@ import java.security.NoSuchAlgorithmException;
 
 public class SocketService extends Service implements StatusListener {
 
+    private HotBroadcastReceiver receiver;
     private ServerManager serverManager;
 
     private final int PORT = 8825;
     private String key;
+    private volatile int heartFlog = 0;
+    private HeartThread heartThread;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
+        receiver = new HotBroadcastReceiver();
+        IntentFilter mIntentFilter = new IntentFilter("android.net.wifi.WIFI_AP_STATE_CHANGED");
+        registerReceiver(receiver, mIntentFilter);
+
         serverManager = new ServerManager(PORT);
         serverManager.setListener(this);
         serverManager.startServer();
     }
 
 
+    public static boolean isConn() {
+        return Contacts.isConn && !TextUtils.isEmpty(Contacts.connKey);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        socketDisConnFlog();
         EventBus.getDefault().unregister(this);
+        unregisterReceiver(receiver);
         serverManager.close();
+        closeHeartThread();
     }
 
+
+    private void socketDisConnFlog() {
+        Contacts.isConn = false;
+        Contacts.connKey = null;
+    }
+
+
+    private void closeHeartThread() {
+        if (heartThread != null && heartThread.isAlive()) {
+            heartThread.interrupt();
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        heartThread = null;
+    }
 
     @Nullable
     @Override
@@ -67,6 +105,10 @@ public class SocketService extends Service implements StatusListener {
             String content = key + "断开连接";
             MyLog.e(content);
             this.key = null;
+
+            socketDisConnFlog();
+            closeHeartThread();
+            heartFlog = 0;
         } else if (status == STATUS.INIT) {
             String content = key + "初始化接收线程";
             MyLog.e(content);
@@ -74,6 +116,14 @@ public class SocketService extends Service implements StatusListener {
             String content = key + "建立连接,开始运行";
             MyLog.e(content);
             this.key = key;
+
+            Contacts.isConn = true;
+            Contacts.connKey = key;
+            heartFlog = 0;
+
+            closeHeartThread();
+            heartThread = new HeartThread();
+            heartThread.start();
         }
 
         ConnBean event = new ConnBean();
@@ -183,6 +233,8 @@ public class SocketService extends Service implements StatusListener {
                 }
             }
         } else if (packet.cmd == CMD.HEART_SEND) {
+            heartFlog++;
+            MyLog.e("heartFlog = " + heartFlog);
             reHeart(1);
         }
     }
@@ -206,6 +258,60 @@ public class SocketService extends Service implements StatusListener {
         builder.append("数据:" + ByteUtil.bytesToHexSpaceString(packet.data) + "\n");
         builder.append("结尾值:" + ByteUtil.bytesToHexSpaceString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
         MyLog.e(builder.toString());
+    }
+
+
+    class HeartThread extends java.lang.Thread {
+        @Override
+        public void run() {
+            super.run();
+            while (Contacts.isConn && !isInterrupted()) {
+                try {
+                    Thread.sleep(4000);
+                    MyLog.e("检测 heartFlog = " + heartFlog);
+                    if (heartFlog < 3) {
+                        MyLog.e("心跳没收到，关闭service");
+                        stopSelf();
+                    } else {
+                        heartFlog = 0;
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    stopSelf();
+                }
+            }
+        }
+    }
+
+    private class HotBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if ("android.net.wifi.WIFI_AP_STATE_CHANGED".equals(action)) {
+                //state状态为：10---正在关闭；11---已关闭；12---正在开启；13---已开启
+                int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
+                MyLog.e("state =" + state);
+
+                switch (state) {
+                    case 10:
+                        MyLog.e("热点正在关闭");
+                        break;
+                    case 11:
+                        MyLog.e("热点已关闭");
+                        stopSelf();
+                        break;
+
+                    case 12:
+                        MyLog.e("热点正在开启");
+                        break;
+                    case 13:
+                        //开启成功
+                        MyLog.e("热点正在开启");
+                        break;
+                }
+            }
+        }
     }
 
 

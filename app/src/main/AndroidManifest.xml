@@ -66,6 +66,10 @@
             android:name=".ui.guanglan.add.GuangLanAddActivitty"
             android:label="新增光缆"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.HotConnActivity"
+            android:label="热点链接"
+            android:screenOrientation="portrait" />
 
     </application>
 

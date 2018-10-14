@@ -49,6 +49,7 @@ public class ClientActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            flog = false;
                             tvContent.setText("与连接断开，请重新连接...");
                         }
                     });
@@ -60,6 +61,7 @@ public class ClientActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        flog = false;
         manager.exit();
         super.onDestroy();
     }
@@ -134,6 +136,12 @@ public class ClientActivity extends AppCompatActivity {
         }
     }
 
+    void sendHeart() {
+        if (key != null) {
+            manager.sendHeart(key);
+        }
+    }
+
 
     public void connWifiHot(View view) {
         tvContent.setText("连接中...");
@@ -148,13 +156,35 @@ public class ClientActivity extends AppCompatActivity {
                     public void run() {
                         if (!TextUtils.isEmpty(key)) {
                             tvContent.setText("连接成功");
+                            flog = true;
+                            new HeartThrad().start();
                         } else {
                             tvContent.setText("连接失败");
                         }
                     }
                 });
+
+
             }
         }).start();
+    }
+
+    private boolean flog = false;
+
+    class HeartThrad extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            while (flog) {
+                try {
+                    Thread.sleep(1000);
+                    sendHeart();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
     }
 
 

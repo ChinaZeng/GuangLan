@@ -142,13 +142,15 @@
             android:text="通信配置" />
 
         <TextView
+            android:id="@+id/hot_conn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@mipmap/icon_work_order_normal"
             android:gravity="center"
-            android:text="通信配置" />
+            android:text="热点链接" />
 
     </LinearLayout>
+
 
 </LinearLayout>

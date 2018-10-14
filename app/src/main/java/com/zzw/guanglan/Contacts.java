@@ -5,6 +5,9 @@ public class Contacts {
     public static String fileDir;
     public static int fileSize = 0;
 
-    public static int fileFlog = 0;
+
+    public static boolean isConn = false;
+    public static String connKey;
+    public static String loaclIp;
 
 }

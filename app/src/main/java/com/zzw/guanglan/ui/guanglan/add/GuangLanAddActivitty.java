@@ -67,7 +67,7 @@ public class GuangLanAddActivitty extends BaseActivity {
     TextView state;
 
 
-    public static void open(Context context) {
+    public static void  open(Context context) {
         context.startActivity(new Intent(context, GuangLanAddActivitty.class));
     }
 

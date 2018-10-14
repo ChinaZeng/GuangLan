@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseFragment;
+import com.zzw.guanglan.ui.HotConnActivity;
 import com.zzw.guanglan.ui.guanglan.GuangLanListActivity;
 import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
 import com.zzw.guanglan.widgets.RingView;
@@ -49,7 +50,7 @@ public class HomeFragment extends BaseFragment {
     }
 
 
-    @OnClick({R.id.res_look, R.id.com_conf})
+    @OnClick({R.id.res_look, R.id.com_conf, R.id.hot_conn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.res_look:
@@ -57,6 +58,10 @@ public class HomeFragment extends BaseFragment {
                 break;
             case R.id.com_conf:
 
+                break;
+
+            case R.id.hot_conn:
+                HotConnActivity.open(getContext());
                 break;
         }
     }
