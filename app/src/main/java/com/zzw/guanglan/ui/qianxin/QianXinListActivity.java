@@ -67,13 +67,18 @@ public class QianXinListActivity extends BaseActivity implements
     private int pageNo = 1;
 
     private final static String ITEM = "item";
+    private final static String TEST_BEAN = "TEST_BEAN";
 
 
     private QianXinListAdapter adapter;
     private GuangLanDItemBean bean;
+    private TestArgsAndStartBean testArgsAndStartBean;
 
-    public static void open(Context context, GuangLanDItemBean bean) {
-        context.startActivity(new Intent(context, QianXinListActivity.class).putExtra(ITEM, bean));
+    public static void open(Context context, GuangLanDItemBean bean, TestArgsAndStartBean testArgsAndStartBean) {
+        context.startActivity(new Intent(context, QianXinListActivity.class)
+                .putExtra(ITEM, bean)
+                .putExtra(TEST_BEAN, testArgsAndStartBean)
+        );
     }
 
     @Override
@@ -85,6 +90,7 @@ public class QianXinListActivity extends BaseActivity implements
     protected void initData() {
         super.initData();
         bean = (GuangLanDItemBean) getIntent().getSerializableExtra(ITEM);
+        testArgsAndStartBean = (TestArgsAndStartBean) getIntent().getSerializableExtra(TEST_BEAN);
 
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new QianXinListAdapter(new ArrayList<QianXinItemBean>());
@@ -157,7 +163,9 @@ public class QianXinListActivity extends BaseActivity implements
         }
         this.testBean = bean;
 
-        chooseArgs();
+        EventBus.getDefault().post(testArgsAndStartBean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
+
+//        chooseArgs();
     }
 
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
@@ -195,6 +203,14 @@ public class QianXinListActivity extends BaseActivity implements
     private ProgressDialog progressDialog;
 
     private void chooseArgs() {
+        EventBus.getDefault().post(testArgsAndStartBean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
+
+        progressDialog = new ProgressDialog(QianXinListActivity.this);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setTitle("正在获取sor文件相关参数信息");
+        progressDialog.show();
+
+
         if (chooseArgsDialog == null) {
             View dialogView = LayoutInflater.from(this).inflate(R.layout.layout_edit_args, null);
             final EditText range = dialogView.findViewById(R.id.et_range);

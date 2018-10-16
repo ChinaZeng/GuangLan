@@ -91,4 +91,5 @@ dependencies {
 
     implementation 'com.amap.api:location:latest.integration'
     api 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    implementation 'com.github.Rukey7:TagLayout:1.0.6'
 }

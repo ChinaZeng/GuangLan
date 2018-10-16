@@ -1,7 +1,9 @@
 package com.zzw.guanglan.socket.event;
 
 
-public class TestArgsAndStartBean {
+import java.io.Serializable;
+
+public class TestArgsAndStartBean implements Serializable {
 
     //距离范围
     public int rang;
