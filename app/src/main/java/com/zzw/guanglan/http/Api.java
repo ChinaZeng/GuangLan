@@ -53,8 +53,8 @@ public interface Api {
     Observable<List<GradeBean>> quertListInfo();
 
 
-    @GET("/glcs/cblCable/searchParam")
-    Observable<ListDataBean<GuangLanParamBean>> searchParam(@Query("paramName") String paramName
+    @GET("/glcs/cblCable/searchAppParam")
+    Observable<ListDataBean<GuangLanItemBean>> searchAppParam(@Query("paramName") String paramName
             ,@Query("pageNum")String pageNum);
 
     @Multipart

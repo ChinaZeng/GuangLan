@@ -16,12 +16,13 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
-import com.zzw.guanglan.bean.GuangLanParamBean;
+import com.zzw.guanglan.bean.GuangLanItemBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.ui.guanglan.GuangLanListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class GuangLanParamActivity extends BaseActivity implements
     SwipeRefreshLayout refreshLayout;
 
     private int pageNo = 1;
-    private GuangLanParamListAdapter adapter;
+    private GuangLanListAdapter adapter;
 
 
     public static void open(Activity activity, int code) {
@@ -65,7 +66,7 @@ public class GuangLanParamActivity extends BaseActivity implements
         etParam.setOnEditorActionListener(this);
 
         recy.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new GuangLanParamListAdapter(new ArrayList<GuangLanParamBean>());
+        adapter = new GuangLanListAdapter(new ArrayList<GuangLanItemBean>());
         adapter.setOnItemClickListener(this);
         adapter.setEnableLoadMore(true);
         adapter.setOnLoadMoreListener(this, recy);
@@ -104,11 +105,11 @@ public class GuangLanParamActivity extends BaseActivity implements
 
     void search(final String key, final int pageNo) {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .searchParam(key, String.valueOf(pageNo))
-                .compose(LifeObservableTransformer.<ListDataBean<GuangLanParamBean>>create(this))
-                .subscribe(new ErrorObserver<ListDataBean<GuangLanParamBean>>(this) {
+                .searchAppParam(key, String.valueOf(pageNo))
+                .compose(LifeObservableTransformer.<ListDataBean<GuangLanItemBean>>create(this))
+                .subscribe(new ErrorObserver<ListDataBean<GuangLanItemBean>>(this) {
                     @Override
-                    public void onNext(ListDataBean<GuangLanParamBean> guanLanItemBeans) {
+                    public void onNext(ListDataBean<GuangLanItemBean> guanLanItemBeans) {
                         setData(guanLanItemBeans.getList());
                         if (adapter.getData().size() >= guanLanItemBeans.getTotal()) {
                             adapter.loadMoreEnd();
@@ -119,7 +120,7 @@ public class GuangLanParamActivity extends BaseActivity implements
                 });
     }
 
-    void setData(List<GuangLanParamBean> datas) {
+    void setData(List<GuangLanItemBean> datas) {
         if (pageNo == 1) {
             adapter.replaceData(datas);
             refreshLayout.setRefreshing(false);
@@ -132,7 +133,7 @@ public class GuangLanParamActivity extends BaseActivity implements
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         setResult(Activity.RESULT_OK,
-                new Intent().putExtra("bean", (GuangLanParamBean) adapter.getData().get(position)));
+                new Intent().putExtra("bean", (GuangLanItemBean) adapter.getData().get(position)));
         finish();
     }
 

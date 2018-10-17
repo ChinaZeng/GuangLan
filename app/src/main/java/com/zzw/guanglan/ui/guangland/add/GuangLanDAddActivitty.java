@@ -340,10 +340,10 @@ public class GuangLanDAddActivitty extends BaseActivity implements LocationManag
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 5 && resultCode == Activity.RESULT_OK) {
-            GuangLanParamBean bean = (GuangLanParamBean) data.getSerializableExtra("bean");
+            GuangLanItemBean bean = (GuangLanItemBean) data.getSerializableExtra("bean");
             if (bean != null) {
-                guanglanIdS = bean.getID();
-                paCableId.setText(bean.getNAME());
+                guanglanIdS = bean.getCableId();
+                paCableId.setText(bean.getCableName());
             }
         }
     }

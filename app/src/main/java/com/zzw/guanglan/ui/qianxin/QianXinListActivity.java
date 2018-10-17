@@ -1,10 +1,12 @@
 package com.zzw.guanglan.ui.qianxin;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,13 +15,17 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.dl7.tag.TagLayout;
+import com.dl7.tag.TagView;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
+import com.zzw.guanglan.bean.SingleChooseBean;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.manager.UserManager;
@@ -63,21 +69,28 @@ public class QianXinListActivity extends BaseActivity implements
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refreshLayout;
 
-    private final static int PAGE_SIZE = 10;
     private int pageNo = 1;
 
     private final static String ITEM = "item";
-    private final static String TEST_BEAN = "TEST_BEAN";
 
 
     private QianXinListAdapter adapter;
     private GuangLanDItemBean bean;
-    private TestArgsAndStartBean testArgsAndStartBean;
 
-    public static void open(Context context, GuangLanDItemBean bean, TestArgsAndStartBean testArgsAndStartBean) {
+    private List<SingleChooseBean> juliS;
+    private List<SingleChooseBean> bochangS;
+    private List<SingleChooseBean> maikuanS;
+    private List<SingleChooseBean> timeS;
+    private List<SingleChooseBean> zheshelvS;
+    private List<SingleChooseBean> modeS;
+
+    private TestArgsAndStartBean testArgsBean;
+
+
+
+    public static void open(Context context, GuangLanDItemBean bean) {
         context.startActivity(new Intent(context, QianXinListActivity.class)
                 .putExtra(ITEM, bean)
-                .putExtra(TEST_BEAN, testArgsAndStartBean)
         );
     }
 
@@ -88,9 +101,13 @@ public class QianXinListActivity extends BaseActivity implements
 
     @Override
     protected void initData() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.CHANGE_WIFI_STATE,
+                        Manifest.permission.WRITE_SETTINGS,}, 5);
+
         super.initData();
         bean = (GuangLanDItemBean) getIntent().getSerializableExtra(ITEM);
-        testArgsAndStartBean = (TestArgsAndStartBean) getIntent().getSerializableExtra(TEST_BEAN);
 
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new QianXinListAdapter(new ArrayList<QianXinItemBean>());
@@ -100,6 +117,9 @@ public class QianXinListActivity extends BaseActivity implements
         adapter.setOnUploadListener(this);
         recy.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this);
+
+        initArgsData();
+        adapter.addHeaderView(headerView());
 
         onRefresh();
     }
@@ -163,7 +183,7 @@ public class QianXinListActivity extends BaseActivity implements
         }
         this.testBean = bean;
 
-        EventBus.getDefault().post(testArgsAndStartBean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
+        EventBus.getDefault().post(testArgsBean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
 
 //        chooseArgs();
     }
@@ -203,8 +223,6 @@ public class QianXinListActivity extends BaseActivity implements
     private ProgressDialog progressDialog;
 
     private void chooseArgs() {
-        EventBus.getDefault().post(testArgsAndStartBean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
-
         progressDialog = new ProgressDialog(QianXinListActivity.this);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setTitle("正在获取sor文件相关参数信息");
@@ -326,6 +344,203 @@ public class QianXinListActivity extends BaseActivity implements
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
+
+
+    void initArgsData() {
+        testArgsBean = new TestArgsAndStartBean();
+        juliS = new ArrayList<>();
+
+        juliS.add(new SingleChooseBean(0, "300m", 300));
+        juliS.add(new SingleChooseBean(1, "1km", 1000));
+        juliS.add(new SingleChooseBean(2, "5km", 5000));
+        juliS.add(new SingleChooseBean(3, "10km", 10000));
+        juliS.add(new SingleChooseBean(4, "30km", 30000));
+        juliS.add(new SingleChooseBean(5, "60km", 60000));
+        juliS.add(new SingleChooseBean(6, "100km", 100000));
+        juliS.add(new SingleChooseBean(7, "180km", 180000));
+        testArgsBean.rang = juliS.get(0).getValue();
+
+        bochangS = new ArrayList<>();
+        bochangS.add(new SingleChooseBean(0, "1550nm", 1550));
+        testArgsBean.wl = bochangS.get(0).getValue();
+
+        maikuanS = new ArrayList<>();
+        maikuanS.add(new SingleChooseBean(0, "10ns", 10));
+        maikuanS.add(new SingleChooseBean(1, "20ns", 20));
+        maikuanS.add(new SingleChooseBean(2, "30ns", 30));
+        maikuanS.add(new SingleChooseBean(3, "40ns", 40));
+        maikuanS.add(new SingleChooseBean(4, "80ns", 80));
+        maikuanS.add(new SingleChooseBean(5, "160ns", 160));
+        maikuanS.add(new SingleChooseBean(6, "640ns", 640));
+        maikuanS.add(new SingleChooseBean(7, "2.56us", 2560));
+        testArgsBean.pw = maikuanS.get(0).getValue();
+
+
+        timeS = new ArrayList<>();
+        timeS.add(new SingleChooseBean(0, "10s", 10));
+        timeS.add(new SingleChooseBean(1, "15s", 15));
+        timeS.add(new SingleChooseBean(2, "30s", 30));
+        timeS.add(new SingleChooseBean(3, "1min", 60));
+        testArgsBean.time = timeS.get(0).getValue();
+
+        modeS = new ArrayList<>();
+        modeS.add(new SingleChooseBean(0, "平均", 1));
+        modeS.add(new SingleChooseBean(1, "实时", 2));
+        testArgsBean.mode = modeS.get(0).getValue();
+
+        zheshelvS = new ArrayList<>();
+        zheshelvS.add(new SingleChooseBean(0, "146850", 146850));
+        testArgsBean.gi = zheshelvS.get(0).getValue();
+    }
+
+
+    private TagLayout juli, bochang, maikuan, time, zheshelv, mode;
+
+    View headerView() {
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_header, recy, false);
+        final View content = view.findViewById(R.id.content);
+        final TextView head_click = view.findViewById(R.id.head_click);
+        view.findViewById(R.id.head_click).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                content.setVisibility(content.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                if (content.getVisibility() == View.VISIBLE) {
+                    head_click.setText("点此收起参数配置");
+                } else {
+                    head_click.setText("点此展开参数配置");
+                }
+            }
+        });
+        juli = view.findViewById(R.id.juli);
+        for (SingleChooseBean singleChooseBean : juliS) {
+            juli.addTag(singleChooseBean.getName());
+        }
+        juli.setCheckTag(0);
+        juli.setTagCheckListener(new TagView.OnTagCheckListener() {
+            @Override
+            public void onTagCheck(int i, String s, boolean b) {
+                if (b) {
+                    testArgsBean.rang = juliS.get(i).getValue();
+                }
+            }
+        });
+
+        bochang = view.findViewById(R.id.bochang);
+        for (SingleChooseBean singleChooseBean : bochangS) {
+            bochang.addTag(singleChooseBean.getName());
+        }
+        bochang.setCheckTag(0);
+        bochang.setTagCheckListener(new TagView.OnTagCheckListener() {
+            @Override
+            public void onTagCheck(int i, String s, boolean b) {
+                if (b) {
+                    testArgsBean.wl = bochangS.get(i).getValue();
+                }
+            }
+        });
+
+        maikuan = view.findViewById(R.id.maikuan);
+        for (SingleChooseBean singleChooseBean : maikuanS) {
+            maikuan.addTag(singleChooseBean.getName());
+        }
+        maikuan.setCheckTag(0);
+        maikuan.setTagCheckListener(new TagView.OnTagCheckListener() {
+            @Override
+            public void onTagCheck(int i, String s, boolean b) {
+                if (b) {
+                    testArgsBean.pw = maikuanS.get(i).getValue();
+                }
+            }
+        });
+
+        time = view.findViewById(R.id.time);
+        for (SingleChooseBean singleChooseBean : timeS) {
+            time.addTag(singleChooseBean.getName());
+        }
+        time.setCheckTag(0);
+        time.setTagCheckListener(new TagView.OnTagCheckListener() {
+            @Override
+            public void onTagCheck(int i, String s, boolean b) {
+                if (b) {
+                    testArgsBean.time = timeS.get(i).getValue();
+                }
+            }
+        });
+
+        mode = view.findViewById(R.id.mode);
+        for (SingleChooseBean singleChooseBean : modeS) {
+            mode.addTag(singleChooseBean.getName());
+        }
+        mode.setCheckTag(0);
+        mode.setTagCheckListener(new TagView.OnTagCheckListener() {
+            @Override
+            public void onTagCheck(int i, String s, boolean b) {
+                if (b) {
+                    testArgsBean.mode = modeS.get(i).getValue();
+                }
+            }
+        });
+
+        zheshelv = view.findViewById(R.id.zheshelv);
+        for (SingleChooseBean singleChooseBean : zheshelvS) {
+            zheshelv.addTag(singleChooseBean.getName());
+        }
+        zheshelv.setCheckTag(0);
+        zheshelv.setTagCheckListener(new TagView.OnTagCheckListener() {
+            @Override
+            public void onTagCheck(int i, String s, boolean b) {
+                if (b) {
+                    testArgsBean.gi = zheshelvS.get(i).getValue();
+                }
+            }
+        });
+        return view;
+    }
+
+    void checkInit() {
+        for (int i = 0; i < juliS.size(); i++) {
+            if (testArgsBean.rang == juliS.get(i).getValue()) {
+                juli.setCheckTag(i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < bochangS.size(); i++) {
+            if (testArgsBean.wl == bochangS.get(i).getValue()) {
+                bochang.setCheckTag(i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < maikuanS.size(); i++) {
+            if (testArgsBean.pw == maikuanS.get(i).getValue()) {
+                maikuan.setCheckTag(i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < timeS.size(); i++) {
+            if (testArgsBean.time == timeS.get(i).getValue()) {
+                time.setCheckTag(i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < modeS.size(); i++) {
+            if (testArgsBean.mode == modeS.get(i).getValue()) {
+                mode.setCheckTag(i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < zheshelvS.size(); i++) {
+            if (testArgsBean.gi == zheshelvS.get(i).getValue()) {
+                zheshelv.setCheckTag(i);
+                break;
+            }
+        }
+    }
+
 
     @Override
     public void onUpload(final QianXinItemBean bean) {
