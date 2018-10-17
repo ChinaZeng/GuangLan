@@ -67,8 +67,8 @@
         <activity
             android:name=".ui.guangland.GuangLanDListActivity"
             android:label="光缆段"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.qianxin.QianXinListActivity"
             android:label="纤芯"
@@ -76,7 +76,7 @@
         <activity
             android:name=".ui.guangland.add.GuangLanDAddActivitty"
             android:label="新增光缆段"
-            android:screenOrientation="portrait" />
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".ui.qianxin.test.QianXinTestActivity"
             android:label="纤芯测试"
@@ -97,8 +97,8 @@
         <activity
             android:name=".ui.guangland.param.GuangLanParamActivity"
             android:label="选择上级光缆"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
 
         <!--高德-->
         <service android:name="com.amap.api.location.APSService" />

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,36 +6,41 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="#f1eeee"
+            android:orientation="horizontal">
 
             <TextView
-                android:paddingRight="5dp"
-                android:paddingLeft="5dp"
                 android:id="@+id/tv_sel"
-                android:text="光缆端编码"
                 android:layout_width="wrap_content"
-                android:gravity="center"
+                android:layout_height="match_parent"
                 android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                android:layout_height="match_parent" />
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="光缆端编码" />
 
-            <include
-                layout="@layout/layout_search"/>
+            <include layout="@layout/layout_search" />
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorDivider" />
 
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#f1eeee">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recy"

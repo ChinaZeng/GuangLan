@@ -3,18 +3,20 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#f1eeee">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:orientation="vertical">
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:orientation="horizontal">
 
             <TextView
@@ -30,6 +32,7 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
+                android:singleLine="true"
                 tools:textColor="@color/color333333" />
 
 
@@ -38,7 +41,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -53,9 +58,10 @@
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
+                android:background="@null"
                 android:hint="请输入光缆段名称(必填)"
                 android:singleLine="true"
-                android:textColorHint="#95A1AA"
+                android:textColorHint="#5f6468"
                 android:textSize="14sp"
                 tools:text="" />
         </LinearLayout>
@@ -63,7 +69,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -78,9 +86,10 @@
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
+                android:background="@null"
                 android:hint="请输入光缆段编码(必填)"
                 android:singleLine="true"
-                android:textColorHint="#95A1AA"
+                android:textColorHint="#5f6468"
                 android:textSize="14sp"
                 tools:text="" />
 
@@ -89,7 +98,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -104,9 +115,10 @@
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
+                android:background="@null"
                 android:hint="请输入纤芯数(必填)"
                 android:singleLine="true"
-                android:textColorHint="#95A1AA"
+                android:textColorHint="#5f6468"
                 android:textSize="14sp"
                 tools:text="" />
 
@@ -114,7 +126,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -129,18 +143,135 @@
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
+                android:background="@null"
                 android:hint="请输入光缆段长度(必填)"
                 android:singleLine="true"
-                android:textColorHint="#95A1AA"
+                android:textColorHint="#5f6468"
                 android:textSize="14sp"
                 tools:text="" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="维护人姓名" />
+
+            <EditText
+                android:id="@+id/org_user_name"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="请输入维护人姓名"
+                android:singleLine="true"
+                android:textColorHint="#5f6468"
+                android:textSize="14sp"
+                tools:text="" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="启动时间" />
+
+
+            <EditText
+                android:id="@+id/op_start_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="请输入启动时间"
+                android:singleLine="true"
+                android:textColorHint="#5f6468"
+                android:textSize="14sp"
+                tools:text="" />
+
 
         </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="有效期限" />
+
+            <EditText
+                android:id="@+id/last_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="请输入有效期"
+                android:singleLine="true"
+                android:textColorHint="#5f6468"
+                android:textSize="14sp"
+                tools:text="" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="备注" />
+
+            <EditText
+                android:id="@+id/remark"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="请输入备注信息"
+                android:singleLine="true"
+                android:textColorHint="#5f6468"
+                android:textSize="14sp"
+                tools:text="" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -160,15 +291,18 @@
                 android:gravity="center_vertical"
                 android:hint="请选择所属地区"
                 android:singleLine="true"
-                tools:text=""
-                tools:textColor="@color/color333333" />
+                android:textColor="#000"
+                android:textColorHint="#5f6468"
+                tools:text="" />
 
         </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -187,8 +321,9 @@
                 android:gravity="center_vertical"
                 android:hint="请选择所属局站"
                 android:singleLine="true"
-                tools:text=""
-                tools:textColor="@color/color333333" />
+                android:textColor="#000"
+                android:textColorHint="#5f6468"
+                tools:text="" />
 
 
         </LinearLayout>
@@ -196,7 +331,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -216,15 +353,18 @@
                 android:gravity="center_vertical"
                 android:hint="请选择所属机房"
                 android:singleLine="true"
-                tools:text=""
-                tools:textColor="@color/color333333" />
+                android:textColor="#000"
+                android:textColorHint="#5f6468"
+                tools:text="" />
 
         </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -243,8 +383,8 @@
                 android:gravity="center_vertical"
                 android:hint="请选择维护部门信息"
                 android:singleLine="true"
-                tools:text=""
-                tools:textColor="@color/color333333" />
+                android:textColor="#000"
+                android:textColorHint="#5f6468" />
 
 
         </LinearLayout>
@@ -252,86 +392,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="维护人姓名" />
-
-            <EditText
-                android:id="@+id/org_user_name"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:hint="请输入维护人姓名"
-                android:singleLine="true"
-                android:textSize="14sp"
-                tools:text="" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="启动时间" />
-
-
-            <EditText
-                android:id="@+id/op_start_time"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="请输入启动时间"
-                android:singleLine="true"
-                android:textSize="14sp"
-                tools:text="" />
-
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="有效期限" />
-
-
-            <EditText
-                android:id="@+id/last_time"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="请输入有效期"
-                android:singleLine="true"
-                android:textSize="14sp"
-                tools:text="" />
-
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -351,39 +414,17 @@
                 android:gravity="center_vertical"
                 android:hint="请选择上级光缆"
                 android:singleLine="true"
-                tools:text=""
-                tools:textColor="@color/color333333" />
+                android:textColor="#000"
+                android:textColorHint="#5f6468" />
 
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="备注" />
-
-            <EditText
-                android:id="@+id/remark"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:hint="请输入备注信息"
-                android:singleLine="true"
-                android:textSize="14sp"
-                tools:text="" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="#fff"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -402,11 +443,12 @@
                 android:gravity="center_vertical"
                 android:hint="请选择纤芯状态"
                 android:singleLine="true"
-                tools:text=""
-                tools:textColor="@color/color333333" />
+                android:textColor="#000"
+                android:textColorHint="#5f6468" />
 
 
         </LinearLayout>
+
 
         <Button
             android:id="@+id/add"

@@ -405,9 +405,9 @@ public class QianXinListActivity extends BaseActivity implements
             public void onClick(View v) {
                 content.setVisibility(content.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 if (content.getVisibility() == View.VISIBLE) {
-                    head_click.setText("点此收起参数配置");
+                    head_click.setText("关闭");
                 } else {
-                    head_click.setText("点此展开参数配置");
+                    head_click.setText("展开");
                 }
             }
         });
