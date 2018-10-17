@@ -1,6 +1,8 @@
 package com.zzw.guanglan.ui.home;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.TextView;
 
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseFragment;
@@ -20,6 +22,8 @@ public class HomeFragment extends BaseFragment {
 
     @BindView(R.id.ring_view)
     RingView ringView;
+    @BindView(R.id.gongdan)
+    TextView tvGongDan;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -46,6 +50,8 @@ public class HomeFragment extends BaseFragment {
         rateList.add(30f);
         rateList.add(50f);
         ringView.setShow(colorList, rateList, false, false);
+
+
 
     }
 

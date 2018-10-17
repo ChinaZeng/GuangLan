@@ -29,7 +29,7 @@
         android:maxLines="1"
         android:paddingLeft="10dp"
         android:textColor="@color/color333333"
-        android:textSize="14dp"
+        android:textSize="18sp"
         app:clearButtonEnable="true"
         app:clearButtonIcon="@mipmap/ic_clear"
         app:iconPadding="5dp" />
@@ -54,7 +54,7 @@
         android:maxLines="1"
         android:paddingLeft="10dp"
         android:textColor="@color/color333333"
-        android:textSize="14dp"
+        android:textSize="18sp"
         app:clearButtonEnable="true"
         app:clearButtonIcon="@mipmap/ic_clear"
         app:iconPadding="5dp"

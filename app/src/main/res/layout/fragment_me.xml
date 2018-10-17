@@ -76,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:drawableLeft="@mipmap/icon_message_fill"
+                android:drawableLeft="@mipmap/wodexiaoxi"
                 android:gravity="center_vertical"
                 android:text="我的消息"
                 android:textSize="16dp" />
@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:drawableLeft="@mipmap/icon_message_fill"
+                android:drawableLeft="@mipmap/mima"
                 android:gravity="center_vertical"
                 android:text="密码修改"
                 android:textSize="16dp" />
@@ -108,7 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:drawableLeft="@mipmap/icon_message_fill"
+                android:drawableLeft="@mipmap/xitongshezhi"
                 android:gravity="center_vertical"
                 android:text="系统设置"
                 android:textSize="16dp" />
@@ -124,7 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:drawableLeft="@mipmap/icon_message_fill"
+                android:drawableLeft="@mipmap/lanya"
                 android:gravity="center_vertical"
                 android:text="蓝牙连接"
                 android:textSize="16dp" />
@@ -141,7 +141,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:drawableLeft="@mipmap/icon_message_fill"
+                android:drawableLeft="@mipmap/socket"
                 android:gravity="center_vertical"
                 android:text="Socket连接"
                 android:textSize="16dp" />
@@ -157,7 +157,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:drawableLeft="@mipmap/icon_message_fill"
+                android:drawableLeft="@mipmap/duanxin"
                 android:gravity="center_vertical"
                 android:text="短信分享"
                 android:textSize="16dp" />
@@ -173,7 +173,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:drawableLeft="@mipmap/icon_message_fill"
+                android:drawableLeft="@mipmap/women"
                 android:gravity="center_vertical"
                 android:text="关于我们"
                 android:textSize="16dp" />
