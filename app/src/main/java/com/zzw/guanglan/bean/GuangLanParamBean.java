@@ -10,6 +10,9 @@ public class GuangLanParamBean implements Serializable{
     private String NAME;
     private String ID;
 
+
+
+
     public String getNAME() {
         return NAME;
     }

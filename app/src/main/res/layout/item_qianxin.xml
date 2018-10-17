@@ -89,11 +89,32 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:background="@color/color1"
-            android:text="上传测试文件"
+            android:text="上传文件"
             android:textColor="#fff" />
 
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/qianxin_status"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/color1"
+            android:text="端口状态"
+            android:textColor="#fff" />
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="left|center|bottom"
+        android:text="上次测试时间:2018-10-16"
+        android:textSize="15sp" />
 
 
 </LinearLayout>
