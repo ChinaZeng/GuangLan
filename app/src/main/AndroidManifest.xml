@@ -67,6 +67,7 @@
         <activity
             android:name=".ui.guangland.GuangLanDListActivity"
             android:label="光缆段"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.qianxin.QianXinListActivity"
@@ -83,6 +84,7 @@
         <activity
             android:name=".ui.guanglan.GuangLanListActivity"
             android:label="光缆"
+
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.guanglan.add.GuangLanAddActivitty"
@@ -95,6 +97,7 @@
         <activity
             android:name=".ui.guangland.param.GuangLanParamActivity"
             android:label="选择上级光缆"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait" />
 
         <!--高德-->

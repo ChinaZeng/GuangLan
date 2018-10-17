@@ -1,13 +1,22 @@
 package com.zzw.guanglan.ui.guangland;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.dl7.tag.TagLayout;
@@ -34,225 +43,27 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener,
-        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
+        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener, TextView.OnEditorActionListener {
     @BindView(R.id.recy)
     RecyclerView recy;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refreshLayout;
+    @BindView(R.id.et_param)
+    EditText etParam;
+    @BindView(R.id.tv_sel)
+    TextView tvSel;
 
     private GuangLanDListAdapter adapter;
+    private String searchKey;
+    private int searchFlog=0;
+    private int tempFlog=0;
 
-    private List<SingleChooseBean> juliS;
-    private List<SingleChooseBean> bochangS;
-    private List<SingleChooseBean> maikuanS;
-    private List<SingleChooseBean> timeS;
-    private List<SingleChooseBean> zheshelvS;
-    private List<SingleChooseBean> modeS;
-
-    private TestArgsAndStartBean testBean;
-
-    private final static int PAGE_SIZE = 10;
     private int pageNo = 1;
 
     public static void open(Context context) {
         context.startActivity(new Intent(context, GuangLanDListActivity.class));
     }
 
-
-    void initArgsData() {
-        testBean = new TestArgsAndStartBean();
-        juliS = new ArrayList<>();
-
-        juliS.add(new SingleChooseBean(0, "300m", 300));
-        juliS.add(new SingleChooseBean(1, "1km", 1000));
-        juliS.add(new SingleChooseBean(2, "5km", 5000));
-        juliS.add(new SingleChooseBean(3, "10km", 10000));
-        juliS.add(new SingleChooseBean(4, "30km", 30000));
-        juliS.add(new SingleChooseBean(5, "60km", 60000));
-        juliS.add(new SingleChooseBean(6, "100km", 100000));
-        juliS.add(new SingleChooseBean(7, "180km", 180000));
-        testBean.rang = juliS.get(0).getValue();
-
-        bochangS = new ArrayList<>();
-        bochangS.add(new SingleChooseBean(0, "1550nm", 1550));
-        testBean.wl = bochangS.get(0).getValue();
-
-        maikuanS = new ArrayList<>();
-        maikuanS.add(new SingleChooseBean(0, "10ns", 10));
-        maikuanS.add(new SingleChooseBean(1, "20ns", 20));
-        maikuanS.add(new SingleChooseBean(2, "30ns", 30));
-        maikuanS.add(new SingleChooseBean(3, "40ns", 40));
-        maikuanS.add(new SingleChooseBean(4, "80ns", 80));
-        maikuanS.add(new SingleChooseBean(5, "160ns", 160));
-        maikuanS.add(new SingleChooseBean(6, "640ns", 640));
-        maikuanS.add(new SingleChooseBean(7, "2.56us", 2560));
-        testBean.pw = maikuanS.get(0).getValue();
-
-
-        timeS = new ArrayList<>();
-        timeS.add(new SingleChooseBean(0, "10s", 10));
-        timeS.add(new SingleChooseBean(1, "15s", 15));
-        timeS.add(new SingleChooseBean(2, "30s", 30));
-        timeS.add(new SingleChooseBean(3, "1min", 60));
-        testBean.time = timeS.get(0).getValue();
-
-        modeS = new ArrayList<>();
-        modeS.add(new SingleChooseBean(0, "平均", 1));
-        modeS.add(new SingleChooseBean(1, "实时", 2));
-        testBean.mode = modeS.get(0).getValue();
-
-        zheshelvS = new ArrayList<>();
-        zheshelvS.add(new SingleChooseBean(0, "146850", 146850));
-        testBean.gi = zheshelvS.get(0).getValue();
-    }
-
-
-    private TagLayout juli, bochang, maikuan, time, zheshelv, mode;
-
-    View headerView() {
-        View view = LayoutInflater.from(this).inflate(R.layout.layout_header, recy, false);
-        final View content = view.findViewById(R.id.content);
-        final TextView head_click = view.findViewById(R.id.head_click);
-        view.findViewById(R.id.head_click).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                content.setVisibility(content.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                if (content.getVisibility() == View.VISIBLE) {
-                    head_click.setText("点此收起参数配置");
-                } else {
-                    head_click.setText("点此展开参数配置");
-                }
-            }
-        });
-        juli = view.findViewById(R.id.juli);
-        for (SingleChooseBean singleChooseBean : juliS) {
-            juli.addTag(singleChooseBean.getName());
-        }
-        juli.setCheckTag(0);
-        juli.setTagCheckListener(new TagView.OnTagCheckListener() {
-            @Override
-            public void onTagCheck(int i, String s, boolean b) {
-                if (b) {
-                    testBean.rang = juliS.get(i).getValue();
-                }
-            }
-        });
-
-        bochang = view.findViewById(R.id.bochang);
-        for (SingleChooseBean singleChooseBean : bochangS) {
-            bochang.addTag(singleChooseBean.getName());
-        }
-        bochang.setCheckTag(0);
-        bochang.setTagCheckListener(new TagView.OnTagCheckListener() {
-            @Override
-            public void onTagCheck(int i, String s, boolean b) {
-                if (b) {
-                    testBean.wl = bochangS.get(i).getValue();
-                }
-            }
-        });
-
-        maikuan = view.findViewById(R.id.maikuan);
-        for (SingleChooseBean singleChooseBean : maikuanS) {
-            maikuan.addTag(singleChooseBean.getName());
-        }
-        maikuan.setCheckTag(0);
-        maikuan.setTagCheckListener(new TagView.OnTagCheckListener() {
-            @Override
-            public void onTagCheck(int i, String s, boolean b) {
-                if (b) {
-                    testBean.pw = maikuanS.get(i).getValue();
-                }
-            }
-        });
-
-        time = view.findViewById(R.id.time);
-        for (SingleChooseBean singleChooseBean : timeS) {
-            time.addTag(singleChooseBean.getName());
-        }
-        time.setCheckTag(0);
-        time.setTagCheckListener(new TagView.OnTagCheckListener() {
-            @Override
-            public void onTagCheck(int i, String s, boolean b) {
-                if (b) {
-                    testBean.time = timeS.get(i).getValue();
-                }
-            }
-        });
-
-        mode = view.findViewById(R.id.mode);
-        for (SingleChooseBean singleChooseBean : modeS) {
-            mode.addTag(singleChooseBean.getName());
-        }
-        mode.setCheckTag(0);
-        mode.setTagCheckListener(new TagView.OnTagCheckListener() {
-            @Override
-            public void onTagCheck(int i, String s, boolean b) {
-                if (b) {
-                    testBean.mode = modeS.get(i).getValue();
-                }
-            }
-        });
-
-        zheshelv = view.findViewById(R.id.zheshelv);
-        for (SingleChooseBean singleChooseBean : zheshelvS) {
-            zheshelv.addTag(singleChooseBean.getName());
-        }
-        zheshelv.setCheckTag(0);
-        zheshelv.setTagCheckListener(new TagView.OnTagCheckListener() {
-            @Override
-            public void onTagCheck(int i, String s, boolean b) {
-                if (b) {
-                    testBean.gi = zheshelvS.get(i).getValue();
-                }
-            }
-        });
-        return view;
-    }
-
-    void checkInit() {
-        for (int i = 0; i < juliS.size(); i++) {
-            if (testBean.rang == juliS.get(i).getValue()) {
-                juli.setCheckTag(i);
-                break;
-            }
-        }
-
-        for (int i = 0; i < bochangS.size(); i++) {
-            if (testBean.wl == bochangS.get(i).getValue()) {
-                bochang.setCheckTag(i);
-                break;
-            }
-        }
-
-        for (int i = 0; i < maikuanS.size(); i++) {
-            if (testBean.pw == maikuanS.get(i).getValue()) {
-                maikuan.setCheckTag(i);
-                break;
-            }
-        }
-
-        for (int i = 0; i < timeS.size(); i++) {
-            if (testBean.time == timeS.get(i).getValue()) {
-                time.setCheckTag(i);
-                break;
-            }
-        }
-
-        for (int i = 0; i < modeS.size(); i++) {
-            if (testBean.mode == modeS.get(i).getValue()) {
-                mode.setCheckTag(i);
-                break;
-            }
-        }
-
-        for (int i = 0; i < zheshelvS.size(); i++) {
-            if (testBean.gi == zheshelvS.get(i).getValue()) {
-                zheshelv.setCheckTag(i);
-                break;
-            }
-        }
-    }
 
     @Override
     protected int initLayoutId() {
@@ -262,6 +73,7 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
     @Override
     protected void initData() {
         super.initData();
+        etParam.setOnEditorActionListener(this);
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GuangLanDListAdapter(new ArrayList<GuangLanDItemBean>());
         adapter.setOnItemClickListener(this);
@@ -271,19 +83,108 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
 
         refreshLayout.setOnRefreshListener(this);
 
-        initArgsData();
-        adapter.addHeaderView(headerView());
-
         onRefresh();
     }
 
-    void getData() {
+
+    void setData(List<GuangLanDItemBean> datas) {
+        if (pageNo == 1) {
+            adapter.replaceData(datas);
+            refreshLayout.setRefreshing(false);
+        } else {
+            adapter.addData(datas);
+        }
+    }
+
+
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+        QianXinListActivity.open(this, (GuangLanDItemBean) adapter.getData().get(position));
+    }
+
+
+    @OnClick({R.id.add,R.id.search,R.id.tv_sel})
+    public void onViewClicked(View view) {
+        switch (view.getId()){
+            case R.id.add:
+                GuangLanDAddActivitty.open(this);
+                break;
+
+            case R.id.search:
+                hideKeyWordSearch();
+                break;
+            case R.id.tv_sel:
+                showListPopupWindow(tvSel);
+                break;
+        }
+    }
+
+    public void showListPopupWindow(View view) {
+        final String items[] = { "光缆端编码", "光缆段名称"};
+        final ListPopupWindow listPopupWindow = new ListPopupWindow(this);
+
+        // ListView适配器
+        listPopupWindow.setAdapter(
+                new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, items));
+
+        // 选择item的监听事件
+        listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                tempFlog = pos;
+                tvSel.setText(items[pos]);
+                listPopupWindow.dismiss();
+            }
+        });
+
+        // 对话框的宽高
+        listPopupWindow.setWidth(500);
+        listPopupWindow.setHeight(400);
+
+        // ListPopupWindow的锚,弹出框的位置是相对当前View的位置
+        listPopupWindow.setAnchorView(view);
+
+        // ListPopupWindow 距锚view的距离
+//        listPopupWindow.setHorizontalOffset(50);
+//        listPopupWindow.setVerticalOffset(100);
+
+        listPopupWindow.setModal(true);
+
+        listPopupWindow.show();
+    }
+
+
+
+    @Override
+    public void onLoadMoreRequested() {
+        pageNo++;
+        search(searchKey,searchFlog, pageNo);
+    }
+
+    @Override
+    public void onRefresh() {
+        pageNo = 1;
+        search(searchKey,searchFlog, pageNo);
+    }
+
+    void hideKeyWordSearch() {
+        // 当按了搜索之后关闭软键盘
+        ((InputMethodManager) etParam.getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(getCurrentFocus()
+                        .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        String searchKey = etParam.getText().toString().trim();
+        search(searchKey,tempFlog, pageNo);
+    }
+    void search(final String key, final int flog, final int page) {
+        searchKey =key;
+        searchFlog = flog;
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppListDuanByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
-                        put("model.cabelOpCode", "");
-                        put("model.cabelOpName", "");
-                        put("pageNum", String.valueOf(pageNo));
+                        put("model.cabelOpCode", flog==0? key:"");
+                        put("model.cabelOpName", flog==0? "":key);
+                        put("pageNum", String.valueOf(page));
                     }
                 }))
                 .compose(LifeObservableTransformer.<ListDataBean<GuangLanDItemBean>>create(this))
@@ -302,36 +203,13 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
                 });
     }
 
-    void setData(List<GuangLanDItemBean> datas) {
-        if (pageNo == 1) {
-            adapter.replaceData(datas);
-            refreshLayout.setRefreshing(false);
-        } else {
-            adapter.addData(datas);
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            hideKeyWordSearch();
+            return true;
         }
-    }
-
-
-    @Override
-    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        QianXinListActivity.open(this, (GuangLanDItemBean) adapter.getData().get(position), testBean);
-    }
-
-
-    @OnClick(R.id.add)
-    public void onViewClicked() {
-        GuangLanDAddActivitty.open(this);
-    }
-
-    @Override
-    public void onLoadMoreRequested() {
-        pageNo++;
-        getData();
-    }
-
-    @Override
-    public void onRefresh() {
-        pageNo = 1;
-        getData();
+        return false;
     }
 }

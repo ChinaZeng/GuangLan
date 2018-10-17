@@ -68,6 +68,16 @@ public class GuangLanItemBean implements Serializable{
     private String startModelName;
     private String endModelName;
     private String userId;
+    private String paramName;
+
+
+    public String getParamName() {
+        return paramName;
+    }
+
+    public void setParamName(String paramName) {
+        this.paramName = paramName;
+    }
 
     public String getCableId() {
         return cableId;
