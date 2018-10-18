@@ -270,7 +270,7 @@ public class SocketService extends Service implements StatusListener {
                     Thread.sleep(5000);
                     MyLog.e("检测 heartFlog = " + heartFlog);
                     if (heartFlog < 2) {
-                        MyLog.e("心跳没收到，关闭service");
+//                        MyLog.e("心跳没收到，关闭service");
                         socketDisConn();
 //                        stopSelf();
                     } else {
