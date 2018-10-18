@@ -64,17 +64,17 @@ public class SocketThread extends Thread {
 
             while (flog) {
                 //5秒
-                if (count > 5 * 5) {
-                    break;
-                }
+//                if (count > 5 * 5) {
+//                    break;
+//                }
                 SystemClock.sleep(5);
-                if (!socket.isConnected()) {
-                    Thread.sleep(200);
-                    count++;
-                    continue;
-                }
-                count = 0;
-                if (inputStream.available() > 0) {
+//                if (!socket.isConnected()) {
+//                    Thread.sleep(200);
+//                    count++;
+//                    continue;
+//                }
+//                count = 0;
+                if (socket.isConnected() && inputStream.available() > 0) {
                     Packet packet = SocketReader.readPktData(socket, inputStream);
                     if (packet != null) {
                         onReciveMsg(packet);
@@ -82,8 +82,6 @@ public class SocketThread extends Thread {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             MyLog.e("socket退出");
@@ -101,7 +99,7 @@ public class SocketThread extends Thread {
 
     private void close() {
         flog = false;
-
+        socketSender.shutdownNow();
         closeCloseable(inputStream);
         closeCloseable(outputStream);
         inputStream = null;
@@ -158,7 +156,6 @@ public class SocketThread extends Thread {
 
     public void exit() {
         flog = false;
-        socketSender.shutdownNow();
     }
 
 

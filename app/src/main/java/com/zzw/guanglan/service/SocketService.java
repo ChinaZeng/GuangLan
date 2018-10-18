@@ -11,12 +11,11 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.zzw.guanglan.Contacts;
-import com.zzw.guanglan.TestActivity;
 import com.zzw.guanglan.socket.CMD;
 import com.zzw.guanglan.socket.EventBusTag;
 import com.zzw.guanglan.socket.event.ConnBean;
-import com.zzw.guanglan.socket.event.SorFileBean;
 import com.zzw.guanglan.socket.event.ReBean;
+import com.zzw.guanglan.socket.event.SorFileBean;
 import com.zzw.guanglan.socket.event.TestArgsAndStartBean;
 import com.zzw.guanglan.socket.listener.STATUS;
 import com.zzw.guanglan.socket.listener.StatusListener;
@@ -65,31 +64,33 @@ public class SocketService extends Service implements StatusListener {
 
     @Override
     public void onDestroy() {
+        MyLog.e("status", "onDestroy");
         super.onDestroy();
-        socketDisConnFlog();
+        socketDisConn();
         EventBus.getDefault().unregister(this);
         unregisterReceiver(receiver);
         serverManager.close();
-        closeHeartThread();
     }
 
+
+    private void socketDisConn() {
+        socketDisConnFlog();
+        closeHeartThread();
+    }
 
     private void socketDisConnFlog() {
         Contacts.isConn = false;
         Contacts.connKey = null;
+        EventBus.getDefault().post(false, EventBusTag.SOCKET_CONN_STATUS_CHANGE);
     }
 
 
     private void closeHeartThread() {
         if (heartThread != null && heartThread.isAlive()) {
             heartThread.interrupt();
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
         heartThread = null;
+        heartFlog = 0;
     }
 
     @Nullable
@@ -105,21 +106,20 @@ public class SocketService extends Service implements StatusListener {
             String content = key + "断开连接";
             MyLog.e(content);
             this.key = null;
-
-            socketDisConnFlog();
-            closeHeartThread();
-            heartFlog = 0;
+            MyLog.e("status", "断开连接");
+            socketDisConn();
         } else if (status == STATUS.INIT) {
             String content = key + "初始化接收线程";
-            MyLog.e(content);
+            MyLog.e("status", content);
         } else if (status == STATUS.RUNNING) {
             String content = key + "建立连接,开始运行";
-            MyLog.e(content);
+            MyLog.e("status", content);
             this.key = key;
 
             Contacts.isConn = true;
             Contacts.connKey = key;
             heartFlog = 0;
+            EventBus.getDefault().post(true, EventBusTag.SOCKET_CONN_STATUS_CHANGE);
 
             closeHeartThread();
             heartThread = new HeartThread();
@@ -267,17 +267,19 @@ public class SocketService extends Service implements StatusListener {
             super.run();
             while (Contacts.isConn && !isInterrupted()) {
                 try {
-                    Thread.sleep(35000);
+                    Thread.sleep(5000);
                     MyLog.e("检测 heartFlog = " + heartFlog);
-                    if (heartFlog < 3) {
+                    if (heartFlog < 2) {
                         MyLog.e("心跳没收到，关闭service");
-                        stopSelf();
+                        socketDisConn();
+//                        stopSelf();
                     } else {
                         heartFlog = 0;
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    stopSelf();
+                    socketDisConn();
+//                    stopSelf();
                 }
             }
         }
@@ -299,6 +301,7 @@ public class SocketService extends Service implements StatusListener {
                         break;
                     case 11:
                         MyLog.e("热点已关闭");
+                        socketDisConn();
                         stopSelf();
                         break;
 

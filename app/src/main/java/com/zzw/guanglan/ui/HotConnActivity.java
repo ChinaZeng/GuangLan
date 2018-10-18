@@ -15,7 +15,6 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,8 +23,7 @@ import com.zzw.guanglan.Contacts;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.service.SocketService;
-import com.zzw.guanglan.socket.event.ConnBean;
-import com.zzw.guanglan.socket.listener.STATUS;
+import com.zzw.guanglan.socket.EventBusTag;
 import com.zzw.guanglan.socket.utils.MyLog;
 import com.zzw.guanglan.utils.WifiAPManager;
 
@@ -115,18 +113,15 @@ public class HotConnActivity extends BaseActivity {
     }
 
 
-    @Subscriber
-    public void conn(ConnBean connBean) {
-        if (connBean.status == STATUS.RUNNING) {
-            hintS = "与" + connBean.key + "建立连接";
-            initData();
-        } else if (connBean.status == STATUS.END) {
-            hintS = "与" + connBean.key + "断开连接";
-            initData();
-        } else if (connBean.status == STATUS.INIT) {
-            hintS = "与" + connBean.key + "初始化接收线程";
+    @Subscriber(tag = EventBusTag.SOCKET_CONN_STATUS_CHANGE)
+    public void socketConnChange(boolean change) {
+        if(change){
+            hintS = "与" + Contacts.connKey + "建立连接";
+        }else {
+            hintS ="断开连接";
         }
         hint();
+        initData();
     }
 
 

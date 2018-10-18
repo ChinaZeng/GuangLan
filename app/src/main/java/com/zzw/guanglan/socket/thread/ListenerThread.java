@@ -51,12 +51,23 @@ public class ListenerThread extends Thread {
                     break;
                 }
                 MyLog.e(TAG, "客户端连接  ip：" + socket.getInetAddress() + " port:" + socket.getPort());
+                //这个是支持多连接
                 String key = KeyUtils.getKey(socket);
-                SocketThread s = serverThreads.remove(key);
-                if (s != null) {
-                    s.exit();
-                    Thread.sleep(500);
+//                SocketThread s = serverThreads.remove(key);
+//                if (s != null) {
+//                    s.exit();
+//                    Thread.sleep(500);
+//                }
+
+                //单链接
+                for (SocketThread socketThread : serverThreads.values()) {
+                    if (socketThread != null) {
+                        socketThread.exit();
+                        Thread.sleep(500);
+                    }
                 }
+                serverThreads.clear();
+
 
                 ServerThread serverThread = new ServerThread(socket, socketThreadStatusListener);
                 serverThread.addListener(new SocketMessageListenerAdapter() {

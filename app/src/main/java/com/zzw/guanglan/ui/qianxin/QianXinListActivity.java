@@ -79,13 +79,12 @@ public class QianXinListActivity extends BaseActivity implements
 
     private List<SingleChooseBean> juliS;
     private List<SingleChooseBean> bochangS;
-    private List<SingleChooseBean> maikuanS;
     private List<SingleChooseBean> timeS;
     private List<SingleChooseBean> zheshelvS;
     private List<SingleChooseBean> modeS;
+    private List<SingleChooseBean> maiKuanS;
 
     private TestArgsAndStartBean testArgsBean;
-
 
 
     public static void open(Context context, GuangLanDItemBean bean) {
@@ -350,30 +349,49 @@ public class QianXinListActivity extends BaseActivity implements
         testArgsBean = new TestArgsAndStartBean();
         juliS = new ArrayList<>();
 
-        juliS.add(new SingleChooseBean(0, "300m", 300));
-        juliS.add(new SingleChooseBean(1, "1km", 1000));
-        juliS.add(new SingleChooseBean(2, "5km", 5000));
-        juliS.add(new SingleChooseBean(3, "10km", 10000));
-        juliS.add(new SingleChooseBean(4, "30km", 30000));
-        juliS.add(new SingleChooseBean(5, "60km", 60000));
-        juliS.add(new SingleChooseBean(6, "100km", 100000));
-        juliS.add(new SingleChooseBean(7, "180km", 180000));
+        List<SingleChooseBean> maikuanS1 = new ArrayList<>();
+        maikuanS1.add(new SingleChooseBean(0, "5ns", 5));
+        maikuanS1.add(new SingleChooseBean(1, "10ns", 10));
+        maikuanS1.add(new SingleChooseBean(2, "20ns", 20));
+        maikuanS1.add(new SingleChooseBean(3, "40ns", 40));
+        juliS.add(new SingleChooseBean(0, "300m", 300, maikuanS1));
+        juliS.add(new SingleChooseBean(1, "1km", 1000, maikuanS1));
+
+        List<SingleChooseBean> maikuanS2 = new ArrayList<>(maikuanS1);
+        maikuanS2.add(new SingleChooseBean(4, "80ns", 80));
+        maikuanS2.add(new SingleChooseBean(5, "160ns", 160));
+        juliS.add(new SingleChooseBean(2, "5km", 5000, maikuanS2));
+
+
+        List<SingleChooseBean> maikuanS3 = new ArrayList<>(maikuanS2);
+        maikuanS3.add(new SingleChooseBean(6, "320ns", 320));
+        juliS.add(new SingleChooseBean(3, "10km", 10000, maikuanS3));
+
+
+        List<SingleChooseBean> maikuanS4 = new ArrayList<>(maikuanS3);
+        maikuanS4.add(new SingleChooseBean(7, "640ns", 640));
+        juliS.add(new SingleChooseBean(4, "30km", 30000, maikuanS4));
+
+
+        List<SingleChooseBean> maikuanS5 = new ArrayList<>(maikuanS4.subList(4, maikuanS4.size()));
+        maikuanS5.add(new SingleChooseBean(8, "1.28us", 1280));
+        juliS.add(new SingleChooseBean(5, "60km", 60000, maikuanS5));
+
+        List<SingleChooseBean> maikuanS6 = new ArrayList<>(maikuanS5.subList(1, maikuanS5.size()));
+        maikuanS6.add(new SingleChooseBean(9, "2.56us", 2560));
+        maikuanS6.add(new SingleChooseBean(10, "5.12us", 5120));
+        maikuanS6.add(new SingleChooseBean(11, "10.24us", 10240));
+        maikuanS6.add(new SingleChooseBean(12, "20.48us", 20480));
+        juliS.add(new SingleChooseBean(6, "100km", 100000, maikuanS6));
+        juliS.add(new SingleChooseBean(7, "180km", 180000, maikuanS6));
         testArgsBean.rang = juliS.get(0).getValue();
+
+        maiKuanS = juliS.get(0).getNextChooses();
+        testArgsBean.pw = maiKuanS.get(0).getValue();
 
         bochangS = new ArrayList<>();
         bochangS.add(new SingleChooseBean(0, "1550nm", 1550));
         testArgsBean.wl = bochangS.get(0).getValue();
-
-        maikuanS = new ArrayList<>();
-        maikuanS.add(new SingleChooseBean(0, "10ns", 10));
-        maikuanS.add(new SingleChooseBean(1, "20ns", 20));
-        maikuanS.add(new SingleChooseBean(2, "30ns", 30));
-        maikuanS.add(new SingleChooseBean(3, "40ns", 40));
-        maikuanS.add(new SingleChooseBean(4, "80ns", 80));
-        maikuanS.add(new SingleChooseBean(5, "160ns", 160));
-        maikuanS.add(new SingleChooseBean(6, "640ns", 640));
-        maikuanS.add(new SingleChooseBean(7, "2.56us", 2560));
-        testArgsBean.pw = maikuanS.get(0).getValue();
 
 
         timeS = new ArrayList<>();
@@ -421,6 +439,9 @@ public class QianXinListActivity extends BaseActivity implements
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
                     testArgsBean.rang = juliS.get(i).getValue();
+                    maiKuanS = juliS.get(i).getNextChooses();
+                    changeTag(maikuan, maiKuanS);
+                    testArgsBean.pw = maiKuanS.get(0).getValue();
                 }
             }
         });
@@ -440,7 +461,7 @@ public class QianXinListActivity extends BaseActivity implements
         });
 
         maikuan = view.findViewById(R.id.maikuan);
-        for (SingleChooseBean singleChooseBean : maikuanS) {
+        for (SingleChooseBean singleChooseBean : maiKuanS) {
             maikuan.addTag(singleChooseBean.getName());
         }
         maikuan.setCheckTag(0);
@@ -448,7 +469,7 @@ public class QianXinListActivity extends BaseActivity implements
             @Override
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
-                    testArgsBean.pw = maikuanS.get(i).getValue();
+                    testArgsBean.pw = maiKuanS.get(i).getValue();
                 }
             }
         });
@@ -497,6 +518,14 @@ public class QianXinListActivity extends BaseActivity implements
         return view;
     }
 
+    void changeTag(TagLayout tagLayout, List<SingleChooseBean> newBeans) {
+        tagLayout.cleanTags();
+        for (SingleChooseBean newBean : newBeans) {
+            tagLayout.addTag(newBean.getName());
+        }
+        tagLayout.setCheckTag(0);
+    }
+
     void checkInit() {
         for (int i = 0; i < juliS.size(); i++) {
             if (testArgsBean.rang == juliS.get(i).getValue()) {
@@ -512,8 +541,8 @@ public class QianXinListActivity extends BaseActivity implements
             }
         }
 
-        for (int i = 0; i < maikuanS.size(); i++) {
-            if (testArgsBean.pw == maikuanS.get(i).getValue()) {
+        for (int i = 0; i < maiKuanS.size(); i++) {
+            if (testArgsBean.pw == maiKuanS.get(i).getValue()) {
                 maikuan.setCheckTag(i);
                 break;
             }
