@@ -267,9 +267,9 @@ public class SocketService extends Service implements StatusListener {
             super.run();
             while (Contacts.isConn && !isInterrupted()) {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(10 * 1000);
                     MyLog.e("检测 heartFlog = " + heartFlog);
-                    if (heartFlog < 2) {
+                    if (heartFlog < 1) {
 //                        MyLog.e("心跳没收到，关闭service");
                         socketDisConn();
 //                        stopSelf();
