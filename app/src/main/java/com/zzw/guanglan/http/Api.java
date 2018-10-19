@@ -52,10 +52,13 @@ public interface Api {
     @GET("/glcs/pubrestrion/quertListInfo")
     Observable<List<GradeBean>> quertListInfo();
 
+    @GET("/glcs/cblFiber/updateFiberState")
+    Observable<ResultBean<Object>> updateFiberState(@Query("fiberId") String fiberId
+            , @Query("stateId") String stateId);
 
     @GET("/glcs/cblCable/searchAppParam")
     Observable<ListDataBean<GuangLanItemBean>> searchAppParam(@Query("paramName") String paramName
-            ,@Query("pageNum")String pageNum);
+            , @Query("pageNum") String pageNum);
 
     @Multipart
     @POST("/glcs/cblCable/getAppListByPage")

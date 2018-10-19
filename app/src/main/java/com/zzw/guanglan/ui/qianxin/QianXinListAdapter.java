@@ -23,6 +23,7 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
     @Override
     protected void convert(final BaseViewHolder helper, final QianXinItemBean item) {
         helper.setText(R.id.num, "光缆序号:" + item.getNo());
+        helper.setText(R.id.status, "纤芯状态: " + item.getStateName());
         helper.setText(R.id.tv_gl_d_num, "光缆段名称:" + item.getCblOpName());
         helper.setText(R.id.tv_gl_d_name, "光缆段编码:" + item.getCblOpCode());
 
@@ -45,10 +46,24 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
             }
         });
 
+        helper.setOnClickListener(R.id.qianxin_status, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onStatusListener != null) {
+                    onStatusListener.onStatus(item);
+                }
+            }
+        });
+
     }
 
     private OnTestListener onTestListener;
     private OnUploadListener onUploadListener;
+    private OnStatusListener onStatusListener;
+
+    public void setOnStatusListener(OnStatusListener onStatusListener) {
+        this.onStatusListener = onStatusListener;
+    }
 
     public void setOnUploadListener(OnUploadListener onUploadListener) {
         this.onUploadListener = onUploadListener;
@@ -66,5 +81,10 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
     public interface OnUploadListener {
         void onUpload(QianXinItemBean bean);
     }
+
+    public interface OnStatusListener {
+        void onStatus(QianXinItemBean bean);
+    }
+
 
 }

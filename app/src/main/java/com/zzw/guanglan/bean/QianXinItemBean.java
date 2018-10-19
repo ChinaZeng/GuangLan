@@ -42,6 +42,15 @@ public class QianXinItemBean {
     private String cblLineId;
     private String aFlag;
     private String zFlag;
+    private String stateName;
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
 
     public String getFiberId() {
         return fiberId;

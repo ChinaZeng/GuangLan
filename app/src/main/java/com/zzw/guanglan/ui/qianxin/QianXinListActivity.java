@@ -26,6 +26,8 @@ import com.zzw.guanglan.bean.GuangLanDItemBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
 import com.zzw.guanglan.bean.SingleChooseBean;
+import com.zzw.guanglan.bean.StatusInfoBean;
+import com.zzw.guanglan.dialogs.BottomListDialog;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.manager.UserManager;
@@ -62,7 +64,7 @@ import okhttp3.RequestBody;
 public class QianXinListActivity extends BaseActivity implements
         BaseQuickAdapter.RequestLoadMoreListener,
         SwipeRefreshLayout.OnRefreshListener,
-        QianXinListAdapter.OnTestListener, QianXinListAdapter.OnUploadListener {
+        QianXinListAdapter.OnTestListener, QianXinListAdapter.OnUploadListener, QianXinListAdapter.OnStatusListener {
     @BindView(R.id.recy)
     RecyclerView recy;
 
@@ -114,6 +116,7 @@ public class QianXinListActivity extends BaseActivity implements
         adapter.setOnLoadMoreListener(this, recy);
         adapter.setOnTestListener(this);
         adapter.setOnUploadListener(this);
+        adapter.setOnStatusListener(this);
         recy.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this);
 
@@ -628,6 +631,60 @@ public class QianXinListActivity extends BaseActivity implements
                     public void onError(Throwable e) {
                         super.onError(e);
                         progressDialog.dismiss();
+                    }
+                });
+    }
+
+    @Override
+    public void onStatus(final QianXinItemBean bean) {
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .quertstatuslistinfo()
+                .compose(LifeObservableTransformer.<List<StatusInfoBean>>create(this))
+                .subscribe(new ErrorObserver<List<StatusInfoBean>>(this) {
+                    @Override
+                    public void onNext(List<StatusInfoBean> data) {
+                        if (data != null && data.size() > 0) {
+                            BottomListDialog.newInstance(data, new BottomListDialog.Convert<StatusInfoBean>() {
+                                @Override
+                                public String convert(StatusInfoBean data) {
+                                    return data.getName();
+                                }
+                            }).setCallback(new BottomListDialog.Callback<StatusInfoBean>() {
+                                @Override
+                                public boolean onSelected(StatusInfoBean data, int position) {
+
+                                    changeStatus(bean, data);
+                                    return true;
+                                }
+                            }).show(getSupportFragmentManager(), "state");
+                        } else {
+                            ToastUtils.showToast("没有查到状态信息");
+                        }
+                    }
+                });
+    }
+
+
+    void changeStatus(final QianXinItemBean qianXinItemBean, final StatusInfoBean statusInfoBean) {
+//        if (TextUtils.equals(qianXinItemBean.getStateId(), statusInfoBean.getStateId())){
+//            return ;
+//        }
+
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .updateFiberState(qianXinItemBean.getFiberId(), statusInfoBean.getStateId())
+                .map(new ResultBooleanFunction<>())
+                .compose(LifeObservableTransformer.<Boolean>create(this))
+                .subscribe(new ErrorObserver<Boolean>(this) {
+                    @Override
+                    public void onNext(Boolean b) {
+                        if (b) {
+                            qianXinItemBean.setStateId(statusInfoBean.getStateId());
+                            qianXinItemBean.setStateName(statusInfoBean.getName());
+                            adapter.notifyDataSetChanged();
+                            ToastUtils.showToast("修改状态成功");
+                        } else {
+                            ToastUtils.showToast("修改状态失败");
+                        }
                     }
                 });
     }
