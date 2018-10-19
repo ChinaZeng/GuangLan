@@ -680,7 +680,14 @@ public class QianXinListActivity extends BaseActivity implements
                         if (b) {
                             qianXinItemBean.setStateId(statusInfoBean.getStateId());
                             qianXinItemBean.setStateName(statusInfoBean.getName());
-                            adapter.notifyDataSetChanged();
+                            int pos = adapter.getData().indexOf(qianXinItemBean);
+                            if (pos != -1) {
+                                //1 是header
+                                adapter.notifyItemChanged(pos + 1);
+                            } else {
+                                adapter.notifyDataSetChanged();
+                            }
+
                             ToastUtils.showToast("修改状态成功");
                         } else {
                             ToastUtils.showToast("修改状态失败");
