@@ -1,8 +1,10 @@
 package com.zzw.guanglan.ui.qianxin;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,14 +14,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.dl7.tag.TagLayout;
 import com.dl7.tag.TagView;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
@@ -30,6 +35,7 @@ import com.zzw.guanglan.bean.StatusInfoBean;
 import com.zzw.guanglan.dialogs.BottomListDialog;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.manager.LocationManager;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
@@ -44,8 +50,8 @@ import com.zzw.guanglan.socket.utils.ByteUtil;
 import com.zzw.guanglan.socket.utils.FileHelper;
 import com.zzw.guanglan.socket.utils.MyLog;
 import com.zzw.guanglan.ui.HotConnActivity;
-import com.zzw.guanglan.ui.qianxin.test.QianXinTestActivity;
 import com.zzw.guanglan.utils.RequestBodyUtils;
+import com.zzw.guanglan.utils.SPUtil;
 import com.zzw.guanglan.utils.ToastUtils;
 
 import org.simple.eventbus.EventBus;
@@ -57,6 +63,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.functions.Consumer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -64,12 +71,22 @@ import okhttp3.RequestBody;
 public class QianXinListActivity extends BaseActivity implements
         BaseQuickAdapter.RequestLoadMoreListener,
         SwipeRefreshLayout.OnRefreshListener,
-        QianXinListAdapter.OnTestListener, QianXinListAdapter.OnUploadListener, QianXinListAdapter.OnStatusListener {
+        QianXinListAdapter.OnTestListener,
+        QianXinListAdapter.OnUploadListener,
+        QianXinListAdapter.OnStatusListener,
+        LocationManager.OnLocationListener {
     @BindView(R.id.recy)
     RecyclerView recy;
 
+    @BindView(R.id.ll)
+    LinearLayout ll;
+
+
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refreshLayout;
+
+
+    private LocationManager locationManager;
 
     private int pageNo = 1;
 
@@ -86,7 +103,9 @@ public class QianXinListActivity extends BaseActivity implements
     private List<SingleChooseBean> modeS;
     private List<SingleChooseBean> maiKuanS;
 
-    private TestArgsAndStartBean testArgsBean;
+    private TestArgsAndStartBean testArgsCustomModeBean;
+    private TestArgsAndStartBean testArgsLastModeBean;
+    private TestArgsAndStartBean testArgsAutoModeBean;
 
 
     public static void open(Context context, GuangLanDItemBean bean) {
@@ -110,6 +129,8 @@ public class QianXinListActivity extends BaseActivity implements
         super.initData();
         bean = (GuangLanDItemBean) getIntent().getSerializableExtra(ITEM);
 
+        headerView();
+
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new QianXinListAdapter(new ArrayList<QianXinItemBean>());
         adapter.setEnableLoadMore(true);
@@ -120,9 +141,7 @@ public class QianXinListActivity extends BaseActivity implements
         recy.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this);
 
-        initArgsData();
-        adapter.addHeaderView(headerView());
-
+        startLocation();
         onRefresh();
     }
 
@@ -178,6 +197,21 @@ public class QianXinListActivity extends BaseActivity implements
 
     @Override
     public void onTest(QianXinItemBean bean) {
+        TestArgsAndStartBean testArgsAndStartBean;
+        if (argsMode == 0) {
+            testArgsAndStartBean = testArgsCustomModeBean;
+        } else if (argsMode == 1) {
+            testArgsAndStartBean = testArgsLastModeBean;
+            if (testArgsAndStartBean == null) {
+                ToastUtils.showToast("没有上一次测试的数据!");
+                return;
+            }
+        } else {
+            testArgsAndStartBean = testArgsAutoModeBean;
+        }
+
+        SPUtil.getInstance("testArgs").put("args", testArgsAndStartBean);
+
         if (!SocketService.isConn()) {
             ToastUtils.showToast("请和设备建立链接");
             HotConnActivity.open(this);
@@ -185,9 +219,21 @@ public class QianXinListActivity extends BaseActivity implements
         }
         this.testBean = bean;
 
-        EventBus.getDefault().post(testArgsBean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
+        if (progressDialog == null) {
+            initProgress();
+        }
+        progressDialog.setTitle("正在获取相关参数");
+        progressDialog.show();
+
+
+        EventBus.getDefault().post(testArgsAndStartBean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
 
 //        chooseArgs();
+    }
+
+    private void initProgress() {
+        progressDialog = new ProgressDialog(QianXinListActivity.this);
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 
     @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
@@ -212,8 +258,32 @@ public class QianXinListActivity extends BaseActivity implements
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
-        filePath = bean.filePath;
-        ToastUtils.showToast("接收sor文件成功,请上传");
+        testBean.setTestLocalFilePath(bean.filePath);
+        adapter.notifyDataSetChanged();
+
+        testSuccessHint();
+    }
+
+    private void testSuccessHint() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("测试完成,是否上传测试文件?");
+        builder.setNegativeButton("上传", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onUpload(testBean);
+                dialog.dismiss();
+            }
+        });
+        builder.setNeutralButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
     }
 
     @Subscriber(tag = EventBusTag.SOR_RECIVE_FAIL)
@@ -292,19 +362,20 @@ public class QianXinListActivity extends BaseActivity implements
         chooseArgsDialog.show();
     }
 
-    private String filePath;
     private String fileName;
     private String fileDir;
     private int fileSize;
     private int getSorFilecount = 0;
 
     private void getSorFile() {
-        filePath = null;
         if (fileName != null && fileDir != null && fileSize != 0) {
             getSorFilecount++;
             if (getSorFilecount > 3) {
                 getSorFilecount = 0;
-                ToastUtils.showToast("文件保存失败!");
+                ToastUtils.showToast("测试失败!");
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
                 return;
             }
 
@@ -315,22 +386,21 @@ public class QianXinListActivity extends BaseActivity implements
                 file.delete();
             }
 
+
+            progressDialog.setTitle("正在获取测试文件");
+            progressDialog.show();
+
             SorFileBean bean = new SorFileBean();
             bean.fileDir = fileDir;
             bean.fileName = fileName;
             bean.fileSize = fileSize;
             EventBus.getDefault().post(bean, EventBusTag.GET_SOR_FILE);
 
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-
-            progressDialog = new ProgressDialog(QianXinListActivity.this);
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setTitle("正在获取sor文件");
-            progressDialog.show();
         } else {
             ToastUtils.showToast("请先设备向APP反馈sor文件信息");
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
         }
     }
 
@@ -344,12 +414,13 @@ public class QianXinListActivity extends BaseActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopLocation();
         EventBus.getDefault().unregister(this);
     }
 
 
     void initArgsData() {
-        testArgsBean = new TestArgsAndStartBean();
+        testArgsCustomModeBean = new TestArgsAndStartBean();
         juliS = new ArrayList<>();
 
         List<SingleChooseBean> maikuanS1 = new ArrayList<>();
@@ -387,14 +458,14 @@ public class QianXinListActivity extends BaseActivity implements
         maikuanS6.add(new SingleChooseBean(12, "20.48us", 20480));
         juliS.add(new SingleChooseBean(6, "100km", 100000, maikuanS6));
         juliS.add(new SingleChooseBean(7, "180km", 180000, maikuanS6));
-        testArgsBean.rang = juliS.get(0).getValue();
+        testArgsCustomModeBean.rang = juliS.get(0).getValue();
 
         maiKuanS = juliS.get(0).getNextChooses();
-        testArgsBean.pw = maiKuanS.get(0).getValue();
+        testArgsCustomModeBean.pw = maiKuanS.get(0).getValue();
 
         bochangS = new ArrayList<>();
         bochangS.add(new SingleChooseBean(0, "1550nm", 1550));
-        testArgsBean.wl = bochangS.get(0).getValue();
+        testArgsCustomModeBean.wl = bochangS.get(0).getValue();
 
 
         timeS = new ArrayList<>();
@@ -402,36 +473,198 @@ public class QianXinListActivity extends BaseActivity implements
         timeS.add(new SingleChooseBean(1, "15s", 15));
         timeS.add(new SingleChooseBean(2, "30s", 30));
         timeS.add(new SingleChooseBean(3, "1min", 60));
-        testArgsBean.time = timeS.get(0).getValue();
+        testArgsCustomModeBean.time = timeS.get(0).getValue();
 
         modeS = new ArrayList<>();
         modeS.add(new SingleChooseBean(0, "平均", 1));
         modeS.add(new SingleChooseBean(1, "实时", 2));
-        testArgsBean.mode = modeS.get(0).getValue();
+        testArgsCustomModeBean.mode = modeS.get(0).getValue();
 
         zheshelvS = new ArrayList<>();
         zheshelvS.add(new SingleChooseBean(0, "146850", 146850));
-        testArgsBean.gi = zheshelvS.get(0).getValue();
+        testArgsCustomModeBean.gi = zheshelvS.get(0).getValue();
     }
 
 
     private TagLayout juli, bochang, maikuan, time, zheshelv, mode;
+    TextView location;
+    //0 自定义  1上一次  2自动
+    int argsMode = 0;
 
     View headerView() {
-        View view = LayoutInflater.from(this).inflate(R.layout.layout_header, recy, false);
-        final View content = view.findViewById(R.id.content);
+        final View view = LayoutInflater.from(this).inflate(R.layout.layout_qianxin_header, ll, false);
+        ll.addView(view, 0);
+        location = view.findViewById(R.id.location);
+        location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startLocation();
+            }
+        });
+        TextView tv_guanglan_name = view.findViewById(R.id.tv_guanglan_name);
+        TextView tv_guanglan_code = view.findViewById(R.id.tv_guanglan_code);
+
+        tv_guanglan_name.setText("光缆名称:" + bean.getCabelOpName());
+        tv_guanglan_code.setText("光缆编码:" + bean.getCabelOpCode());
+
+        final View cutomView = view.findViewById(R.id.content);
+        final View lastView = view.findViewById(R.id.content2);
+        final View autoMode = view.findViewById(R.id.content3);
+
         final TextView head_click = view.findViewById(R.id.head_click);
         view.findViewById(R.id.head_click).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                View content;
+                if (argsMode == 0) {
+                    content = cutomView;
+                } else if (argsMode == 1) {
+                    content = lastView;
+                    initLastMode(view);
+                } else {
+                    content = autoMode;
+                }
                 content.setVisibility(content.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 if (content.getVisibility() == View.VISIBLE) {
                     head_click.setText("关闭");
+                    if (argsMode == 1) {
+                        initLastMode(view);
+                    }
                 } else {
                     head_click.setText("展开");
                 }
             }
         });
+
+        initCustomMode(view);
+        initLastMode(view);
+        initAutoMode(view);
+
+        final TagLayout tagLayout = view.findViewById(R.id.sel_mode);
+        tagLayout.setTagCheckListener(new TagView.OnTagCheckListener() {
+            @Override
+            public void onTagCheck(int i, String s, boolean b) {
+                if (b) {
+                    head_click.setText("关闭");
+                    argsMode = i;
+                    //自定义
+                    if (i == 0) {
+                        cutomView.setVisibility(View.VISIBLE);
+                        lastView.setVisibility(View.GONE);
+                        autoMode.setVisibility(View.GONE);
+                        //上一次
+                    } else if (i == 1) {
+                        initLastMode(view);
+                        cutomView.setVisibility(View.GONE);
+                        lastView.setVisibility(View.VISIBLE);
+                        autoMode.setVisibility(View.GONE);
+                        //自动配置
+                    } else {
+                        cutomView.setVisibility(View.GONE);
+                        lastView.setVisibility(View.GONE);
+                        autoMode.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+
+        tagLayout.addTags("自定义", "上一次配置", "自动配置");
+        tagLayout.setCheckTag(0);
+
+        return view;
+    }
+
+    private void initAutoMode(View view) {
+        TagLayout juli = view.findViewById(R.id.content3_juli);
+        juli.addTags("300m", "1km", "5km", "10km", "30km", "60km", "100km", "180km");
+        juli.setCheckTag(0);
+        juli.setTagCheckListener(new TagView.OnTagCheckListener() {
+            @Override
+            public void onTagCheck(int i, String s, boolean b) {
+                if (!b) {
+                    return;
+                }
+                TestArgsAndStartBean bean = new TestArgsAndStartBean();
+                bean.mode = 1;
+                bean.gi = 146850;
+                bean.wl = 1550;
+                if (i == 0) {
+                    bean.rang = 300;
+                    bean.pw = 10;
+                    bean.time = 10;
+                } else if (i == 1) {
+                    bean.rang = 1000;
+                    bean.pw = 20;
+                    bean.time = 10;
+                } else if (i == 2) {
+                    bean.rang = 5000;
+                    bean.pw = 40;
+                    bean.time = 15;
+                } else if (i == 3) {
+                    bean.rang = 10000;
+                    bean.pw = 80;
+                    bean.time = 15;
+                } else if (i == 4) {
+                    bean.rang = 30000;
+                    bean.pw = 160;
+                    bean.time = 15;
+                } else if (i == 5) {
+                    bean.rang = 60000;
+                    bean.pw = 320;
+                    bean.time = 30;
+                } else if (i == 6) {
+                    bean.rang = 100000;
+                    bean.pw = 640;
+                    bean.time = 30;
+                } else if (i == 7) {
+                    bean.rang = 180000;
+                    bean.pw = 2560;
+                    bean.time = 60;
+                }
+                testArgsAutoModeBean = bean;
+            }
+        });
+        TestArgsAndStartBean bean = new TestArgsAndStartBean();
+        bean.mode = 1;
+        bean.gi = 146850;
+        bean.wl = 1550;
+        bean.rang = 300;
+        bean.pw = 10;
+        bean.time = 10;
+        testArgsAutoModeBean = bean;
+    }
+
+    private void initLastMode(View view) {
+        TestArgsAndStartBean bean = SPUtil.getInstance("testArgs").getSerializable("args", null);
+        TextView juli = view.findViewById(R.id.content2_juli);
+        TextView bochang = view.findViewById(R.id.content2_bochang);
+        TextView maikuan = view.findViewById(R.id.content2_maikuan);
+        TextView time = view.findViewById(R.id.content2_time);
+        TextView mode = view.findViewById(R.id.content2_mode);
+        TextView zheshelv = view.findViewById(R.id.content2_zheshelv);
+
+        if (bean != null) {
+            juli.setText("测试距离:" + bean.rang);
+            bochang.setText("测试波长:" + bean.wl);
+            maikuan.setText("测试脉宽:" + bean.pw);
+            time.setText("测试时间:" + bean.time);
+            mode.setText("测试模式:" + (bean.mode == 1 ? "平均" : "实时"));
+            zheshelv.setText("折射率:" + bean.gi);
+        } else {
+            juli.setText("测试距离: 无");
+            bochang.setText("测试波长: 无");
+            maikuan.setText("测试脉宽: 无");
+            time.setText("测试时间: 无");
+            mode.setText("测试模式: 无");
+            zheshelv.setText("折射率: 无");
+        }
+
+        testArgsLastModeBean = bean;
+    }
+
+    private void initCustomMode(View view) {
+        initArgsData();
+
         juli = view.findViewById(R.id.juli);
         for (SingleChooseBean singleChooseBean : juliS) {
             juli.addTag(singleChooseBean.getName());
@@ -441,10 +674,10 @@ public class QianXinListActivity extends BaseActivity implements
             @Override
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
-                    testArgsBean.rang = juliS.get(i).getValue();
+                    testArgsCustomModeBean.rang = juliS.get(i).getValue();
                     maiKuanS = juliS.get(i).getNextChooses();
                     changeTag(maikuan, maiKuanS);
-                    testArgsBean.pw = maiKuanS.get(0).getValue();
+                    testArgsCustomModeBean.pw = maiKuanS.get(0).getValue();
                 }
             }
         });
@@ -458,7 +691,7 @@ public class QianXinListActivity extends BaseActivity implements
             @Override
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
-                    testArgsBean.wl = bochangS.get(i).getValue();
+                    testArgsCustomModeBean.wl = bochangS.get(i).getValue();
                 }
             }
         });
@@ -472,7 +705,7 @@ public class QianXinListActivity extends BaseActivity implements
             @Override
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
-                    testArgsBean.pw = maiKuanS.get(i).getValue();
+                    testArgsCustomModeBean.pw = maiKuanS.get(i).getValue();
                 }
             }
         });
@@ -486,7 +719,7 @@ public class QianXinListActivity extends BaseActivity implements
             @Override
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
-                    testArgsBean.time = timeS.get(i).getValue();
+                    testArgsCustomModeBean.time = timeS.get(i).getValue();
                 }
             }
         });
@@ -500,7 +733,7 @@ public class QianXinListActivity extends BaseActivity implements
             @Override
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
-                    testArgsBean.mode = modeS.get(i).getValue();
+                    testArgsCustomModeBean.mode = modeS.get(i).getValue();
                 }
             }
         });
@@ -514,11 +747,10 @@ public class QianXinListActivity extends BaseActivity implements
             @Override
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
-                    testArgsBean.gi = zheshelvS.get(i).getValue();
+                    testArgsCustomModeBean.gi = zheshelvS.get(i).getValue();
                 }
             }
         });
-        return view;
     }
 
     void changeTag(TagLayout tagLayout, List<SingleChooseBean> newBeans) {
@@ -531,42 +763,42 @@ public class QianXinListActivity extends BaseActivity implements
 
     void checkInit() {
         for (int i = 0; i < juliS.size(); i++) {
-            if (testArgsBean.rang == juliS.get(i).getValue()) {
+            if (testArgsCustomModeBean.rang == juliS.get(i).getValue()) {
                 juli.setCheckTag(i);
                 break;
             }
         }
 
         for (int i = 0; i < bochangS.size(); i++) {
-            if (testArgsBean.wl == bochangS.get(i).getValue()) {
+            if (testArgsCustomModeBean.wl == bochangS.get(i).getValue()) {
                 bochang.setCheckTag(i);
                 break;
             }
         }
 
         for (int i = 0; i < maiKuanS.size(); i++) {
-            if (testArgsBean.pw == maiKuanS.get(i).getValue()) {
+            if (testArgsCustomModeBean.pw == maiKuanS.get(i).getValue()) {
                 maikuan.setCheckTag(i);
                 break;
             }
         }
 
         for (int i = 0; i < timeS.size(); i++) {
-            if (testArgsBean.time == timeS.get(i).getValue()) {
+            if (testArgsCustomModeBean.time == timeS.get(i).getValue()) {
                 time.setCheckTag(i);
                 break;
             }
         }
 
         for (int i = 0; i < modeS.size(); i++) {
-            if (testArgsBean.mode == modeS.get(i).getValue()) {
+            if (testArgsCustomModeBean.mode == modeS.get(i).getValue()) {
                 mode.setCheckTag(i);
                 break;
             }
         }
 
         for (int i = 0; i < zheshelvS.size(); i++) {
-            if (testArgsBean.gi == zheshelvS.get(i).getValue()) {
+            if (testArgsCustomModeBean.gi == zheshelvS.get(i).getValue()) {
                 zheshelv.setCheckTag(i);
                 break;
             }
@@ -576,23 +808,30 @@ public class QianXinListActivity extends BaseActivity implements
 
     @Override
     public void onUpload(final QianXinItemBean bean) {
-        if (TextUtils.isEmpty(filePath) ||
-                (testBean != null &&
-                        !TextUtils.equals(bean.getFiberId(), testBean.getFiberId()))) {
+
+        if (locationBean == null) {
+            ToastUtils.showToast("请先获取定位!");
+            return;
+        }
+
+        if (TextUtils.isEmpty(bean.getTestLocalFilePath())) {
             ToastUtils.showToast("请先进行测试!");
             return;
         }
-        if (TextUtils.isEmpty(filePath)) {
-            ToastUtils.showToast("请先进行测试");
+        if (!new File(bean.getTestLocalFilePath()).exists()) {
+            ToastUtils.showToast("测试文件已失效，请重新测试!");
+            bean.setTestLocalFilePath(null);
+            adapter.notifyDataSetChanged();
             return;
         }
 
-        progressDialog = new ProgressDialog(QianXinListActivity.this);
-        progressDialog.setCanceledOnTouchOutside(false);
+        if (progressDialog == null) {
+            initProgress();
+        }
         progressDialog.setTitle("正在上传sor文件");
         progressDialog.show();
 
-        final File file = new File(filePath);
+        final File file = new File(bean.getTestLocalFilePath());
         RequestBody requestFile =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file);
         String name = file.getName();
@@ -612,6 +851,8 @@ public class QianXinListActivity extends BaseActivity implements
                         put("struffix", finalStruffix);
                         put("fiberId", bean.getFiberId());
                         put("userId", UserManager.getInstance().getUserId());
+                        put("geny", String.valueOf(locationBean.latitude));
+                        put("genx", String.valueOf(locationBean.longitude));
                     }
                 }), fileBody)
                 .map(ResultBooleanFunction.create())
@@ -683,7 +924,7 @@ public class QianXinListActivity extends BaseActivity implements
                             int pos = adapter.getData().indexOf(qianXinItemBean);
                             if (pos != -1) {
                                 //1 是header
-                                adapter.notifyItemChanged(pos + 1);
+                                adapter.notifyItemChanged(pos);
                             } else {
                                 adapter.notifyDataSetChanged();
                             }
@@ -694,5 +935,48 @@ public class QianXinListActivity extends BaseActivity implements
                         }
                     }
                 });
+    }
+
+    @SuppressLint("CheckResult")
+    private void startLocation() {
+        location.setText("定位中...");
+        new RxPermissions(this)
+                .request(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            stopLocation();
+                            locationManager = new LocationManager(QianXinListActivity.this,
+                                    QianXinListActivity.this);
+                            locationManager.start();
+                        } else {
+                            ToastUtils.showToast("请开启定位权限");
+                            location.setText("定位失败，点击重新定位");
+                        }
+                    }
+                });
+    }
+
+
+    private void stopLocation() {
+        if (locationManager != null) {
+            locationManager.stop();
+            locationManager = null;
+        }
+    }
+
+
+    private LocationManager.LocationBean locationBean;
+
+    @Override
+    public void onSuccess(LocationManager.LocationBean bean) {
+        location.setText(bean.addrss);
+        this.locationBean = bean;
+    }
+
+    @Override
+    public void onError(int code, String msg) {
+        location.setText("定位失败，点击重新定位");
     }
 }

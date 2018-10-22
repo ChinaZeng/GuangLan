@@ -44,6 +44,18 @@ public class QianXinItemBean {
     private String zFlag;
     private String stateName;
 
+
+    private String testLocalFilePath;
+
+
+    public String getTestLocalFilePath() {
+        return testLocalFilePath;
+    }
+
+    public void setTestLocalFilePath(String testLocalFilePath) {
+        this.testLocalFilePath = testLocalFilePath;
+    }
+
     public String getStateName() {
         return stateName;
     }

@@ -1,34 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="14dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="定位地址:" />
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            tools:textColor="@color/color333333" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_guanglan_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="光缆名称:" />
+
+    <TextView
+        android:id="@+id/tv_guanglan_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="光缆编码:" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/head_cslick"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:gravity="center"
-            android:paddingLeft="20dp"
             android:text="参数配置"
             android:textColor="#000"
             android:textSize="16sp" />
+
+        <com.dl7.tag.TagLayout
+            android:id="@+id/sel_mode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:tag_layout_mode="single_choice"/>
 
         <TextView
             android:id="@+id/head_click"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_alignParentRight="true"
             android:gravity="center"
-            android:paddingRight="20dp"
             android:text="展开"
             android:textSize="14sp" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -123,4 +164,77 @@
             app:tag_layout_mode="single_choice"
             app:tag_layout_shape="round_rect" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/content2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/content2_juli"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试距离:" />
+
+        <TextView
+            android:id="@+id/content2_bochang"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试波长:" />
+
+
+        <TextView
+            android:id="@+id/content2_maikuan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试脉宽:" />
+
+
+        <TextView
+            android:id="@+id/content2_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试时间:" />
+
+
+        <TextView
+            android:id="@+id/content2_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试模式:" />
+
+
+        <TextView
+            android:id="@+id/content2_zheshelv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="折射率:" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/content3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试距离:" />
+
+        <com.dl7.tag.TagLayout
+            android:id="@+id/content3_juli"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tag_layout_mode="single_choice"
+            app:tag_layout_shape="round_rect" />
+
+    </LinearLayout>
+
+
 </LinearLayout>
