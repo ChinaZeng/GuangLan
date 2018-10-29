@@ -861,6 +861,8 @@ public class QianXinListActivity extends BaseActivity implements
                     @Override
                     public void onNext(Boolean bo) {
                         if (bo) {
+                            bean.setUpload(true);
+                            adapter.notifyDataSetChanged();
                             ToastUtils.showToast("上传成功");
                         } else {
                             ToastUtils.showToast("上传失败");
@@ -893,7 +895,6 @@ public class QianXinListActivity extends BaseActivity implements
                             }).setCallback(new BottomListDialog.Callback<StatusInfoBean>() {
                                 @Override
                                 public boolean onSelected(StatusInfoBean data, int position) {
-
                                     changeStatus(bean, data);
                                     return true;
                                 }

@@ -10,6 +10,7 @@ import com.zzw.guanglan.R;
 import com.zzw.guanglan.bean.QianXinItemBean;
 import com.zzw.guanglan.ui.qianxin.test.QianXinTestActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -27,21 +28,15 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
         helper.setText(R.id.num, "光缆序号:" + item.getNo());
         helper.setText(R.id.status, "纤芯状态: " + item.getStateName());
 
-//        if (!TextUtils.isEmpty(item.getModifyDate())) {
-//            helper.setText(R.id.last_time, "上次测试时间: " + new Date(item.getModifyDate()).toString());
-//        } else {
-//            helper.setText(R.id.last_time, "上次测试时间: ");
-//        }
-
-
-//        helper.setText(R.id.tv_gl_d_num, "光缆段名称:" + item.getCblOpName());
-//        helper.setText(R.id.tv_gl_d_name, "光缆段编码:" + item.getCblOpCode());
+        helper.setText(R.id.last_time, "上次测试时间: "+getData(item.getModifyDate()));
 
         if (TextUtils.isEmpty(item.getTestLocalFilePath())) {
             helper.setVisible(R.id.test_ok, false);
         } else {
             helper.setVisible(R.id.test_ok, true);
         }
+
+         helper.setVisible(R.id.upload_ok, item.isUpload());
 
         helper.setOnClickListener(R.id.qianxin_test, new View.OnClickListener() {
             @Override
@@ -102,5 +97,20 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
         void onStatus(QianXinItemBean bean);
     }
 
+
+    String getData(String s){
+        if(TextUtils.isEmpty(s)){
+            return "无";
+        }
+        try {
+            long d = Long.parseLong(s);
+//            SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd  HH:mm");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+            return format.format( new Date(d));
+        }catch (Exception e){
+            e.printStackTrace();
+            return "无";
+        }
+    }
 
 }

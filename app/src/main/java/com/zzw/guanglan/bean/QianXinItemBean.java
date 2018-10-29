@@ -46,7 +46,16 @@ public class QianXinItemBean {
 
 
     private String testLocalFilePath;
+    private boolean upload=false;
 
+
+    public boolean isUpload() {
+        return upload;
+    }
+
+    public void setUpload(boolean upload) {
+        this.upload = upload;
+    }
 
     public String getTestLocalFilePath() {
         return testLocalFilePath;
