@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
@@ -109,10 +110,6 @@ public class GuangLanDAddActivitty extends BaseActivity implements LocationManag
 
     public void submit() {
 
-        if (locationBean == null) {
-            ToastUtils.showToast("请先获取定位!");
-            return;
-        }
 
         final String cabelOpNameS = cabelOpName.getText().toString().trim();
         final String cabelOpCodeS = cabelOpCode.getText().toString().trim();
@@ -123,13 +120,37 @@ public class GuangLanDAddActivitty extends BaseActivity implements LocationManag
         final String lastTimeS = lastTime.getText().toString().trim();
         final String remarkS = remark.getText().toString().trim();
 
+        if (TextUtils.isEmpty(cabelOpNameS)) {
+            ToastUtils.showToast("请填取光缆段名称!");
+            return;
+        }
+
+        if (TextUtils.isEmpty(capaticyS)) {
+            ToastUtils.showToast("请填取容量!");
+            return;
+        }
+        if (TextUtils.isEmpty(opLongS)) {
+            ToastUtils.showToast("请填取长度!");
+            return;
+        }
+
+        if (TextUtils.isEmpty(areaIdStr)) {
+            ToastUtils.showToast("请选择地区!");
+            return;
+        }
+
+        if (TextUtils.isEmpty(stationIdStr)) {
+            ToastUtils.showToast("请选择局站!");
+            return;
+        }
+
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .duanAppAdd(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
                         put("userId", UserManager.getInstance().getUserId());
 
-                        put("latitude", String.valueOf(locationBean.latitude));
-                        put("longitude", String.valueOf(locationBean.longitude));
+                        put("ageoy", String.valueOf(locationBean == null ? "" : locationBean.latitude));
+                        put("ageox", String.valueOf(locationBean == null ? "" : locationBean.longitude));
 
                         put("cabelOpName", cabelOpNameS);
                         put("cabelOpCode", cabelOpCodeS);

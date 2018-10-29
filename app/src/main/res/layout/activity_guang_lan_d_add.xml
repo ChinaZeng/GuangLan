@@ -87,7 +87,7 @@
                 android:layout_height="50dp"
                 android:layout_weight="1"
                 android:background="@null"
-                android:hint="请输入光缆段编码(必填)"
+                android:hint="请输入光缆段编码(非必填)"
                 android:singleLine="true"
                 android:textColorHint="#5f6468"
                 android:textSize="14sp"
@@ -153,6 +153,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
@@ -181,6 +182,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
@@ -212,6 +214,7 @@
 
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
@@ -240,6 +243,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
@@ -289,7 +293,7 @@
                 android:layout_weight="1"
                 android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:gravity="center_vertical"
-                android:hint="请选择所属地区"
+                android:hint="请选择所属地区(必填)"
                 android:singleLine="true"
                 android:textColor="#000"
                 android:textColorHint="#5f6468"
@@ -319,7 +323,7 @@
                 android:layout_weight="1"
                 android:drawableRight="@drawable/ic_chevron_right_black_24dp"
                 android:gravity="center_vertical"
-                android:hint="请选择所属局站"
+                android:hint="请选择所属局站(必填)"
                 android:singleLine="true"
                 android:textColor="#000"
                 android:textColorHint="#5f6468"
@@ -330,6 +334,7 @@
 
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
@@ -361,6 +366,7 @@
 
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
@@ -391,6 +397,7 @@
 
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
@@ -421,6 +428,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
@@ -455,10 +463,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="50dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_marginTop="40dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="50dp"
             android:background="@color/color1"
             android:text="新增光缆段"
             android:textColor="#fff" />

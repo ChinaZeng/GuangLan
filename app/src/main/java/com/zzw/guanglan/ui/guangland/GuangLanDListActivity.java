@@ -1,5 +1,6 @@
 package com.zzw.guanglan.ui.guangland;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -21,19 +22,24 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.dl7.tag.TagLayout;
 import com.dl7.tag.TagView;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.bean.GradeBean;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.SingleChooseBean;
+import com.zzw.guanglan.dialogs.BottomListDialog;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.manager.LocationManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.socket.event.TestArgsAndStartBean;
 import com.zzw.guanglan.ui.guangland.add.GuangLanDAddActivitty;
 import com.zzw.guanglan.ui.qianxin.QianXinListActivity;
 import com.zzw.guanglan.utils.RequestBodyUtils;
+import com.zzw.guanglan.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,9 +47,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.functions.Consumer;
 
 public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener,
-        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener, TextView.OnEditorActionListener {
+        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener,
+        TextView.OnEditorActionListener, LocationManager.OnLocationListener {
     @BindView(R.id.recy)
     RecyclerView recy;
     @BindView(R.id.swipe_refresh_layout)
@@ -52,13 +60,33 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
     EditText etParam;
     @BindView(R.id.tv_sel)
     TextView tvSel;
+    @BindView(R.id.hide)
+    TextView hide;
+    @BindView(R.id.loca)
+    TextView loca;
+    @BindView(R.id.location)
+    TextView location;
+    @BindView(R.id.loca_content)
+    View locaContent;
+    @BindView(R.id.juli)
+    TagLayout juli;
+    @BindView(R.id.jibie)
+    TagLayout jibie;
 
     private GuangLanDListAdapter adapter;
     private String searchKey;
-    private int searchFlog=0;
-    private int tempFlog=0;
+    private String searchJuli;
+    private String searchJibie;
+    private String searchLontude;
+    private String searchLatude;
+
+    private int searchFlog = 0;
+    private int tempFlog = 0;
 
     private int pageNo = 1;
+
+    private boolean userLoca = false;
+    private LocationManager locationManager;
 
     public static void open(Context context) {
         context.startActivity(new Intent(context, GuangLanDListActivity.class));
@@ -73,7 +101,10 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
     @Override
     protected void initData() {
         super.initData();
+
         etParam.setOnEditorActionListener(this);
+        initLoca();
+        startLocation();
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new GuangLanDListAdapter(new ArrayList<GuangLanDItemBean>());
         adapter.setOnItemClickListener(this);
@@ -84,6 +115,69 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
         refreshLayout.setOnRefreshListener(this);
 
         onRefresh();
+    }
+
+    private String juliStr;
+    private String jibieStr;
+
+    private void initLoca() {
+        final List<SingleChooseBean> juliS = new ArrayList<>();
+        juliS.add(new SingleChooseBean(0, "300m", 300));
+        juliS.add(new SingleChooseBean(1, "1km", 1000));
+//        juliS.add(new SingleChooseBean(2, "5km", 5000));
+//        juliS.add(new SingleChooseBean(3, "10km", 10000));
+//        juliS.add(new SingleChooseBean(4, "30km", 30000));
+//        juliS.add(new SingleChooseBean(5, "60km", 60000));
+//        juliS.add(new SingleChooseBean(6, "100km", 100000));
+//        juliS.add(new SingleChooseBean(7, "180km", 180000));
+
+        juli.cleanTags();
+        for (SingleChooseBean singleChooseBean : juliS) {
+            juli.addTags(singleChooseBean.getName());
+        }
+        juli.setTagCheckListener(new TagView.OnTagCheckListener() {
+            @Override
+            public void onTagCheck(int i, String s, boolean b) {
+                if (b) {
+                    juliStr = String.valueOf(juliS.get(i).getValue());
+                    if (userLoca) {
+                        onRefresh();
+                    }
+                }
+            }
+        });
+        juli.setCheckTag(0);
+        juliStr = String.valueOf(juliS.get(0).getValue());
+
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .quertListInfo()
+                .compose(LifeObservableTransformer.<List<GradeBean>>create(this))
+                .subscribe(new ErrorObserver<List<GradeBean>>(this) {
+                    @Override
+                    public void onNext(final List<GradeBean> data) {
+                        if (data == null) {
+                            return;
+                        }
+                        jibie.cleanTags();
+                        for (GradeBean datum : data) {
+                            jibie.addTags(datum.getDescChina());
+                        }
+                        jibie.setTagCheckListener(new TagView.OnTagCheckListener() {
+                            @Override
+                            public void onTagCheck(int i, String s, boolean b) {
+                                if (b) {
+                                    jibieStr = String.valueOf(data.get(i).getDescChina());
+                                    if (userLoca) {
+                                        onRefresh();
+                                    }
+                                }
+                            }
+                        });
+                        jibie.setCheckTag(0);
+                        jibieStr = String.valueOf(data.get(0).getSerialNo());
+                    }
+                });
+
     }
 
 
@@ -103,9 +197,9 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
     }
 
 
-    @OnClick({R.id.add,R.id.search,R.id.tv_sel})
+    @OnClick({R.id.add, R.id.search, R.id.tv_sel, R.id.hide, R.id.loca, R.id.location})
     public void onViewClicked(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.add:
                 GuangLanDAddActivitty.open(this);
                 break;
@@ -116,11 +210,40 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
             case R.id.tv_sel:
                 showListPopupWindow(tvSel);
                 break;
+            case R.id.hide:
+                locaContent.setVisibility(locaContent.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                if (locaContent.getVisibility() == View.VISIBLE) {
+                    hide.setText("收起");
+                } else {
+                    hide.setText("展开");
+                }
+                break;
+            case R.id.loca:
+                loca.setSelected(!loca.isSelected());
+
+                if (loca.isSelected()) {
+                    userLoca = true;
+                    locaContent.setVisibility(View.VISIBLE);
+                    hide.setVisibility(View.VISIBLE);
+                    hide.setText("收起");
+                } else {
+                    userLoca = false;
+                    locaContent.setVisibility(View.GONE);
+                    hide.setVisibility(View.GONE);
+                }
+
+                onRefresh();
+
+                break;
+
+            case R.id.location:
+                startLocation();
+                break;
         }
     }
 
     public void showListPopupWindow(View view) {
-        final String items[] = { "光缆端编码", "光缆段名称"};
+        final String items[] = {"光缆端编码", "光缆段名称"};
         final ListPopupWindow listPopupWindow = new ListPopupWindow(this);
 
         // ListView适配器
@@ -154,17 +277,16 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
     }
 
 
-
     @Override
     public void onLoadMoreRequested() {
         pageNo++;
-        search(searchKey,searchFlog, pageNo);
+        search(searchKey, searchFlog, pageNo);
     }
 
     @Override
     public void onRefresh() {
         pageNo = 1;
-        search(searchKey,searchFlog, pageNo);
+        search(searchKey, searchFlog, pageNo);
     }
 
     void hideKeyWordSearch() {
@@ -174,17 +296,42 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
                 .hideSoftInputFromWindow(getCurrentFocus()
                         .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         String searchKey = etParam.getText().toString().trim();
-        search(searchKey,tempFlog, pageNo);
+        search(searchKey, tempFlog, pageNo);
     }
+
     void search(final String key, final int flog, final int page) {
-        searchKey =key;
+        searchKey = key;
         searchFlog = flog;
+
+        String searchJuli = null;
+        String searchJibie = null;
+        String searchLontude = null;
+        String searchLatude = null;
+        if (userLoca) {
+            searchJuli = juliStr;
+            searchJibie = jibieStr;
+            if (locationBean != null) {
+                searchLontude = String.valueOf(locationBean.longitude);
+                searchLatude = String.valueOf(locationBean.latitude);
+            }
+        }
+
+        this.searchJuli = searchJuli;
+        this.searchJibie = searchJibie;
+        this.searchLontude = searchLontude;
+        this.searchLatude = searchLatude;
+
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppListDuanByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
-                        put("model.cabelOpCode", flog==0? key:"");
-                        put("model.cabelOpName", flog==0? "":key);
+                        put("model.cabelOpCode", GuangLanDListActivity.this.searchFlog == 0 ? GuangLanDListActivity.this.searchKey : "");
+                        put("model.cabelOpName", GuangLanDListActivity.this.searchFlog == 0 ? "" : GuangLanDListActivity.this.searchKey);
                         put("pageNum", String.valueOf(page));
+
+                        put("model.dd", GuangLanDListActivity.this.searchJuli);
+                        put("model.descChina", GuangLanDListActivity.this.searchJibie);
+                        put("model.lontude", GuangLanDListActivity.this.searchLontude);
+                        put("model.latude", GuangLanDListActivity.this.searchLatude);
                     }
                 }))
                 .compose(LifeObservableTransformer.<ListDataBean<GuangLanDItemBean>>create(this))
@@ -211,5 +358,52 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
             return true;
         }
         return false;
+    }
+
+    @SuppressLint("CheckResult")
+    private void startLocation() {
+        location.setText("定位中...");
+        new RxPermissions(this)
+                .request(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            stopLocation();
+                            locationManager = new LocationManager(GuangLanDListActivity.this,
+                                    GuangLanDListActivity.this);
+                            locationManager.start();
+                        } else {
+                            ToastUtils.showToast("请开启定位权限");
+                            location.setText("定位失败，点击重新定位");
+                        }
+                    }
+                });
+    }
+
+    private void stopLocation() {
+        if (locationManager != null) {
+            locationManager.stop();
+            locationManager = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopLocation();
+    }
+
+    private LocationManager.LocationBean locationBean;
+
+    @Override
+    public void onSuccess(LocationManager.LocationBean bean) {
+        location.setText("定位地址: " + bean.addrss);
+        this.locationBean = bean;
+    }
+
+    @Override
+    public void onError(int code, String msg) {
+        location.setText("定位地址: 定位失败，点击重新定位");
     }
 }

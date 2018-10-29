@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,6 +30,82 @@
             <include layout="@layout/layout_search" />
 
         </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
+
+            <TextView
+                android:id="@+id/loca"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_rect_rounded_border"
+                android:padding="5dp"
+                android:text="定位筛选"
+                android:textColor="@drawable/selector_main_tab_text_color" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/hide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="收起"
+                android:visibility="gone" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/loca_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/location"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:text="定位地址:" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="测试距离:" />
+
+            <com.dl7.tag.TagLayout
+                android:id="@+id/juli"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tag_layout_mode="single_choice"
+                app:tag_layout_shape="round_rect" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="光缆级别:" />
+
+            <com.dl7.tag.TagLayout
+                android:id="@+id/jibie"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tag_layout_mode="single_choice"
+                app:tag_layout_shape="round_rect" />
+
+        </LinearLayout>
+
 
         <View
             android:layout_width="match_parent"
@@ -56,8 +133,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="20dp"
         android:layout_marginRight="15dp"
+        android:layout_marginBottom="20dp"
         android:src="@drawable/ic_add_black_24dp"
         app:backgroundTint="#31bfcf"
         app:elevation="5dp"

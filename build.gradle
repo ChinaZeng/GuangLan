@@ -5,6 +5,7 @@ buildscript {
     repositories {
         maven { url 'http://maven.aliyun.com/repository/public/' }
         maven { url 'http://maven.6xyun.cn/' }
+
         google()
         jcenter()
         maven { url "https://jitpack.io" }
