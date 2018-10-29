@@ -122,8 +122,8 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
 
     private void initLoca() {
         final List<SingleChooseBean> juliS = new ArrayList<>();
-        juliS.add(new SingleChooseBean(0, "300m", 300));
-        juliS.add(new SingleChooseBean(1, "1km", 1000));
+        juliS.add(new SingleChooseBean(0, "300m", 0.3f));
+        juliS.add(new SingleChooseBean(1, "1km", 1.0f));
 //        juliS.add(new SingleChooseBean(2, "5km", 5000));
 //        juliS.add(new SingleChooseBean(3, "10km", 10000));
 //        juliS.add(new SingleChooseBean(4, "30km", 30000));
@@ -139,7 +139,7 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
             @Override
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
-                    juliStr = String.valueOf(juliS.get(i).getValue());
+                    juliStr = String.valueOf(juliS.get(i).getFloatValue());
                     if (userLoca) {
                         onRefresh();
                     }
@@ -147,7 +147,7 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
             }
         });
         juli.setCheckTag(0);
-        juliStr = String.valueOf(juliS.get(0).getValue());
+        juliStr = String.valueOf(juliS.get(0).getFloatValue());
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .quertListInfo()
