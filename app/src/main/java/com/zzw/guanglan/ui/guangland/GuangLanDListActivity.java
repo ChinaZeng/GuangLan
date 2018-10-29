@@ -174,7 +174,7 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
                             }
                         });
                         jibie.setCheckTag(0);
-                        jibieStr = String.valueOf(data.get(0).getSerialNo());
+                        jibieStr = String.valueOf(data.get(0).getDescChina());
                     }
                 });
 
