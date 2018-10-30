@@ -124,7 +124,8 @@ public class GuangLanDListActivity extends BaseActivity implements BaseQuickAdap
         final List<SingleChooseBean> juliS = new ArrayList<>();
         juliS.add(new SingleChooseBean(0, "300m", 0.3f));
         juliS.add(new SingleChooseBean(1, "1km", 1.0f));
-//        juliS.add(new SingleChooseBean(2, "5km", 5000));
+        juliS.add(new SingleChooseBean(2, "2km", 2.0f));
+        juliS.add(new SingleChooseBean(3, "5km", 5.0f));
 //        juliS.add(new SingleChooseBean(3, "10km", 10000));
 //        juliS.add(new SingleChooseBean(4, "30km", 30000));
 //        juliS.add(new SingleChooseBean(5, "60km", 60000));

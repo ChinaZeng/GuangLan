@@ -59,6 +59,8 @@ import org.simple.eventbus.Subscriber;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -862,6 +864,7 @@ public class QianXinListActivity extends BaseActivity implements
                     public void onNext(Boolean bo) {
                         if (bo) {
                             bean.setUpload(true);
+                            bean.setModifyDate(String.valueOf(Calendar.getInstance().getTimeInMillis()));
                             adapter.notifyDataSetChanged();
                             ToastUtils.showToast("上传成功");
                         } else {
