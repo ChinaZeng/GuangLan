@@ -104,7 +104,7 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
         }
         try {
             long d = Long.parseLong(s);
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd  HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
             return format.format(new Date(d));
         }catch (Exception e){
             e.printStackTrace();
