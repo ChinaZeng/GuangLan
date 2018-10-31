@@ -1,145 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
-    <LinearLayout
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#f1eeee"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_sel"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="光缆端编码" />
-
-            <include layout="@layout/layout_search" />
-
-        </LinearLayout>
-
-        <LinearLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp">
-
-            <TextView
-                android:id="@+id/loca"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/selector_rect_rounded_border"
-                android:padding="5dp"
-                android:text="定位筛选"
-                android:textColor="@drawable/selector_main_tab_text_color" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/hide"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:text="收起"
-                android:visibility="gone" />
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/loca_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/location"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingLeft="10dp"
-                android:text="定位地址:" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="测试距离:" />
-
-            <com.dl7.tag.TagLayout
-                android:id="@+id/juli"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tag_layout_mode="single_choice"
-                app:tag_layout_shape="round_rect" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="光缆级别:" />
-
-            <com.dl7.tag.TagLayout
-                android:id="@+id/jibie"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tag_layout_mode="single_choice"
-                app:tag_layout_shape="round_rect" />
-
-        </LinearLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/colorDivider" />
-
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#f1eeee">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recy"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-    </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/ic_add_black_24dp"
-        app:backgroundTint="#31bfcf"
-        app:elevation="5dp"
-        app:fabSize="normal"
-        app:rippleColor="#e7d161" />
+        app:tabIndicatorColor="#0b85f6"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="#0b85f6"
+        app:tabTextColor="#707070" />
 
-</FrameLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#f1eeee" />
+
+</LinearLayout>
 

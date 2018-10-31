@@ -14,7 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -50,6 +49,7 @@ import com.zzw.guanglan.socket.utils.ByteUtil;
 import com.zzw.guanglan.socket.utils.FileHelper;
 import com.zzw.guanglan.socket.utils.MyLog;
 import com.zzw.guanglan.ui.HotConnActivity;
+import com.zzw.guanglan.utils.DataUtils;
 import com.zzw.guanglan.utils.RequestBodyUtils;
 import com.zzw.guanglan.utils.SPUtil;
 import com.zzw.guanglan.utils.ToastUtils;
@@ -58,8 +58,8 @@ import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +96,7 @@ public class QianXinListActivity extends BaseActivity implements
 
 
     private QianXinListAdapter adapter;
-    private GuangLanDItemBean bean;
+    private GuangLanDItemBean guangLanDBean;
 
     private List<SingleChooseBean> juliS;
     private List<SingleChooseBean> bochangS;
@@ -129,7 +129,7 @@ public class QianXinListActivity extends BaseActivity implements
                         Manifest.permission.WRITE_SETTINGS,}, 5);
 
         super.initData();
-        bean = (GuangLanDItemBean) getIntent().getSerializableExtra(ITEM);
+        guangLanDBean = (GuangLanDItemBean) getIntent().getSerializableExtra(ITEM);
 
         headerView();
 
@@ -151,8 +151,8 @@ public class QianXinListActivity extends BaseActivity implements
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppListByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
-                        put("model.cblOpName", bean.getCabelOpName());
-                        put("model.cblOpCode", bean.getCabelOpCode());
+                        put("model.cblOpName", guangLanDBean.getCabelOpName());
+                        put("model.cblOpCode", guangLanDBean.getCabelOpCode());
                         put("pageNum", String.valueOf(pageNo));
                     }
                 }))
@@ -506,8 +506,8 @@ public class QianXinListActivity extends BaseActivity implements
         TextView tv_guanglan_name = view.findViewById(R.id.tv_guanglan_name);
         TextView tv_guanglan_code = view.findViewById(R.id.tv_guanglan_code);
 
-        tv_guanglan_name.setText("光缆名称:" + bean.getCabelOpName());
-        tv_guanglan_code.setText("光缆编码:" + bean.getCabelOpCode());
+        tv_guanglan_name.setText("光缆名称:" + guangLanDBean.getCabelOpName());
+        tv_guanglan_code.setText("光缆编码:" + guangLanDBean.getCabelOpCode());
 
         final View cutomView = view.findViewById(R.id.content);
         final View lastView = view.findViewById(R.id.content2);
@@ -864,9 +864,19 @@ public class QianXinListActivity extends BaseActivity implements
                     public void onNext(Boolean bo) {
                         if (bo) {
                             bean.setUpload(true);
-                            bean.setModifyDate(String.valueOf(new Date().getTime()));
+                            bean.setModifyTimeString(DataUtils.getNowTime());
                             adapter.notifyDataSetChanged();
                             ToastUtils.showToast("上传成功");
+
+                            ArrayList<GuangLanDItemBean> data = SPUtil.getInstance("guanglan")
+                                    .getSerializable("data", new ArrayList<GuangLanDItemBean>());
+                            data.remove(guangLanDBean);
+                            data.add(0, guangLanDBean);
+                            if (data.size() > 10) {
+                                data.remove(10);
+                            }
+                            SPUtil.getInstance("guanglan").put("data", data);
+
                         } else {
                             ToastUtils.showToast("上传失败");
                         }
@@ -880,6 +890,7 @@ public class QianXinListActivity extends BaseActivity implements
                     }
                 });
     }
+
 
     @Override
     public void onStatus(final QianXinItemBean bean) {

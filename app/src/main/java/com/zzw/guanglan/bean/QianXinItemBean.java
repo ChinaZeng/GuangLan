@@ -43,11 +43,20 @@ public class QianXinItemBean {
     private String aFlag;
     private String zFlag;
     private String stateName;
+    private String modifyTimeString;
 
 
     private String testLocalFilePath;
     private boolean upload=false;
 
+
+    public String getModifyTimeString() {
+        return modifyTimeString;
+    }
+
+    public void setModifyTimeString(String modifyTimeString) {
+        this.modifyTimeString = modifyTimeString;
+    }
 
     public boolean isUpload() {
         return upload;

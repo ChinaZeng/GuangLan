@@ -28,7 +28,8 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
         helper.setText(R.id.num, "光缆序号:" + item.getNo());
         helper.setText(R.id.status, "纤芯状态: " + item.getStateName());
 
-        helper.setText(R.id.last_time, "上次测试时间: "+getData(item.getModifyDate()));
+        helper.setText(R.id.last_time, "上次测试时间: " + (TextUtils.isEmpty(item.getModifyTimeString())
+                ? "无" : item.getModifyTimeString()));
 
         if (TextUtils.isEmpty(item.getTestLocalFilePath())) {
             helper.setVisible(R.id.test_ok, false);
@@ -36,7 +37,7 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
             helper.setVisible(R.id.test_ok, true);
         }
 
-         helper.setVisible(R.id.upload_ok, item.isUpload());
+        helper.setVisible(R.id.upload_ok, item.isUpload());
 
         helper.setOnClickListener(R.id.qianxin_test, new View.OnClickListener() {
             @Override
@@ -98,18 +99,6 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
     }
 
 
-    String getData(String s){
-        if(TextUtils.isEmpty(s)){
-            return "无";
-        }
-        try {
-            long d = Long.parseLong(s);
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
-            return format.format(new Date(d));
-        }catch (Exception e){
-            e.printStackTrace();
-            return "无";
-        }
-    }
+
 
 }

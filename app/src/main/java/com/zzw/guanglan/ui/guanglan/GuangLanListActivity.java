@@ -47,7 +47,7 @@ public class GuangLanListActivity extends BaseActivity implements BaseQuickAdapt
 
     @Override
     protected int initLayoutId() {
-        return R.layout.activity_guang_lan_d_list;
+        return R.layout.fragment_guang_lan_d_list;
     }
 
     @Override

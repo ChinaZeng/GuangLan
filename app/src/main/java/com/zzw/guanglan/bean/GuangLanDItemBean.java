@@ -1,6 +1,7 @@
 package com.zzw.guanglan.bean;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Created by zzw on 2018/10/3.
@@ -222,4 +223,49 @@ public class GuangLanDItemBean implements Serializable {
     public void setStateName(String stateName) {
         this.stateName = stateName;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GuangLanDItemBean that = (GuangLanDItemBean) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (cabelOpName != null ? !cabelOpName.equals(that.cabelOpName) : that.cabelOpName != null)
+            return false;
+        if (cabelOpCode != null ? !cabelOpCode.equals(that.cabelOpCode) : that.cabelOpCode != null)
+            return false;
+        if (statId != null ? !statId.equals(that.statId) : that.statId != null) return false;
+        if (areaId != null ? !areaId.equals(that.areaId) : that.areaId != null) return false;
+        if (roomId != null ? !roomId.equals(that.roomId) : that.roomId != null) return false;
+        if (capaticy != null ? !capaticy.equals(that.capaticy) : that.capaticy != null)
+            return false;
+        if (state != null ? !state.equals(that.state) : that.state != null) return false;
+        if (opString != null ? !opString.equals(that.opString) : that.opString != null)
+            return false;
+        if (orgId != null ? !orgId.equals(that.orgId) : that.orgId != null) return false;
+        if (orgUserName != null ? !orgUserName.equals(that.orgUserName) : that.orgUserName != null)
+            return false;
+        if (opStartTime != null ? !opStartTime.equals(that.opStartTime) : that.opStartTime != null)
+            return false;
+        if (lastTime != null ? !lastTime.equals(that.lastTime) : that.lastTime != null)
+            return false;
+        if (paCableId != null ? !paCableId.equals(that.paCableId) : that.paCableId != null)
+            return false;
+        if (paEquipId != null ? !paEquipId.equals(that.paEquipId) : that.paEquipId != null)
+            return false;
+        if (createOp != null ? !createOp.equals(that.createOp) : that.createOp != null)
+            return false;
+        if (areaName != null ? !areaName.equals(that.areaName) : that.areaName != null)
+            return false;
+        if (remark != null ? !remark.equals(that.remark) : that.remark != null) return false;
+        if (paCableName != null ? !paCableName.equals(that.paCableName) : that.paCableName != null)
+            return false;
+        if (paCableLevel != null ? !paCableLevel.equals(that.paCableLevel) : that.paCableLevel != null)
+            return false;
+        return stateName != null ? stateName.equals(that.stateName) : that.stateName == null;
+    }
+
 }
