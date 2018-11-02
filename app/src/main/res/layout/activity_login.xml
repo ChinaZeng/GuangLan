@@ -19,15 +19,14 @@
 
     <com.zzw.guanglan.widgets.MultiFunctionEditText
         android:id="@+id/et_phone"
-        android:text="ADMIN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:background="@android:color/transparent"
-        android:hint="请输入手机号"
-        android:inputType="number"
+        android:hint="请输入账号"
         android:maxLines="1"
         android:paddingLeft="10dp"
+        android:text="ADMIN"
         android:textColor="@color/color333333"
         android:textSize="18sp"
         app:clearButtonEnable="true"
@@ -46,13 +45,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="123456"
         android:background="@android:color/transparent"
-        android:hint="密码"
+        android:hint="请输入密码"
         android:inputType="textPassword"
         android:maxLength="32"
         android:maxLines="1"
         android:paddingLeft="10dp"
+        android:text="123456"
         android:textColor="@color/color333333"
         android:textSize="18sp"
         app:clearButtonEnable="true"
@@ -81,13 +80,13 @@
 
     <Button
         android:id="@+id/login"
-        android:onClick="login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:background="@color/color1"
         android:gravity="center"
         android:minHeight="40dp"
+        android:onClick="login"
         android:text="登录"
         android:textColor="@android:color/white" />
 
