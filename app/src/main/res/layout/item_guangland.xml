@@ -9,11 +9,12 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/num"
-        android:layout_width="match_parent"
+        android:id="@+id/tv_gl_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        tools:text="光缆段名称:xxxxxxx" />
+        tools:text="光缆名称:xxxxx" />
+
 
     <View
         android:layout_width="match_parent"
@@ -28,17 +29,18 @@
         android:layout_marginBottom="0dp">
 
         <TextView
-            android:id="@+id/tv_gl_d_num"
-            android:layout_width="wrap_content"
+            android:id="@+id/guang_lan_d_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="所属光缆名称:xxxxx" />
+            tools:text="光缆段名称:xxxxxxx" />
+
 
         <TextView
             android:id="@+id/tv_gl_d_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_gl_d_num"
-            android:layout_alignLeft="@+id/tv_gl_d_num"
+            android:layout_below="@+id/guang_lan_d_name"
+            android:layout_alignLeft="@+id/guang_lan_d_name"
             android:layout_marginTop="5dp"
             android:singleLine="true"
             tools:text="所在区域:xxxxx" />
@@ -48,7 +50,7 @@
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_gl_d_name"
-            android:layout_alignLeft="@+id/tv_gl_d_num"
+            android:layout_alignLeft="@+id/guang_lan_d_name"
             android:layout_marginTop="5dp"
             android:singleLine="true"
             tools:text="光缆段状态:xxxxx" />

@@ -8,10 +8,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.bean.QianXinItemBean;
-import com.zzw.guanglan.ui.qianxin.test.QianXinTestActivity;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,7 +22,7 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
 
     @Override
     protected void convert(final BaseViewHolder helper, final QianXinItemBean item) {
-        helper.setText(R.id.num, "光缆序号:" + item.getNo());
+        helper.setText(R.id.guang_lan_d_name, "光缆序号:" + item.getNo());
         helper.setText(R.id.status, "纤芯状态: " + item.getStateName());
 
         helper.setText(R.id.last_time, "上次测试时间: " + (TextUtils.isEmpty(item.getModifyTimeString())

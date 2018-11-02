@@ -505,11 +505,9 @@ public class QianXinListActivity extends BaseActivity implements
         });
         TextView tv_guanglan_name = view.findViewById(R.id.tv_guanglan_name);
         TextView tv_guanglan_code = view.findViewById(R.id.tv_guanglan_code);
-        TextView tv_suoshu_guanglan_name = view.findViewById(R.id.tv_suoshu_guanglan_name);
 
-        tv_guanglan_name.setText("光缆名称:" + guangLanDBean.getCabelOpName());
+        tv_guanglan_name.setText("光缆名称:" + guangLanDBean.getPaCableName());
         tv_guanglan_code.setText("光缆编码:" + guangLanDBean.getCabelOpCode());
-        tv_suoshu_guanglan_name.setText("所属光缆名称:" + guangLanDBean.getPaCableName());
 
         final View cutomView = view.findViewById(R.id.content);
         final View lastView = view.findViewById(R.id.content2);
@@ -573,7 +571,7 @@ public class QianXinListActivity extends BaseActivity implements
         });
 
         tagLayout.addTags("自定义", "上一次配置", "自动配置");
-        tagLayout.setCheckTag(0);
+//        tagLayout.setCheckTag(0);
 
         return view;
     }

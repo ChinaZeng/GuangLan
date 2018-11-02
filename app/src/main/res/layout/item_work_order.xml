@@ -9,7 +9,7 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/num"
+        android:id="@+id/guang_lan_d_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="工单编号003"

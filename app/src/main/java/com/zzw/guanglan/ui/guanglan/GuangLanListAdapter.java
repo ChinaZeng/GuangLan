@@ -25,11 +25,11 @@ public class GuangLanListAdapter extends BaseQuickAdapter<GuangLanItemBean, Base
 //        helper.setText(R.id.num, "id:" + item.getId());
 //        helper.setText(R.id.tv_gd_are_name, "区域:" + item.getAreaName());
 
-        helper.setText(R.id.num, "光缆名称:" + item.getCableName());
+        helper.setText(R.id.guang_lan_d_name, "光缆名称:" + item.getCableName());
 
         helper.setText(R.id.tv_gl_leave, "当前级别:" + item.getDescChina());
         helper.setText(R.id.tv_gl_state, "当前状态:" + item.getStateName());
-        helper.setText(R.id.tv_gl_d_num, "所在区域:" + item.getAreaName());
+        helper.setText(R.id.tv_gl_name, "所在区域:" + item.getAreaName());
         helper.setText(R.id.tv_gl_address, "安装地址:" + item.getAddress());
         helper.setText(R.id.tv_gl_len, "长度:" + item.getLength());
         helper.setText(R.id.tv_gl_rongliang, "容量:" + item.getCapacity());

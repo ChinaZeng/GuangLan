@@ -27,8 +27,8 @@ public class GuangLanDListAdapter extends BaseQuickAdapter<GuangLanDItemBean, Ba
 
         helper.setText(R.id.tv_gl_leave, "当前级别:" + item.getPaCableLevel());
         helper.setText(R.id.tv_gl_state, "当前状态:" + item.getStateName());
-        helper.setText(R.id.num, "光缆段名称:" + item.getCabelOpName());
+        helper.setText(R.id.guang_lan_d_name, "光缆段名称:" + item.getCabelOpName());
         helper.setText(R.id.tv_gl_d_name, "所在区域:" + item.getAreaName());
-        helper.setText(R.id.tv_gl_d_num, "所属光缆名称:" + item.getPaCableName());
+        helper.setText(R.id.tv_gl_name, "光缆名称:" + item.getPaCableName());
     }
 }

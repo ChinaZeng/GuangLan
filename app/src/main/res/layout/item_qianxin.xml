@@ -14,7 +14,7 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/num"
+            android:id="@+id/guang_lan_d_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
@@ -44,7 +44,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_gl_d_num"
+            android:id="@+id/tv_gl_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
@@ -54,7 +54,7 @@
             android:id="@+id/tv_gl_d_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/tv_gl_d_num"
+            android:layout_toRightOf="@+id/tv_gl_name"
             android:textSize="16sp"
             tools:text="光缆段编码:xxxxx" />
 

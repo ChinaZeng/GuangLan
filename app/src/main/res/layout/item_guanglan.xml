@@ -9,7 +9,7 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/num"
+        android:id="@+id/guang_lan_d_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
@@ -28,7 +28,7 @@
         android:layout_marginTop="10dp">
 
         <TextView
-            android:id="@+id/tv_gl_d_num"
+            android:id="@+id/tv_gl_name"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -38,8 +38,8 @@
             android:id="@+id/tv_gl_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/tv_gl_d_num"
-            android:layout_toRightOf="@+id/tv_gl_d_num"
+            android:layout_alignTop="@+id/tv_gl_name"
+            android:layout_toRightOf="@+id/tv_gl_name"
             android:singleLine="true"
             tools:text="安装地址:xxxxx" />
 
@@ -48,8 +48,8 @@
             android:id="@+id/tv_gl_state"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/tv_gl_d_num"
-            android:layout_below="@+id/tv_gl_d_num"
+            android:layout_alignLeft="@+id/tv_gl_name"
+            android:layout_below="@+id/tv_gl_name"
             android:layout_marginTop="5dp"
             android:singleLine="true"
             tools:text="光缆段状态:xxxxx" />
@@ -68,7 +68,7 @@
             android:id="@+id/tv_gl_len"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/tv_gl_d_num"
+            android:layout_alignLeft="@+id/tv_gl_name"
             android:layout_below="@+id/tv_gl_state"
             android:layout_marginTop="5dp"
             android:singleLine="true"
