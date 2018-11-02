@@ -34,6 +34,12 @@
         tools:text="光缆名称:" />
 
     <TextView
+        android:id="@+id/tv_suoshu_guanglan_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="所属光缆名称:" />
+
+    <TextView
         android:id="@+id/tv_guanglan_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
