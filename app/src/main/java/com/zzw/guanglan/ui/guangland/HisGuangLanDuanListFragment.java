@@ -2,17 +2,20 @@ package com.zzw.guanglan.ui.guangland;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseFragment;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
+import com.zzw.guanglan.ui.qianxin.QianXinListActivity;
 import com.zzw.guanglan.utils.SPUtil;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 
-public class HisGuangLanDuanListFragment extends BaseFragment {
+public class HisGuangLanDuanListFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener {
 
     @BindView(R.id.recy)
     RecyclerView recy;
@@ -33,6 +36,7 @@ public class HisGuangLanDuanListFragment extends BaseFragment {
         super.initData();
         recy.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new GuangLanDListAdapter(new ArrayList<GuangLanDItemBean>());
+        adapter.setOnItemClickListener(this);
         recy.setAdapter(adapter);
     }
 
@@ -44,5 +48,11 @@ public class HisGuangLanDuanListFragment extends BaseFragment {
         if (data != null && data.size() > 0) {
             adapter.setNewData(data);
         }
+    }
+
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+        QianXinListActivity.open(getContext(), (GuangLanDItemBean) adapter.getData().get(position));
+
     }
 }
