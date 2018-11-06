@@ -67,13 +67,22 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:textColor="@color/color1"
+                    android:id="@+id/clean_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="清除名称"
+                    android:textColor="@color/color1" />
+
+                <TextView
                     android:id="@+id/choose_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right"
-                    android:text="选择光缆名称" />
+                    android:text="选择光缆名称"
+                    android:textColor="@color/color1" />
 
 
             </LinearLayout>

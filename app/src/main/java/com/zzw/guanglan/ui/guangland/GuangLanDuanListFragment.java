@@ -191,7 +191,6 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
             name = v.findViewById(R.id.name);
             area = v.findViewById(R.id.area);
 
-
             initLoca();
             startLocation();
 
@@ -208,6 +207,14 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                     popupWindow.dismiss();
                 }
             });
+
+            v.findViewById(R.id.clean_name).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    name.setText("");
+                }
+            });
+
             v.findViewById(R.id.choose_name).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
