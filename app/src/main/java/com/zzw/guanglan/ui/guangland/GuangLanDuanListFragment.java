@@ -367,7 +367,12 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                 .hideSoftInputFromWindow(getActivity().getCurrentFocus()
                         .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         String searchKey = etParam.getText().toString().trim();
+
+        pageNo = 1;
+        refreshLayout.setRefreshing(true);
+
         search(searchKey, tempFlog, pageNo);
+
     }
 
     void search(final String key, final int flog, final int page) {
