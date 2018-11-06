@@ -99,6 +99,11 @@
             android:label="选择上级光缆"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ui.guangland.GuangLanSearchActivity"
+            android:label="选择光缆名称"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
 
         <!--高德-->
         <service android:name="com.amap.api.location.APSService" />

@@ -1,10 +1,11 @@
 package com.zzw.guanglan.ui.guangland;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
@@ -27,7 +28,6 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.dl7.tag.TagLayout;
-import com.dl7.tag.TagView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseFragment;
@@ -45,6 +45,9 @@ import com.zzw.guanglan.ui.qianxin.QianXinListActivity;
 import com.zzw.guanglan.utils.RequestBodyUtils;
 import com.zzw.guanglan.utils.ToastUtils;
 
+import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +55,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
+
 
 public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener,
         BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener,
@@ -99,6 +103,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
     @Override
     protected void initData() {
         super.initData();
+
         etParam.setOnEditorActionListener(this);
 
         recy.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -172,7 +177,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
 
     private PopupWindow popupWindow;
 
-    private TextView location;
+    private TextView location, name, area;
     private TagLayout juli, jibie;
 
     private void showSel() {
@@ -183,6 +188,8 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
             location = v.findViewById(R.id.location);
             juli = v.findViewById(R.id.juli);
             jibie = v.findViewById(R.id.jibie);
+            name = v.findViewById(R.id.name);
+            area = v.findViewById(R.id.area);
 
 
             initLoca();
@@ -199,6 +206,18 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                 @Override
                 public void onClick(View v) {
                     popupWindow.dismiss();
+                }
+            });
+            v.findViewById(R.id.choose_name).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GuangLanSearchActivity.open(getContext());
+                }
+            });
+            v.findViewById(R.id.choose_area).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
                 }
             });
 
@@ -226,7 +245,11 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                             }
                         }
                     }
-                    selection(juliStr, jibieStr);
+
+                    String nameStr = name.getText().toString().trim();
+                    String areaStr = area.getText().toString().trim();
+
+                    selection(nameStr, areaStr, juliStr, jibieStr);
                     popupWindow.dismiss();
                 }
             });
@@ -279,7 +302,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
         animator.start();
     }
 
-    private void selection(String juliStr, String jibieStr) {
+    private void selection(String nameStr, String areaStr, String juliStr, String jibieStr) {
         if (locationBean != null) {
             searchLontude = String.valueOf(locationBean.longitude);
             searchLatude = String.valueOf(locationBean.latitude);
@@ -291,7 +314,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
         pageNo = 1;
 
         refreshLayout.setRefreshing(true);
-        search(searchKey, searchFlog, pageNo);
+        search(nameStr, searchFlog, pageNo);
     }
 
 
@@ -446,11 +469,6 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        stopLocation();
-    }
 
     private LocationManager.LocationBean locationBean;
 
@@ -464,5 +482,27 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
     public void onError(int code, String msg) {
         location.setText("定位地址: 定位失败，点击重新定位");
     }
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        stopLocation();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscriber(tag = GuangLanSearchActivity.TAG_GUANG_LAN_D_NAME)
+    public void name(GuangLanDItemBean bean) {
+        if (bean != null && name != null) {
+            name.setText(bean.getCabelOpName());
+        }
+    }
+
 
 }
