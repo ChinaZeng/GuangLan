@@ -27,4 +27,10 @@
     </style>
 
 
+    <style name="PopRightEnterAnimStyle">
+        <item name="android:windowEnterAnimation">@anim/right_enter</item>
+        <item name="android:windowExitAnimation">@anim/right_exit</item>
+
+    </style>
+
 </resources>

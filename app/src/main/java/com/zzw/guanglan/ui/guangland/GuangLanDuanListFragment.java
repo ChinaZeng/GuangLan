@@ -1,19 +1,28 @@
 package com.zzw.guanglan.ui.guangland;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -56,32 +65,23 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
     EditText etParam;
     @BindView(R.id.tv_sel)
     TextView tvSel;
-    @BindView(R.id.hide)
-    TextView hide;
-    @BindView(R.id.loca)
-    TextView loca;
-    @BindView(R.id.location)
-    TextView location;
-    @BindView(R.id.loca_content)
-    View locaContent;
-    @BindView(R.id.juli)
-    TagLayout juli;
-    @BindView(R.id.jibie)
-    TagLayout jibie;
+    @BindView(R.id.root)
+    View root;
+
 
     private GuangLanDListAdapter adapter;
     private String searchKey;
+
     private String searchJuli;
     private String searchJibie;
     private String searchLontude;
     private String searchLatude;
-
     private int searchFlog = 0;
+
     private int tempFlog = 0;
 
     private int pageNo = 1;
 
-    private boolean userLoca = false;
     private LocationManager locationManager;
 
 
@@ -99,10 +99,8 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
     @Override
     protected void initData() {
         super.initData();
-
         etParam.setOnEditorActionListener(this);
-        initLoca();
-        startLocation();
+
         recy.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new GuangLanDListAdapter(new ArrayList<GuangLanDItemBean>());
         adapter.setOnItemClickListener(this);
@@ -115,11 +113,12 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
         onRefresh();
     }
 
-    private String juliStr;
-    private String jibieStr;
+
+    private List<SingleChooseBean> juliS;
+    private List<GradeBean> jibieS;
 
     private void initLoca() {
-        final List<SingleChooseBean> juliS = new ArrayList<>();
+        juliS = new ArrayList<>();
         juliS.add(new SingleChooseBean(0, "300m", 0.3f));
         juliS.add(new SingleChooseBean(1, "1km", 1.0f));
         juliS.add(new SingleChooseBean(2, "2km", 2.0f));
@@ -134,19 +133,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
         for (SingleChooseBean singleChooseBean : juliS) {
             juli.addTags(singleChooseBean.getName());
         }
-        juli.setTagCheckListener(new TagView.OnTagCheckListener() {
-            @Override
-            public void onTagCheck(int i, String s, boolean b) {
-                if (b) {
-                    juliStr = String.valueOf(juliS.get(i).getFloatValue());
-                    if (userLoca) {
-                        onRefresh();
-                    }
-                }
-            }
-        });
-        juli.setCheckTag(0);
-        juliStr = String.valueOf(juliS.get(0).getFloatValue());
+
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .quertListInfo()
@@ -157,26 +144,13 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                         if (data == null) {
                             return;
                         }
+                        jibieS = data;
                         jibie.cleanTags();
                         for (GradeBean datum : data) {
                             jibie.addTags(datum.getDescChina());
                         }
-                        jibie.setTagCheckListener(new TagView.OnTagCheckListener() {
-                            @Override
-                            public void onTagCheck(int i, String s, boolean b) {
-                                if (b) {
-                                    jibieStr = String.valueOf(data.get(i).getDescChina());
-                                    if (userLoca) {
-                                        onRefresh();
-                                    }
-                                }
-                            }
-                        });
-                        jibie.setCheckTag(0);
-                        jibieStr = String.valueOf(data.get(0).getDescChina());
                     }
                 });
-
     }
 
 
@@ -196,47 +170,145 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
     }
 
 
-    @OnClick({R.id.add, R.id.search, R.id.tv_sel, R.id.hide, R.id.loca, R.id.location})
+    private PopupWindow popupWindow;
+
+    private TextView location;
+    private TagLayout juli, jibie;
+
+    private void showSel() {
+        if (popupWindow == null) {
+            popupWindow = new PopupWindow();
+            View v = LayoutInflater.from(getContext()).inflate(R.layout.layout_pop_sel, null);
+
+            location = v.findViewById(R.id.location);
+            juli = v.findViewById(R.id.juli);
+            jibie = v.findViewById(R.id.jibie);
+
+
+            initLoca();
+            startLocation();
+
+            location.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startLocation();
+                }
+            });
+
+            v.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupWindow.dismiss();
+                }
+            });
+
+            v.findViewById(R.id.sure).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    List<String> juliselList = juli.getCheckedTags();
+                    String juliStr = null;
+                    if (juliselList.size() > 0) {
+                        String j = juliselList.get(0);
+                        for (SingleChooseBean juli : juliS) {
+                            if (TextUtils.equals(j, juli.getName())) {
+                                juliStr = String.valueOf(juli.getFloatValue());
+                            }
+                        }
+                    }
+
+                    List<String> jibieList = jibie.getCheckedTags();
+                    String jibieStr = null;
+                    if (jibieList.size() > 0) {
+                        String j = jibieList.get(0);
+                        for (GradeBean jibie : jibieS) {
+                            if (TextUtils.equals(j, jibie.getDescChina())) {
+                                jibieStr = jibie.getDescChina();
+                            }
+                        }
+                    }
+                    selection(juliStr, jibieStr);
+                    popupWindow.dismiss();
+                }
+            });
+            popupWindow.setAnimationStyle(R.style.PopRightEnterAnimStyle);
+            popupWindow.setContentView(v);
+            popupWindow.setFocusable(true);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+            popupWindow.setWidth((int) (recy.getWidth() - TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 100, getContext().getResources().getDisplayMetrics())));
+            popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    animPop(false);
+                }
+            });
+
+        }
+
+        popupWindow.showAtLocation(root, Gravity.RIGHT, 0, 0);
+        animPop(true);
+    }
+
+
+    private void animPop(boolean show) {
+
+        float start = 1.0f;
+        float end = 0.4f;
+
+        if (!show) {
+            start = 0.4f;
+            end = 1.0f;
+        }
+
+
+        ValueAnimator animator = new ValueAnimator();
+        animator.setDuration(200);
+        animator.setFloatValues();
+
+        final WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
+        animator.setFloatValues(start, end);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float alpha = (float) animation.getAnimatedValue();
+                lp.alpha = alpha; //0.0-1.0
+                getActivity().getWindow().setAttributes(lp);
+            }
+        });
+        animator.start();
+    }
+
+    private void selection(String juliStr, String jibieStr) {
+        if (locationBean != null) {
+            searchLontude = String.valueOf(locationBean.longitude);
+            searchLatude = String.valueOf(locationBean.latitude);
+        }
+
+        searchJibie = jibieStr;
+        searchJuli = juliStr;
+
+        pageNo = 1;
+
+        refreshLayout.setRefreshing(true);
+        search(searchKey, searchFlog, pageNo);
+    }
+
+
+    @OnClick({R.id.add, R.id.sel, R.id.search, R.id.tv_sel,})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.add:
                 GuangLanDAddActivitty.open(getContext());
                 break;
-
+            case R.id.sel:
+                showSel();
+                break;
             case R.id.search:
                 hideKeyWordSearch();
                 break;
             case R.id.tv_sel:
                 showListPopupWindow(tvSel);
-                break;
-            case R.id.hide:
-                locaContent.setVisibility(locaContent.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                if (locaContent.getVisibility() == View.VISIBLE) {
-                    hide.setText("收起");
-                } else {
-                    hide.setText("展开");
-                }
-                break;
-            case R.id.loca:
-                loca.setSelected(!loca.isSelected());
-
-                if (loca.isSelected()) {
-                    userLoca = true;
-                    locaContent.setVisibility(View.VISIBLE);
-                    hide.setVisibility(View.VISIBLE);
-                    hide.setText("收起");
-                } else {
-                    userLoca = false;
-                    locaContent.setVisibility(View.GONE);
-                    hide.setVisibility(View.GONE);
-                }
-
-                onRefresh();
-
-                break;
-
-            case R.id.location:
-                startLocation();
                 break;
         }
     }
@@ -301,24 +373,6 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
     void search(final String key, final int flog, final int page) {
         searchKey = key;
         searchFlog = flog;
-
-        String searchJuli = null;
-        String searchJibie = null;
-        String searchLontude = null;
-        String searchLatude = null;
-        if (userLoca) {
-            searchJuli = juliStr;
-            searchJibie = jibieStr;
-            if (locationBean != null) {
-                searchLontude = String.valueOf(locationBean.longitude);
-                searchLatude = String.valueOf(locationBean.latitude);
-            }
-        }
-
-        this.searchJuli = searchJuli;
-        this.searchJibie = searchJibie;
-        this.searchLontude = searchLontude;
-        this.searchLatude = searchLatude;
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppListDuanByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
