@@ -326,9 +326,14 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
     }
 
     private void selection(String nameStr, String areaStr, String juliStr, String jibieStr) {
-        if (locationBean != null) {
-            searchLontude = String.valueOf(locationBean.longitude);
-            searchLatude = String.valueOf(locationBean.latitude);
+        if (TextUtils.isEmpty(juliStr)) {
+            searchLontude = "";
+            searchLatude = "";
+        } else {
+            if (locationBean != null) {
+                searchLontude = String.valueOf(locationBean.longitude);
+                searchLatude = String.valueOf(locationBean.latitude);
+            }
         }
 
         searchJibie = jibieStr;
@@ -360,7 +365,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
     }
 
     public void showListPopupWindow(View view) {
-        final String items[] = {"光缆端编码", "光缆段名称"};
+        final String items[] = {"光缆段名称", "光缆段编码"};
         final ListPopupWindow listPopupWindow = new ListPopupWindow(getContext());
 
         // ListView适配器
@@ -428,8 +433,8 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppListDuanByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
-                        put("model.cabelOpCode", GuangLanDuanListFragment.this.searchFlog == 0 ? GuangLanDuanListFragment.this.searchKey : "");
-                        put("model.cabelOpName", GuangLanDuanListFragment.this.searchFlog == 0 ? "" : GuangLanDuanListFragment.this.searchKey);
+                        put("model.cabelOpName", GuangLanDuanListFragment.this.searchFlog == 0 ? GuangLanDuanListFragment.this.searchKey : "");
+                        put("model.cabelOpCode", GuangLanDuanListFragment.this.searchFlog == 0 ? "" : GuangLanDuanListFragment.this.searchKey);
                         put("pageNum", String.valueOf(page));
 
                         put("model.dd", GuangLanDuanListFragment.this.searchJuli);
