@@ -122,7 +122,8 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
     private List<SingleChooseBean> juliS;
     private List<GradeBean> jibieS;
 
-    private void initLoca() {
+
+    private void initJuli() {
         juliS = new ArrayList<>();
         juliS.add(new SingleChooseBean(0, "300m", 0.3f));
         juliS.add(new SingleChooseBean(1, "1km", 1.0f));
@@ -138,7 +139,9 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
         for (SingleChooseBean singleChooseBean : juliS) {
             juli.addTags(singleChooseBean.getName());
         }
+    }
 
+    private void initJibie() {
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .quertListInfo()
@@ -191,8 +194,6 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
             name = v.findViewById(R.id.name);
             area = v.findViewById(R.id.area);
 
-            initLoca();
-            startLocation();
 
             location.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -231,24 +232,27 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
             v.findViewById(R.id.sure).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    List<String> juliselList = juli.getCheckedTags();
                     String juliStr = null;
-                    if (juliselList.size() > 0) {
-                        String j = juliselList.get(0);
-                        for (SingleChooseBean juli : juliS) {
-                            if (TextUtils.equals(j, juli.getName())) {
-                                juliStr = String.valueOf(juli.getFloatValue());
+                    if (juliS != null) {
+                        List<String> juliselList = juli.getCheckedTags();
+                        if (juliselList.size() > 0) {
+                            String j = juliselList.get(0);
+                            for (SingleChooseBean juli : juliS) {
+                                if (TextUtils.equals(j, juli.getName())) {
+                                    juliStr = String.valueOf(juli.getFloatValue());
+                                }
                             }
                         }
                     }
-
-                    List<String> jibieList = jibie.getCheckedTags();
                     String jibieStr = null;
-                    if (jibieList.size() > 0) {
-                        String j = jibieList.get(0);
-                        for (GradeBean jibie : jibieS) {
-                            if (TextUtils.equals(j, jibie.getDescChina())) {
-                                jibieStr = jibie.getDescChina();
+                    if (jibieS != null) {
+                        List<String> jibieList = jibie.getCheckedTags();
+                        if (jibieList.size() > 0) {
+                            String j = jibieList.get(0);
+                            for (GradeBean jibie : jibieS) {
+                                if (TextUtils.equals(j, jibie.getDescChina())) {
+                                    jibieStr = jibie.getDescChina();
+                                }
                             }
                         }
                     }
@@ -266,7 +270,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
             popupWindow.setOutsideTouchable(true);
             popupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
             popupWindow.setWidth((int) (recy.getWidth() - TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 100, getContext().getResources().getDisplayMetrics())));
+                    TypedValue.COMPLEX_UNIT_DIP, 40, getContext().getResources().getDisplayMetrics())));
             popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
@@ -274,6 +278,18 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                 }
             });
 
+        }
+
+        if (locationBean == null) {
+            startLocation();
+        }
+
+        if (juliS == null || juliS.size() == 0) {
+            initJuli();
+        }
+
+        if (jibieS == null || jibieS.size() == 0) {
+            initJibie();
         }
 
         popupWindow.showAtLocation(root, Gravity.RIGHT, 0, 0);

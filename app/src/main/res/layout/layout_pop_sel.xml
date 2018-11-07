@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:text="测试距离:"
+                android:text="查询周边光缆:"
                 android:textStyle="bold" />
 
             <com.dl7.tag.TagLayout
