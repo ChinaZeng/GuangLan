@@ -11,6 +11,7 @@
 
 
     <ImageView
+        android:visibility="gone"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
@@ -51,7 +52,7 @@
         android:maxLength="32"
         android:maxLines="1"
         android:paddingLeft="10dp"
-        android:text="123456"
+        android:text="njtest"
         android:textColor="@color/color333333"
         android:textSize="18sp"
         app:clearButtonEnable="true"

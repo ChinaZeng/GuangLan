@@ -92,6 +92,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
+            android:textSize="12sp"
             android:background="@color/color1"
             android:text="纤芯测试"
             android:textColor="#fff" />
@@ -117,6 +118,7 @@
             android:layout_weight="1"
             android:background="@color/color1"
             android:text="上传文件"
+            android:textSize="12sp"
             android:textColor="#fff" />
 
         <ImageView
@@ -138,6 +140,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
+            android:textSize="12sp"
             android:background="@color/color1"
             android:text="纤芯状态"
             android:textColor="#fff" />

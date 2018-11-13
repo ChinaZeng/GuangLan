@@ -30,14 +30,6 @@ public class LoginActivity extends BaseActivity {
     protected void initView() {
         super.initView();
         setTitle("登录");
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            // 判断是否有WRITE_SETTINGS权限if(!Settings.System.canWrite(this))
-//            if (!Settings.System.canWrite(this)) {
-//                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
-//                        Uri.parse("package:" + getPackageName()));
-//                startActivityForResult(intent, 1);
-//            }
-//        }
     }
 
     @Override
