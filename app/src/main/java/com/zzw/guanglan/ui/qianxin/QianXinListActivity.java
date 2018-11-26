@@ -853,8 +853,8 @@ public class QianXinListActivity extends BaseActivity implements
                         put("struffix", finalStruffix);
                         put("fiberId", bean.getFiberId());
                         put("userId", UserManager.getInstance().getUserId());
-                        put("geny", String.valueOf(locationBean.latitude));
-                        put("genx", String.valueOf(locationBean.longitude));
+                        put("geoy", String.valueOf(locationBean.latitude));
+                        put("geox", String.valueOf(locationBean.longitude));
                     }
                 }), fileBody)
                 .map(ResultBooleanFunction.create())
