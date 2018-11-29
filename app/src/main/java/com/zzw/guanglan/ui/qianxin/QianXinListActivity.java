@@ -29,7 +29,9 @@ import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
+import com.zzw.guanglan.bean.RemoveBean;
 import com.zzw.guanglan.bean.SingleChooseBean;
+import com.zzw.guanglan.bean.StationBean;
 import com.zzw.guanglan.bean.StatusInfoBean;
 import com.zzw.guanglan.dialogs.BottomListDialog;
 import com.zzw.guanglan.http.Api;
@@ -58,13 +60,12 @@ import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -172,6 +173,31 @@ public class QianXinListActivity extends BaseActivity implements
                 });
     }
 
+
+    @OnClick(R.id.look)
+    public void onViewClicked() {
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .remove(guangLanDBean.getId())
+                .compose(LifeObservableTransformer.<RemoveBean>create(this))
+                .subscribe(new ErrorObserver<RemoveBean>(this) {
+                    @Override
+                    public void onNext(RemoveBean removeBean) {
+                        List<String> remove = removeBean.getRemove();
+
+                        if (remove == null || remove.size() == 0) {
+                            ToastUtils.showToast("无纤芯重复信息");
+                            return;
+                        }
+
+                        BottomListDialog.newInstance(remove, new BottomListDialog.Convert<String>() {
+                            @Override
+                            public String convert(String data) {
+                                return data;
+                            }
+                        }).show(getSupportFragmentManager(), "remove");
+                    }
+                });
+    }
 
     void setData(List<QianXinItemBean> datas) {
         if (pageNo == 1) {
@@ -994,4 +1020,6 @@ public class QianXinListActivity extends BaseActivity implements
     public void onError(int code, String msg) {
         location.setText("定位失败，点击重新定位");
     }
+
+
 }

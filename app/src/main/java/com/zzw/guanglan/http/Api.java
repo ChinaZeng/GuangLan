@@ -9,6 +9,7 @@ import com.zzw.guanglan.bean.GuangLanParamBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.LoginResultBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
+import com.zzw.guanglan.bean.RemoveBean;
 import com.zzw.guanglan.bean.ResultBean;
 import com.zzw.guanglan.bean.StationBean;
 import com.zzw.guanglan.bean.StatusInfoBean;
@@ -83,5 +84,10 @@ public interface Api {
     @Multipart
     @POST("/glcs/cblFiber/saveFiberFile")
     Observable<ResultBean<Object>> saveFiberFile(@PartMap Map<String, RequestBody> s, @Part MultipartBody.Part file);
+
+
+    @GET("/glcs/cblFiber/remove")
+    Observable<RemoveBean> remove(@Query("id") String id);
+
 
 }
