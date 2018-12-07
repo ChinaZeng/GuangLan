@@ -9,6 +9,10 @@ android {
         targetSdkVersion rootProject.ext.android["targetSdkVersion"]
         versionCode rootProject.ext.android["versionCode"]
         versionName rootProject.ext.android["versionName"]
+        ndk {
+            //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
+            abiFilters "armeabi-v7a"//"armeabi",  "arm64-v8a", "x86","x86_64"
+        }
     }
 
     signingConfigs {
@@ -71,7 +75,7 @@ dependencies {
     implementation rootProject.ext.dependencies["gson"]
     //rx
     implementation rootProject.ext.dependencies["rxjava2"]
-    implementation (rootProject.ext.dependencies["rxpermissions2"]){
+    implementation(rootProject.ext.dependencies["rxpermissions2"]) {
         exclude module: 'rxjava'
     }
     implementation(rootProject.ext.dependencies["rxandroid2"]) {
@@ -90,6 +94,9 @@ dependencies {
     implementation rootProject.ext.dependencies["timber"]
 
     implementation 'com.amap.api:location:latest.integration'
+    implementation 'com.amap.api:map2d:latest.integration'
+    implementation 'com.amap.api:search:latest.integration'
+
     api 'com.astuetz:pagerslidingtabstrip:1.0.1'
     implementation 'com.github.Rukey7:TagLayout:1.0.6'
 }

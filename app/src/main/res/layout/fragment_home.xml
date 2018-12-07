@@ -109,12 +109,13 @@ android:id="@+id/xiaoxi"
 
 
         <TextView
+            android:id="@+id/tv_temp_test"
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
             android:drawableTop="@mipmap/renwu"
             android:gravity="center"
-            android:text="临时任务" />
+            android:text="临时测试" />
 
         <TextView
             android:id="@+id/res_look"

@@ -1,14 +1,13 @@
 package com.zzw.guanglan.ui.home;
 
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.TextView;
 
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseFragment;
 import com.zzw.guanglan.ui.HotConnActivity;
-import com.zzw.guanglan.ui.guanglan.GuangLanListActivity;
 import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
+import com.zzw.guanglan.ui.resource.ResourceActivity;
 import com.zzw.guanglan.widgets.RingView;
 
 import java.util.ArrayList;
@@ -52,19 +51,21 @@ public class HomeFragment extends BaseFragment {
         ringView.setShow(colorList, rateList, false, false);
 
 
-
     }
 
 
-    @OnClick({R.id.res_look, R.id.com_conf, R.id.hot_conn})
+    @OnClick({R.id.res_look, R.id.com_conf, R.id.tv_temp_test, R.id.hot_conn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.res_look:
-//                GuangLanListActivity.open(getContext());
-                GuangLanDListActivity.open(getContext());
+                ResourceActivity.open(getContext());
                 break;
             case R.id.com_conf:
 
+                break;
+            case R.id.tv_temp_test:
+                //                GuangLanListActivity.open(getContext());
+                GuangLanDListActivity.open(getContext());
                 break;
 
             case R.id.hot_conn:

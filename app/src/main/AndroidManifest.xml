@@ -103,6 +103,10 @@
             android:label="选择光缆名称"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ui.resource.ResourceActivity"
+            android:label="资源查看"
+            android:screenOrientation="portrait" />
 
         <!--高德-->
         <service android:name="com.amap.api.location.APSService" />
