@@ -46,7 +46,7 @@ public class HotConnActivity extends BaseActivity {
 
     private WifiAPManager wifiAPManager;
     private HotBroadcastReceiver receiver;
-    private final String hotName = "光缆共享wifi";
+    private final String hotName = "GLCS";
     private boolean isOpen = false;
     private boolean serviceOpen = false;
 
