@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.amap.api.location.AMapLocation;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
@@ -16,6 +15,7 @@ import com.amap.api.maps2d.model.MyLocationStyle;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.manager.LocationManager;
+import com.zzw.guanglan.ui.HotConnActivity;
 import com.zzw.guanglan.utils.PopWindowUtils;
 import com.zzw.guanglan.utils.ToastUtils;
 
@@ -40,6 +40,7 @@ public class ResourceActivity extends BaseActivity {
         return R.layout.activity_resource;
     }
 
+
     @OnClick({R.id.tv_res_look, R.id.tv_my_gd, R.id.tv_add, R.id.tv_hot_conn})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -54,7 +55,7 @@ public class ResourceActivity extends BaseActivity {
                         if (position == 0) {
                             NearbyResActivity.open(ResourceActivity.this, location);
                         } else {
-
+                            ResourceSearchActivity.open(ResourceActivity.this);
                         }
                     }
                 });
@@ -76,7 +77,7 @@ public class ResourceActivity extends BaseActivity {
 
                 break;
             case R.id.tv_hot_conn:
-                ToastUtils.showToast("热点连接");
+                HotConnActivity.open(this);
                 break;
         }
     }

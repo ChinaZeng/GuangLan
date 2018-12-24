@@ -12,18 +12,6 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp">
 
-        <TextView
-            android:id="@+id/tv_city"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="区市" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="match_parent"
-            android:background="@android:color/darker_gray" />
 
         <TextView
             android:id="@+id/tv_area"
@@ -31,7 +19,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="区县" />
+            android:text="地区" />
 
         <View
             android:layout_width="1px"
@@ -52,7 +40,9 @@
         android:layout_height="1px"
         android:background="@android:color/darker_gray" />
 
-    <include layout="@layout/layout_search" />
+    <include
+        android:visibility="gone"
+        layout="@layout/layout_search" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
@@ -67,9 +57,6 @@
             android:layout_weight="1" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
-
 
 
 </LinearLayout>

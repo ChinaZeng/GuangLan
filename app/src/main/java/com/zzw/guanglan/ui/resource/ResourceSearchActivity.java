@@ -13,8 +13,11 @@ import android.widget.TextView;
 
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.bean.AreaBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.ResBean;
+import com.zzw.guanglan.dialogs.area.AreaDialog;
+import com.zzw.guanglan.dialogs.multilevel.OnConfirmCallback;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.rx.ErrorObserver;
@@ -22,6 +25,7 @@ import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.utils.PopWindowUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,9 +36,6 @@ import butterknife.OnClick;
  */
 public class ResourceSearchActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-
-    @BindView(R.id.tv_city)
-    TextView tvCity;
     @BindView(R.id.tv_area)
     TextView tvArea;
     @BindView(R.id.tv_engine_room)
@@ -67,14 +68,17 @@ public class ResourceSearchActivity extends BaseActivity implements SwipeRefresh
     }
 
 
-    @OnClick({R.id.tv_city, R.id.tv_area, R.id.tv_engine_room, R.id.search})
+    @Override
+    protected void initData() {
+        super.initData();
+        onRefresh();
+    }
+
+    @OnClick({R.id.tv_area, R.id.tv_engine_room, R.id.search})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.tv_city:
-
-                break;
             case R.id.tv_area:
-
+                area();
                 break;
             case R.id.tv_engine_room:
                 PopWindowUtils.showListPop(this, view, types, new AdapterView.OnItemClickListener() {
@@ -120,5 +124,24 @@ public class ResourceSearchActivity extends BaseActivity implements SwipeRefresh
                     }
 
                 });
+    }
+
+    private void area() {
+        AreaDialog.createCityDialog(this, "选择地区", new OnConfirmCallback<AreaBean>() {
+            @Override
+            public void onConfirm(List<AreaBean> selectedEntities) {
+                if (selectedEntities.size() > 2) {
+                    AreaBean area = selectedEntities.get(selectedEntities.size() - 1);
+                    AreaBean city = selectedEntities.get(selectedEntities.size() - 2);
+
+                    cityName = city.getText();
+                    areaName = area.getText();
+
+                    tvArea.setText(cityName+areaName);
+
+                    onRefresh();
+                }
+            }
+        }).show(getSupportFragmentManager(), "area");
     }
 }
