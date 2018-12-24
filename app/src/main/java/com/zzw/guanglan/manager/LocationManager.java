@@ -1,12 +1,15 @@
 package com.zzw.guanglan.manager;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+
+import java.io.Serializable;
 
 /**
  * Created by zzw on 2018/10/14.
@@ -76,7 +79,7 @@ public class LocationManager implements AMapLocationListener {
         }
     }
 
-    LocationBean AMapLocation2LocationBean(AMapLocation amapLocation) {
+    public static LocationBean AMapLocation2LocationBean(AMapLocation amapLocation) {
         LocationBean locationBean = new LocationBean();
         locationBean.latitude = amapLocation.getLatitude();
         locationBean.longitude = amapLocation.getLongitude();
@@ -90,10 +93,9 @@ public class LocationManager implements AMapLocationListener {
         locationBean.cityCode = amapLocation.getCityCode();
         locationBean.adCode = amapLocation.getAdCode();
         locationBean.time = amapLocation.getTime();
-
         return locationBean;
-
     }
+
 
     public OnLocationListener locationListener;
 
@@ -107,7 +109,7 @@ public class LocationManager implements AMapLocationListener {
         void onError(int code, String msg);
     }
 
-    public class LocationBean {
+    public static class LocationBean implements Serializable {
         //纬度
         public double latitude;
         //经度

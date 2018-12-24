@@ -5,18 +5,18 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.ListPopupWindow;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.manager.LocationManager;
+import com.zzw.guanglan.utils.PopWindowUtils;
 import com.zzw.guanglan.utils.ToastUtils;
 
 import butterknife.BindView;
@@ -28,8 +28,6 @@ import butterknife.OnClick;
 public class ResourceActivity extends BaseActivity {
     @BindView(R.id.map_view)
     MapView mapView;
-    @BindView(R.id.tv_add)
-    TextView tvAdd;
 
     private AMap aMap;
 
@@ -46,16 +44,26 @@ public class ResourceActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_res_look:
-                ToastUtils.showToast("资源查看");
+                PopWindowUtils.showListPop(this, view, new String[]{"附近", "查询"}, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        if (location == null) {
+                            ToastUtils.showToast("请您先定位!");
+                            return;
+                        }
+                        if (position == 0) {
+                            NearbyResActivity.open(ResourceActivity.this, location);
+                        } else {
+
+                        }
+                    }
+                });
                 break;
             case R.id.tv_my_gd:
                 ToastUtils.showToast("我的工单");
                 break;
             case R.id.tv_add:
-                final ListPopupWindow popupWindow = new ListPopupWindow(this);
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1
-                        , new String[]{"局站", "光缆"});
-                popupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                PopWindowUtils.showListPop(this, view, new String[]{"局站", "光缆"}, new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         if (position == 0) {
@@ -63,22 +71,9 @@ public class ResourceActivity extends BaseActivity {
                         } else {
                             ToastUtils.showToast("1");
                         }
-                        popupWindow.dismiss();
                     }
                 });
-                popupWindow.setAdapter(adapter);
-                popupWindow.setWidth(tvAdd.getWidth());
-                popupWindow.setHeight(ListPopupWindow.WRAP_CONTENT);
 
-                // ListPopupWindow的锚,弹出框的位置是相对当前View的位置
-                popupWindow.setAnchorView(view);
-
-                // ListPopupWindow 距锚view的距离
-//                listPopupWindow.setHorizontalOffset(50);
-//                listPopupWindow.setVerticalOffset(100);
-
-                popupWindow.setModal(true);
-                popupWindow.show();
                 break;
             case R.id.tv_hot_conn:
                 ToastUtils.showToast("热点连接");
@@ -87,7 +82,7 @@ public class ResourceActivity extends BaseActivity {
     }
 
 
-    private Location location;
+    private LocationManager.LocationBean location;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,7 +94,10 @@ public class ResourceActivity extends BaseActivity {
             aMap.setOnMyLocationChangeListener(new AMap.OnMyLocationChangeListener() {
                 @Override
                 public void onMyLocationChange(Location location) {
-                    ResourceActivity.this.location = location;
+                    LocationManager.LocationBean bean = new LocationManager.LocationBean();
+                    bean.latitude = location.getLatitude();
+                    bean.longitude = location.getLongitude();
+                    ResourceActivity.this.location = bean;
                 }
             });
         }

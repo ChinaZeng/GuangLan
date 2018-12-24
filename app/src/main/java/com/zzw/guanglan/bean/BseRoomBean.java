@@ -116,4 +116,6 @@ public class BseRoomBean {
     public void setRoomTypeId(String roomTypeId) {
         this.roomTypeId = roomTypeId;
     }
+
+
 }

@@ -10,6 +10,7 @@ import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.LoginResultBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
 import com.zzw.guanglan.bean.RemoveBean;
+import com.zzw.guanglan.bean.ResBean;
 import com.zzw.guanglan.bean.ResultBean;
 import com.zzw.guanglan.bean.StationBean;
 import com.zzw.guanglan.bean.StatusInfoBean;
@@ -89,5 +90,21 @@ public interface Api {
     @GET("/glcs/cblFiber/remove")
     Observable<RemoveBean> remove(@Query("id") String id);
 
+
+    @GET("/glcs/bseRoom/getAppJfOrGlByType")
+    Observable<ListDataBean<ResBean>> getAppJfOrGlByType(
+            @Query("type") String type,
+            @Query("LONGITUDE") String LONGITUDE,
+            @Query("LATITUDE") String LATITUDE,
+            @Query("DISTANCE") String DISTANCE
+    );
+
+    @GET("/glcs/bseRoom/getAppJfOrGlByOthers")
+    Observable<ListDataBean<ResBean>> getAppJfOrGlByOthers(
+            @Query("type") String type,
+            @Query("cityName") String cityName,
+            @Query("areaName") String areaName,
+            @Query("typeName") String typeName
+    );
 
 }

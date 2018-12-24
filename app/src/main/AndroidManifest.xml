@@ -108,6 +108,15 @@
             android:name=".ui.resource.ResourceActivity"
             android:label="资源查看"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.resource.NearbyResActivity"
+            android:label="附近资源"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.resource.ResourceSearchActivity"
+            android:label="附近查询"
+            android:screenOrientation="portrait" />
 
         <!--高德-->
         <service android:name="com.amap.api.location.APSService" />
