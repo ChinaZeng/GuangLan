@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,7 +37,8 @@ import butterknife.OnClick;
 /**
  * Create by zzw on 2018/12/7
  */
-public class ResourceSearchActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class ResourceSearchActivity extends BaseActivity implements
+        SwipeRefreshLayout.OnRefreshListener, TextView.OnEditorActionListener {
 
     @BindView(R.id.tv_area)
     TextView tvArea;
@@ -61,10 +65,14 @@ public class ResourceSearchActivity extends BaseActivity implements SwipeRefresh
     @Override
     protected void initView() {
         super.initView();
+
+
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ResourceAdapter(new ArrayList<ResBean>());
         recy.setAdapter(adapter);
         swipeRefreshLayout.setOnRefreshListener(this);
+
+        etParam.setOnEditorActionListener(this);
     }
 
 
@@ -86,14 +94,31 @@ public class ResourceSearchActivity extends BaseActivity implements SwipeRefresh
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         type = types[position];
                         tvEngineRoom.setText(type);
-                        onRefresh();
+                        hideKeyWordSearch();
                     }
                 });
                 break;
             case R.id.search:
-
+                hideKeyWordSearch();
                 break;
         }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            hideKeyWordSearch();
+            return true;
+        }
+        return false;
+    }
+
+    void hideKeyWordSearch() {
+        ((InputMethodManager) etParam.getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(getCurrentFocus()
+                        .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        onRefresh();
     }
 
 
@@ -108,7 +133,7 @@ public class ResourceSearchActivity extends BaseActivity implements SwipeRefresh
                 .getAppJfOrGlByOthers(type,
                         cityName,
                         areaName,
-                        type)
+                        etParam.getText().toString().trim())
                 .compose(LifeObservableTransformer.<ListDataBean<ResBean>>create(this))
                 .subscribe(new ErrorObserver<ListDataBean<ResBean>>(this) {
                     @Override
@@ -137,9 +162,9 @@ public class ResourceSearchActivity extends BaseActivity implements SwipeRefresh
                     cityName = city.getText();
                     areaName = area.getText();
 
-                    tvArea.setText(cityName+areaName);
+                    tvArea.setText(cityName + areaName);
 
-                    onRefresh();
+                    hideKeyWordSearch();
                 }
             }
         }).show(getSupportFragmentManager(), "area");
