@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.AreaBean;
@@ -25,6 +26,7 @@ import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.ui.room.EngineRoomDetailsActivity;
 import com.zzw.guanglan.utils.PopWindowUtils;
 
 import java.util.ArrayList;
@@ -66,10 +68,16 @@ public class ResourceSearchActivity extends BaseActivity implements
     protected void initView() {
         super.initView();
 
-
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ResourceAdapter(new ArrayList<ResBean>());
         recy.setAdapter(adapter);
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                EngineRoomDetailsActivity.open(ResourceSearchActivity.this, (ResBean) adapter.getData().get(position));
+            }
+        });
         swipeRefreshLayout.setOnRefreshListener(this);
 
         etParam.setOnEditorActionListener(this);

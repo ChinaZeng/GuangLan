@@ -15,7 +15,7 @@ public class ResultBooleanFunction<T> implements Function<ResultBean<T>, Boolean
         if (tResultBean.getCode() == 0) {
             return true;
         }
-        return false;
+        throw new CodeException(tResultBean.getCode(), tResultBean.getMsg());
     }
 
     public static <T> ResultBooleanFunction<T> create() {

@@ -109,7 +109,7 @@ public class GuangLanListActivity extends BaseActivity implements BaseQuickAdapt
 
     @OnClick(R.id.add)
     public void onViewClicked() {
-        GuangLanAddActivitty.open(this);
+
     }
 
     @Override

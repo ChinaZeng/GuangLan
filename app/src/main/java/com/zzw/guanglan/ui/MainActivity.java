@@ -1,13 +1,9 @@
 package com.zzw.guanglan.ui;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bottomtab.TabBottomNavigation;
@@ -21,7 +17,6 @@ import com.zzw.guanglan.ui.workorder.WorkOrderFragment;
 import com.zzw.guanglan.utils.FragmentHelper;
 
 import butterknife.BindView;
-import io.reactivex.functions.Consumer;
 
 public class MainActivity extends BaseActivity
         implements TabBottomNavigation.OnCheckChangeListener, LocationManager.OnLocationListener {

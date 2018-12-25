@@ -16,6 +16,8 @@ import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.manager.LocationManager;
 import com.zzw.guanglan.ui.HotConnActivity;
+import com.zzw.guanglan.ui.guanglan.add.GuangLanAddActivitty;
+import com.zzw.guanglan.ui.juzhan.add.JuZhanAddActivity;
 import com.zzw.guanglan.utils.PopWindowUtils;
 import com.zzw.guanglan.utils.ToastUtils;
 
@@ -68,9 +70,9 @@ public class ResourceActivity extends BaseActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         if (position == 0) {
-                            ToastUtils.showToast("0");
+                            JuZhanAddActivity.open(ResourceActivity.this);
                         } else {
-                            ToastUtils.showToast("1");
+                            GuangLanAddActivitty.open(ResourceActivity.this);
                         }
                     }
                 });
