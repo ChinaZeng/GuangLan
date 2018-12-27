@@ -4,10 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -18,15 +19,28 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
+import com.amap.api.maps2d.model.Polyline;
+import com.amap.api.maps2d.model.PolylineOptions;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.bean.GuangLanBean;
+import com.zzw.guanglan.bean.ListDataBean;
+import com.zzw.guanglan.bean.ResBean;
+import com.zzw.guanglan.http.Api;
+import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.manager.LocationManager;
+import com.zzw.guanglan.rx.ErrorObserver;
+import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.HotConnActivity;
 import com.zzw.guanglan.ui.guanglan.add.GuangLanAddActivitty;
+import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
 import com.zzw.guanglan.ui.juzhan.add.JuZhanAddActivity;
 import com.zzw.guanglan.utils.PopWindowUtils;
 import com.zzw.guanglan.utils.ToastUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -41,6 +55,9 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 
     private AMap aMap;
 
+
+    private int nowType = 0; //0 机房  1光缆
+
     public static void open(Context context) {
         context.startActivity(new Intent(context, ResourceActivity.class));
     }
@@ -51,7 +68,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     }
 
 
-    @OnClick({R.id.tv_res_look, R.id.tv_my_gd, R.id.tv_add, R.id.tv_hot_conn, R.id.iv_location})
+    @OnClick({R.id.tv_res_look, R.id.tv_my_gd, R.id.tv_add, R.id.tv_room, R.id.tv_guanglan, R.id.tv_hot_conn, R.id.iv_location})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_res_look:
@@ -72,6 +89,12 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                 break;
             case R.id.tv_my_gd:
                 ToastUtils.showToast("我的工单");
+                break;
+            case R.id.tv_room:
+                showResDataPop(0, view);
+                break;
+            case R.id.tv_guanglan:
+                showResDataPop(1, view);
                 break;
             case R.id.tv_add:
                 PopWindowUtils.showListPop(this, view, new String[]{"局站", "光缆"}, new AdapterView.OnItemClickListener() {
@@ -99,6 +122,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 
     private LocationManager.LocationBean location;
     private LocationManager locationManager;
+
 
     @Override
     protected void initData() {
@@ -130,6 +154,212 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
             locationManager.stop();
             locationManager = null;
         }
+    }
+
+
+    private void showResDataPop(final int type, View view) {
+        PopWindowUtils.showListPop(this, view,
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                        100.0f, view.getContext().getResources().getDisplayMetrics()),
+                new String[]{"1km", "2km", "3km", "4km"}, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        getResData(type, position + 1);
+                    }
+                });
+
+    }
+
+    /**
+     * @param type     0 机房  1光缆
+     * @param distance 千米数
+     */
+    private void getResData(final int type, int distance) {
+        if (type == 0) {
+            RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                    .getAppJfOrGlByType("机房",
+                            String.valueOf(location.longitude),
+                            String.valueOf(location.latitude),
+                            String.valueOf(String.valueOf(distance)))
+                    .compose(LifeObservableTransformer.<ListDataBean<ResBean>>create(this))
+                    .subscribe(new ErrorObserver<ListDataBean<ResBean>>(this) {
+                        @Override
+                        public void onNext(ListDataBean<ResBean> listDataBean) {
+                            addRoomMark(type, listDataBean.getList());
+                        }
+                    });
+        } else {
+            RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                    .getAppJfOrGlByTypeGuangLan("光缆",
+                            String.valueOf(location.longitude),
+                            String.valueOf(location.latitude),
+                            String.valueOf(String.valueOf(distance)))
+                    .compose(LifeObservableTransformer.<ListDataBean<GuangLanBean>>create(this))
+                    .subscribe(new ErrorObserver<ListDataBean<GuangLanBean>>(this) {
+                        @Override
+                        public void onNext(ListDataBean<GuangLanBean> listDataBean) {
+                            addGuangLanMark(type, listDataBean.getList());
+                        }
+                    });
+//            String testData = " [{\n" +
+//                    "\t\t\"CABLE_NAME\": \"南京浦口西葛光跳站-花旗CS机房光缆01\",\n" +
+//                    "\t\t\"AHOSTNAME\": \"江宁至花旗营001045#\",\n" +
+//                    "\t\t\"ZGEOX\": 118.65685,\n" +
+//                    "\t\t\"AREA_NAME\": \"南京\",\n" +
+//                    "\t\t\"CITY_NAME\": \"南京\",\n" +
+//                    "\t\t\"ZGEOY\": 32.16453333333333,\n" +
+//                    "\t\t\"ZHOSTNAME\": \"京沪005506#\",\n" +
+//                    "\t\t\"CABLE_TYPE\": \"本地骨干光缆\",\n" +
+//                    "\t\t\"AGEOY\": 32.162977933107506,\n" +
+//                    "\t\t\"FLAG\": \"N\",\n" +
+//                    "\t\t\"AGEOX\": 118.65298999671664,\n" +
+//                    "\t\t\"CABLE_ID\": 3583357\n" +
+//                    "\t}, {\n" +
+//                    "\t\t\"CABLE_NAME\": \"旭日华庭-浦东花园CS光缆01\",\n" +
+//                    "\t\t\"AHOSTNAME\": \"大桥北路020307#\",\n" +
+//                    "\t\t\"ZGEOX\": 118.72404333333334,\n" +
+//                    "\t\t\"AREA_NAME\": \"南京\",\n" +
+//                    "\t\t\"CITY_NAME\": \"南京\",\n" +
+//                    "\t\t\"ZGEOY\": 32.132196388888886,\n" +
+//                    "\t\t\"ZHOSTNAME\": \"大桥北路020315#\",\n" +
+//                    "\t\t\"CABLE_TYPE\": \"本地汇聚光缆\",\n" +
+//                    "\t\t\"AGEOY\": 32.13957410788257,\n" +
+//                    "\t\t\"FLAG\": \"N\",\n" +
+//                    "\t\t\"AGEOX\": 118.7181289035044,\n" +
+//                    "\t\t\"CABLE_ID\": 2261520\n" +
+//                    "\t}, {\n" +
+//                    "\t\t\"CABLE_NAME\": \"一干-宁汉1-路由段5（花旗CS南-虎踞路72芯）\",\n" +
+//                    "\t\t\"AHOSTNAME\": \"花旗CS\",\n" +
+//                    "\t\t\"ZGEOX\": 118.66545,\n" +
+//                    "\t\t\"AREA_NAME\": \"江苏\",\n" +
+//                    "\t\t\"ZGEOY\": 32.1722,\n" +
+//                    "\t\t\"ZHOSTNAME\": \"花旗001066#\",\n" +
+//                    "\t\t\"CABLE_TYPE\": \"一干光缆\",\n" +
+//                    "\t\t\"AGEOY\": 32.16486,\n" +
+//                    "\t\t\"FLAG\": \"N\",\n" +
+//                    "\t\t\"AGEOX\": 118.6584,\n" +
+//                    "\t\t\"CABLE_ID\": 63549\n" +
+//                    "\t}]\n";
+//            Observable.just(testData)
+//                    .map(new Function<String, ListDataBean<GuangLanBean>>() {
+//                        @Override
+//                        public ListDataBean<GuangLanBean> apply(String s) throws Exception {
+//                            Type type = new TypeToken<List<GuangLanBean>>() {
+//                            }.getType();
+//                            List<GuangLanBean> list = new Gson().fromJson(s, type);
+//
+//                            ListDataBean bean = new ListDataBean();
+//                            bean.setList(list);
+//                            bean.setTotal(103);
+//                            return bean;
+//                        }
+//                    })
+//                    .compose(LifeObservableTransformer.<ListDataBean<GuangLanBean>>create(this))
+//                    .subscribe(new ErrorObserver<ListDataBean<GuangLanBean>>(this) {
+//                        @Override
+//                        public void onNext(ListDataBean<GuangLanBean> listDataBean) {
+//                            addGuangLanMark(type, listDataBean.getList());
+//                        }
+//                    });
+        }
+
+    }
+
+
+    private List<Marker> nowMarks = new ArrayList<>();
+    private List<Polyline> polylines = new ArrayList<>();
+    private List<ResBean> data = new ArrayList<>();
+
+    private void addGuangLanMark(final int searchType, List<GuangLanBean> list) {
+        cleanNowMark();
+
+        this.nowType = searchType;
+        aMap.setOnMarkerClickListener(null);
+
+//        aMap.setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(Marker marker) {
+//                if (marker == locationMarker)
+//                    return false;
+//
+//                int pos = Integer.parseInt(marker.getSnippet());
+////                    QianXinListActivity.open(this,);
+////                    EngineRoomDetailsActivity.open(ResourceActivity.this, data.get(pos));
+//                return true;
+//            }
+//        });
+
+        for (int i = 0; i < list.size(); i++) {
+            GuangLanBean bean = list.get(i);
+
+            if (!TextUtils.isEmpty(bean.getAGEOX()) && !TextUtils.isEmpty(bean.getAGEOY())) {
+                LatLng aLatLng = new LatLng(Double.parseDouble(bean.getAGEOY())
+                        , Double.parseDouble(bean.getAGEOX()));
+                final Marker aMarker = aMap.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_guanglan))
+                        .position(aLatLng).title(bean.getCABLE_NAME()).snippet(i + ""));
+                nowMarks.add(aMarker);
+
+                if (!TextUtils.isEmpty(bean.getZGEOX()) && !TextUtils.isEmpty(bean.getZGEOY())) {
+                    LatLng zLatLng = new LatLng(Double.parseDouble(bean.getZGEOY())
+                            , Double.parseDouble(bean.getZGEOX()));
+                    final Marker zMarker = aMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_guanglan))
+                            .position(zLatLng).title(bean.getCABLE_NAME()).snippet(i + ""));
+                    nowMarks.add(zMarker);
+
+                    Polyline polyline = aMap.addPolyline(new PolylineOptions().add(aLatLng, zLatLng)
+                            .width(5).color(Color.argb(255, 255, 0, 0)));
+                    polylines.add(polyline);
+                }
+            }
+
+        }
+    }
+
+    private void cleanNowMark() {
+        for (Marker roomMarker : nowMarks) {
+            roomMarker.remove();
+        }
+        nowMarks.clear();
+
+        for (Polyline polyline : polylines) {
+            polyline.remove();
+        }
+        polylines.clear();
+
+        data.clear();
+
+    }
+
+
+    private void addRoomMark(final int searchType, List<ResBean> list) {
+        cleanNowMark();
+
+        this.nowType = searchType;
+        aMap.setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (marker == locationMarker)
+                    return false;
+                int pos = Integer.parseInt(marker.getSnippet());
+                GuangLanDListActivity.open(ResourceActivity.this);
+//                    EngineRoomDetailsActivity.open(ResourceActivity.this, data.get(pos));
+                return true;
+            }
+        });
+
+        for (int i = 0; i < list.size(); i++) {
+            ResBean resBean = list.get(i);
+            LatLng latLng = new LatLng(Double.parseDouble(resBean.getLatitude())
+                    , Double.parseDouble(resBean.getLongitude()));
+            final Marker marker = aMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_room))
+                    .position(latLng).title(resBean.getRoomName()).snippet(i + ""));
+            nowMarks.add(marker);
+        }
+        this.data = list;
+
     }
 
 
@@ -170,6 +400,13 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     private Marker locationMarker;
 
     void setLocationMark(LocationManager.LocationBean bean) {
+        if (bean == null)
+            return;
+
+        if (location != null) {
+            getResData(0, 2);
+        }
+
         //https://lbs.amap.com/api/android-sdk/guide/draw-on-map/draw-marker
         LatLng latLng = new LatLng(bean.latitude, bean.longitude);
         //添加Marker显示定位位置
@@ -185,7 +422,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         //然后可以移动到定位点,使用animateCamera就有动画效果
         aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
         //改变地图的缩放级别
-        aMap.moveCamera(CameraUpdateFactory.zoomBy(6));
+        aMap.moveCamera(CameraUpdateFactory.zoomBy(4));
     }
 
     private void showMySelf() {
@@ -204,7 +441,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         // 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
         aMap.setMyLocationEnabled(false);
         //改变地图的缩放级别
-        aMap.moveCamera(CameraUpdateFactory.zoomBy(6));
+        aMap.moveCamera(CameraUpdateFactory.zoomBy(4));
     }
 
     @Override
@@ -238,6 +475,11 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 
     @Override
     public void onSuccess(LocationManager.LocationBean bean) {
+
+        //todo 这里写死了 测试数据
+        bean.longitude = 118.695495;
+        bean.latitude = 32.154022;
+
         this.location = bean;
         setLocationMark(bean);
     }

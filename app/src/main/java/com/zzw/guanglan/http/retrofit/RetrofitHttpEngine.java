@@ -25,7 +25,7 @@ public class RetrofitHttpEngine {
     private static Retrofit mRetrofit;
     private static Map<String, Object> mRetrofitServiceCache = new LinkedHashMap<>();
 
-    private static final int TOME_OUT = 20; //s  秒
+    private static final int TOME_OUT = 300; //s  秒
     private HttpUrl mBaseUrl;
     private Interceptor[] mInterceptors;
     private GlobeHttpHandler mHandler;

@@ -6,6 +6,7 @@ import android.location.Location;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.bean.GuangLanBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.ResBean;
 import com.zzw.guanglan.http.Api;
@@ -135,7 +137,6 @@ public class NearbyResActivity extends BaseActivity implements SwipeRefreshLayou
                         super.onError(e);
                         swipeRefreshLayout.setRefreshing(false);
                     }
-
                 });
     }
 

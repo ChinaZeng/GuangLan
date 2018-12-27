@@ -3,6 +3,7 @@ package com.zzw.guanglan.http;
 import com.zzw.guanglan.bean.AreaBean;
 import com.zzw.guanglan.bean.BseRoomBean;
 import com.zzw.guanglan.bean.GradeBean;
+import com.zzw.guanglan.bean.GuangLanBean;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
 import com.zzw.guanglan.bean.GuangLanItemBean;
 import com.zzw.guanglan.bean.GuangLanParamBean;
@@ -101,6 +102,15 @@ public interface Api {
             @Query("LATITUDE") String LATITUDE,
             @Query("DISTANCE") String DISTANCE
     );
+
+    @GET("/glcs/bseRoom/getAppJfOrGlByType")
+    Observable<ListDataBean<GuangLanBean>> getAppJfOrGlByTypeGuangLan(
+            @Query("type") String type,
+            @Query("LONGITUDE") String LONGITUDE,
+            @Query("LATITUDE") String LATITUDE,
+            @Query("DISTANCE") String DISTANCE
+    );
+
 
     @GET("/glcs/bseRoom/getAppJfOrGlByOthers")
     Observable<ListDataBean<ResBean>> getAppJfOrGlByOthers(

@@ -22,6 +22,29 @@
             android:layout_margin="14dp"
             android:src="@mipmap/icon_location" />
 
+        <ImageView
+            android:id="@+id/tv_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="14dp"
+            android:background="@android:color/holo_blue_dark"
+            android:padding="10dp"
+            android:src="@mipmap/icon_room" />
+
+        <ImageView
+            android:id="@+id/tv_guanglan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_room"
+            android:layout_alignLeft="@+id/tv_room"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="14dp"
+            android:background="@android:color/holo_blue_dark"
+            android:padding="10dp"
+            android:src="@mipmap/icon_guanglan" />
+
 
     </RelativeLayout>
 
