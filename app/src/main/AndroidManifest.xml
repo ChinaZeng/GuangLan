@@ -116,14 +116,8 @@
         <activity
             android:name=".ui.resource.ResourceActivity"
             android:label="资源查看"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:screenOrientation="portrait" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
         <activity
             android:name=".ui.resource.NearbyResActivity"
             android:label="附近资源"
