@@ -158,6 +158,9 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 
 
     private void showResDataPop(final int type, View view) {
+        if(location ==null){
+            ToastUtils.showToast("请先定位!");
+        }
         PopWindowUtils.showListPop(this, view,
                 (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                         100.0f, view.getContext().getResources().getDisplayMetrics()),
@@ -390,15 +393,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         showMySelf();
     }
 
-    void addMark() {
-        //https://lbs.amap.com/api/android-sdk/guide/draw-on-map/draw-marker
-
-//        LatLng latLng = new LatLng(39.906901, 116.397972);
-//        final Marker marker = aMap.addMarker(new MarkerOptions().position(latLng).title("北京").snippet("DefaultMarker"));
-    }
-
     private Marker locationMarker;
-
     void setLocationMark(LocationManager.LocationBean bean) {
         if (bean == null)
             return;
@@ -476,9 +471,9 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     @Override
     public void onSuccess(LocationManager.LocationBean bean) {
 
-        //todo 这里写死了 测试数据
-        bean.longitude = 118.695495;
-        bean.latitude = 32.154022;
+//        todo 这里写死了 测试数据
+//        bean.longitude = 118.695495;
+//        bean.latitude = 32.154022;
 
         this.location = bean;
         setLocationMark(bean);
