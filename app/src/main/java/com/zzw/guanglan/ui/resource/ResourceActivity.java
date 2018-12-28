@@ -21,6 +21,7 @@ import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.Polyline;
 import com.amap.api.maps2d.model.PolylineOptions;
+import com.amap.api.maps2d.model.VisibleRegion;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
@@ -158,7 +159,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 
 
     private void showResDataPop(final int type, View view) {
-        if(location ==null){
+        if (location == null) {
             ToastUtils.showToast("请先定位!");
         }
         PopWindowUtils.showListPop(this, view,
@@ -394,6 +395,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     }
 
     private Marker locationMarker;
+
     void setLocationMark(LocationManager.LocationBean bean) {
         if (bean == null)
             return;
@@ -475,8 +477,14 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 //        bean.longitude = 118.695495;
 //        bean.latitude = 32.154022;
 
+
         this.location = bean;
         setLocationMark(bean);
+    }
+
+    //可以通过可见范围计算距离
+    private void getVisibleRegion() {
+        VisibleRegion region = aMap.getProjection().getVisibleRegion();
     }
 
     @Override

@@ -27,6 +27,7 @@ import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.room.EngineRoomDetailsActivity;
+import com.zzw.guanglan.utils.InputMethodSoftUtil;
 import com.zzw.guanglan.utils.PopWindowUtils;
 
 import java.util.ArrayList;
@@ -122,10 +123,7 @@ public class ResourceSearchActivity extends BaseActivity implements
     }
 
     void hideKeyWordSearch() {
-        ((InputMethodManager) etParam.getContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(getCurrentFocus()
-                        .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        InputMethodSoftUtil.hideSoftInput(etParam);
         onRefresh();
     }
 
