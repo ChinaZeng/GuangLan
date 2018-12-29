@@ -1,59 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
-    <LinearLayout
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="#f1eeee">
 
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recy"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#f1eeee"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:layout_height="match_parent" />
 
-            <TextView
-                android:id="@+id/tv_sel"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="光缆端编码" />
-
-            <include layout="@layout/layout_search" />
-
-        </LinearLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/colorDivider" />
-
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#f1eeee">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recy"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-    </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 
     <android.support.design.widget.FloatingActionButton
@@ -61,8 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginRight="15dp"
         android:layout_marginBottom="80dp"
+        android:layout_marginRight="15dp"
         android:src="@drawable/ic_mode_edit_black_24dp"
         app:backgroundTint="#31bfcf"
         app:elevation="5dp"
@@ -74,8 +38,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_marginRight="15dp"
         android:layout_marginBottom="20dp"
+        android:layout_marginRight="15dp"
         android:src="@drawable/ic_add_black_24dp"
         app:backgroundTint="#31bfcf"
         app:elevation="5dp"

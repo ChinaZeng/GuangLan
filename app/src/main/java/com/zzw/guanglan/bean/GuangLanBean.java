@@ -4,6 +4,8 @@ package com.zzw.guanglan.bean;
  * Create by zzw on 2018/12/27
  */
 public class GuangLanBean {
+
+
     //光缆名称
     private String CABLE_NAME;
     //A端局站名称
@@ -35,6 +37,24 @@ public class GuangLanBean {
 
     //光缆ID
     private String CABLE_ID;
+    /**
+     * STATE_NAME : 空闲
+     * CAPACITY : 48
+     * CABLE_ID : 47489
+     * R : 2
+     * ZGEOX : 118.939878
+     * ZGEOY : 34.73575
+     * ID : 80191
+     * AGEOY : 34.762509
+     * AGEOX : 118.976775
+     */
+
+    private String STATE_NAME;
+    private String CAPACITY;
+
+    private String R;
+    private String ID;
+
 
     public String getCABLE_NAME() {
         return CABLE_NAME;
@@ -143,4 +163,42 @@ public class GuangLanBean {
         this.CABLE_ID = CABLE_ID;
         return this;
     }
+
+    public String getSTATE_NAME() {
+        return STATE_NAME;
+    }
+
+    public void setSTATE_NAME(String STATE_NAME) {
+        this.STATE_NAME = STATE_NAME;
+    }
+
+    public String getCAPACITY() {
+        return CAPACITY;
+    }
+
+    public void setCAPACITY(String CAPACITY) {
+        this.CAPACITY = CAPACITY;
+    }
+
+
+
+    public String getR() {
+        return R;
+    }
+
+    public void setR(String R) {
+        this.R = R;
+    }
+
+
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+
 }

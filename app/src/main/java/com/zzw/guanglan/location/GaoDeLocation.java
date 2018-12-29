@@ -1,34 +1,36 @@
-package com.zzw.guanglan.manager;
+package com.zzw.guanglan.location;
 
 import android.content.Context;
-import android.location.Location;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-
-import java.io.Serializable;
+import com.zzw.guanglan.location.base.AbsLocation;
 
 /**
- * Created by zzw on 2018/10/14.
+ * Created by zzw on 2018/12/29.
  * 描述:
  */
-public class LocationManager implements AMapLocationListener {
+public class GaoDeLocation extends AbsLocation implements AMapLocationListener{
     //声明AMapLocationClient类对象
-    public AMapLocationClient mLocationClient = null;
+    public AMapLocationClient mLocationClient;
 
-
-    public LocationManager(Context context, OnLocationListener locationListener) {
-        //初始化定位
-        mLocationClient = new AMapLocationClient(context.getApplicationContext());
-        //设置定位回调监听
-        mLocationClient.setLocationListener(this);
-        this.locationListener = locationListener;
+    public GaoDeLocation(Context context) {
+       super(context);
     }
 
+    @Override
     public void start() {
+
+        if(mLocationClient == null){
+            //初始化定位
+            mLocationClient = new AMapLocationClient(mContext);
+            //设置定位回调监听
+            mLocationClient.setLocationListener(this);
+        }
+
         ////初始化AMapLocationClientOption对象
         AMapLocationClientOption option = new AMapLocationClientOption();
         //设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
@@ -50,6 +52,7 @@ public class LocationManager implements AMapLocationListener {
         mLocationClient.startLocation();
     }
 
+    @Override
     public void stop() {
         //停止定位后，本地定位服务并不会被销毁
         mLocationClient.stopLocation();
@@ -63,24 +66,22 @@ public class LocationManager implements AMapLocationListener {
         if (amapLocation != null) {
             if (amapLocation.getErrorCode() == 0) {
                 //可在其中解析amapLocation获取相应内容。
-                if (locationListener != null) {
-                    locationListener.onSuccess(AMapLocation2LocationBean(amapLocation));
+                if (mLocationListener != null) {
+                    mLocationListener.onSuccess(AMapLocation2LocationBean(amapLocation));
                 }
-
             } else {
                 //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                 Log.e("AmapError", "location Error, ErrCode:"
                         + amapLocation.getErrorCode() + ", errInfo:"
                         + amapLocation.getErrorInfo());
-                if (locationListener != null) {
-                    locationListener.onError(amapLocation.getErrorCode(), amapLocation.getErrorInfo());
+                if (mLocationListener != null) {
+                    mLocationListener.onError(amapLocation.getErrorCode(), amapLocation.getErrorInfo());
                 }
             }
         }
     }
-
-    public static LocationBean AMapLocation2LocationBean(AMapLocation amapLocation) {
-        LocationBean locationBean = new LocationBean();
+    private LocationManager.LocationBean AMapLocation2LocationBean(AMapLocation amapLocation) {
+        LocationManager.LocationBean locationBean = new LocationManager.LocationBean();
         locationBean.latitude = amapLocation.getLatitude();
         locationBean.longitude = amapLocation.getLongitude();
         locationBean.addrss = amapLocation.getAddress();
@@ -94,63 +95,5 @@ public class LocationManager implements AMapLocationListener {
         locationBean.adCode = amapLocation.getAdCode();
         locationBean.time = amapLocation.getTime();
         return locationBean;
-    }
-
-
-    public OnLocationListener locationListener;
-
-    public void setmLocationClient(AMapLocationClient mLocationClient) {
-        this.mLocationClient = mLocationClient;
-    }
-
-    public interface OnLocationListener {
-        void onSuccess(LocationBean bean);
-
-        void onError(int code, String msg);
-    }
-
-    public static class LocationBean implements Serializable {
-        //纬度
-        public double latitude;
-        //经度
-        public double longitude;
-        //地址
-        public String addrss;
-        //国家
-        public String country;
-        //省
-        public String province;
-        //城市
-        public String city;
-        //城区
-        public String district;
-        //街道
-        public String street;
-        //街道门牌号信息
-        public String streetNum;
-        //城市编码
-        public String cityCode;
-        //地区编码
-        public String adCode;
-        //定位时间
-        public long time;
-
-        @Override
-        public String toString() {
-            return "LocationBean{" +
-                    "latitude=" + latitude +
-                    ", longitude=" + longitude +
-                    ", addrss='" + addrss + '\'' +
-                    ", country='" + country + '\'' +
-                    ", province='" + province + '\'' +
-                    ", city='" + city + '\'' +
-                    ", district='" + district + '\'' +
-                    ", street='" + street + '\'' +
-                    ", streetNum='" + streetNum + '\'' +
-                    ", cityCode='" + cityCode + '\'' +
-                    ", adCode='" + adCode + '\'' +
-                    ", time=" + time +
-                    '}';
-        }
     }
 }

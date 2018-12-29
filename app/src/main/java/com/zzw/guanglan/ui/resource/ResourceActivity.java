@@ -30,13 +30,13 @@ import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.ResBean;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
-import com.zzw.guanglan.manager.LocationManager;
+import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.HotConnActivity;
 import com.zzw.guanglan.ui.guanglan.add.GuangLanAddActivitty;
 import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
-import com.zzw.guanglan.ui.juzhan.add.JuZhanAddActivity;
+import com.zzw.guanglan.ui.room.add.RoomAddActivity;
 import com.zzw.guanglan.utils.PopWindowUtils;
 import com.zzw.guanglan.utils.ToastUtils;
 
@@ -102,7 +102,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         if (position == 0) {
-                            JuZhanAddActivity.open(ResourceActivity.this);
+                            RoomAddActivity.open(ResourceActivity.this);
                         } else {
                             GuangLanAddActivitty.open(ResourceActivity.this);
                         }
@@ -181,10 +181,9 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     private void getResData(final int type, int distance) {
         if (type == 0) {
             RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                    .getAppJfOrGlByType("机房",
-                            String.valueOf(location.longitude),
+                    .getAppJfInfo(String.valueOf(location.longitude),
                             String.valueOf(location.latitude),
-                            String.valueOf(String.valueOf(distance)))
+                            String.valueOf(String.valueOf(distance)), null)
                     .compose(LifeObservableTransformer.<ListDataBean<ResBean>>create(this))
                     .subscribe(new ErrorObserver<ListDataBean<ResBean>>(this) {
                         @Override
@@ -194,10 +193,10 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                     });
         } else {
             RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                    .getAppJfOrGlByTypeGuangLan("光缆",
+                    .getAppGlInfo(
                             String.valueOf(location.longitude),
                             String.valueOf(location.latitude),
-                            String.valueOf(String.valueOf(distance)))
+                            String.valueOf(String.valueOf(distance)), null)
                     .compose(LifeObservableTransformer.<ListDataBean<GuangLanBean>>create(this))
                     .subscribe(new ErrorObserver<ListDataBean<GuangLanBean>>(this) {
                         @Override
@@ -205,66 +204,6 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                             addGuangLanMark(type, listDataBean.getList());
                         }
                     });
-//            String testData = " [{\n" +
-//                    "\t\t\"CABLE_NAME\": \"南京浦口西葛光跳站-花旗CS机房光缆01\",\n" +
-//                    "\t\t\"AHOSTNAME\": \"江宁至花旗营001045#\",\n" +
-//                    "\t\t\"ZGEOX\": 118.65685,\n" +
-//                    "\t\t\"AREA_NAME\": \"南京\",\n" +
-//                    "\t\t\"CITY_NAME\": \"南京\",\n" +
-//                    "\t\t\"ZGEOY\": 32.16453333333333,\n" +
-//                    "\t\t\"ZHOSTNAME\": \"京沪005506#\",\n" +
-//                    "\t\t\"CABLE_TYPE\": \"本地骨干光缆\",\n" +
-//                    "\t\t\"AGEOY\": 32.162977933107506,\n" +
-//                    "\t\t\"FLAG\": \"N\",\n" +
-//                    "\t\t\"AGEOX\": 118.65298999671664,\n" +
-//                    "\t\t\"CABLE_ID\": 3583357\n" +
-//                    "\t}, {\n" +
-//                    "\t\t\"CABLE_NAME\": \"旭日华庭-浦东花园CS光缆01\",\n" +
-//                    "\t\t\"AHOSTNAME\": \"大桥北路020307#\",\n" +
-//                    "\t\t\"ZGEOX\": 118.72404333333334,\n" +
-//                    "\t\t\"AREA_NAME\": \"南京\",\n" +
-//                    "\t\t\"CITY_NAME\": \"南京\",\n" +
-//                    "\t\t\"ZGEOY\": 32.132196388888886,\n" +
-//                    "\t\t\"ZHOSTNAME\": \"大桥北路020315#\",\n" +
-//                    "\t\t\"CABLE_TYPE\": \"本地汇聚光缆\",\n" +
-//                    "\t\t\"AGEOY\": 32.13957410788257,\n" +
-//                    "\t\t\"FLAG\": \"N\",\n" +
-//                    "\t\t\"AGEOX\": 118.7181289035044,\n" +
-//                    "\t\t\"CABLE_ID\": 2261520\n" +
-//                    "\t}, {\n" +
-//                    "\t\t\"CABLE_NAME\": \"一干-宁汉1-路由段5（花旗CS南-虎踞路72芯）\",\n" +
-//                    "\t\t\"AHOSTNAME\": \"花旗CS\",\n" +
-//                    "\t\t\"ZGEOX\": 118.66545,\n" +
-//                    "\t\t\"AREA_NAME\": \"江苏\",\n" +
-//                    "\t\t\"ZGEOY\": 32.1722,\n" +
-//                    "\t\t\"ZHOSTNAME\": \"花旗001066#\",\n" +
-//                    "\t\t\"CABLE_TYPE\": \"一干光缆\",\n" +
-//                    "\t\t\"AGEOY\": 32.16486,\n" +
-//                    "\t\t\"FLAG\": \"N\",\n" +
-//                    "\t\t\"AGEOX\": 118.6584,\n" +
-//                    "\t\t\"CABLE_ID\": 63549\n" +
-//                    "\t}]\n";
-//            Observable.just(testData)
-//                    .map(new Function<String, ListDataBean<GuangLanBean>>() {
-//                        @Override
-//                        public ListDataBean<GuangLanBean> apply(String s) throws Exception {
-//                            Type type = new TypeToken<List<GuangLanBean>>() {
-//                            }.getType();
-//                            List<GuangLanBean> list = new Gson().fromJson(s, type);
-//
-//                            ListDataBean bean = new ListDataBean();
-//                            bean.setList(list);
-//                            bean.setTotal(103);
-//                            return bean;
-//                        }
-//                    })
-//                    .compose(LifeObservableTransformer.<ListDataBean<GuangLanBean>>create(this))
-//                    .subscribe(new ErrorObserver<ListDataBean<GuangLanBean>>(this) {
-//                        @Override
-//                        public void onNext(ListDataBean<GuangLanBean> listDataBean) {
-//                            addGuangLanMark(type, listDataBean.getList());
-//                        }
-//                    });
         }
 
     }
@@ -347,7 +286,8 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                 if (marker == locationMarker)
                     return false;
                 int pos = Integer.parseInt(marker.getSnippet());
-                GuangLanDListActivity.open(ResourceActivity.this);
+                ResBean bean = data.get(pos);
+                GuangLanDListActivity.open(ResourceActivity.this, bean.getRoomId(), location);
 //                    EngineRoomDetailsActivity.open(ResourceActivity.this, data.get(pos));
                 return true;
             }
@@ -474,8 +414,11 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     public void onSuccess(LocationManager.LocationBean bean) {
 
 //        todo 这里写死了 测试数据
-//        bean.longitude = 118.695495;
-//        bean.latitude = 32.154022;
+//        bean.longitude = 116.450119;
+//        bean.latitude = 39.927381;
+
+        bean.longitude = 118.97677500000000400;
+        bean.latitude = 34.7625090000000014;
 
 
         this.location = bean;

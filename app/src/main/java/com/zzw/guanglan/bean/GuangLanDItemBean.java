@@ -3,7 +3,6 @@ package com.zzw.guanglan.bean;
 import android.text.TextUtils;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Created by zzw on 2018/10/3.
@@ -13,219 +12,40 @@ public class GuangLanDItemBean implements Serializable {
 
 
     /**
-     * id : 55592803299758080
-     * cabelOpName : 光缆段名称123
-     * cabelOpCode : 光缆段编码
-     * statId : 621
-     * areaId : 377
-     * roomId : 496
-     * capaticy : 24
-     * state : 100001
-     * opString : 12
-     * orgId : null
-     * orgUserName : null
-     * opStartTime : null
-     * lastTime : 1536508800000
-     * paCableId : null
-     * paEquipId : null
-     * createOp : null
-     * areaName : 东城区
-     * remark : null
-     * paCableName : 测试11133
-     * paCableLevel : 配线
-     * stateName : 空闲
+     * STATE_NAME : 空闲
+     * SERIAL_NO : 90000012
+     * LONGITUDE : 118.760247
+     * NAME : 连云港
+     * CABLE_NAME : 东海城南-东海综合楼48芯光缆
+     * R : 1
+     * AHOSTNAME : 东海综合楼
+     * ROOM_ID : 763
+     * ROOM_NAME : 东海综合楼
+     * CAPATICY : 48
+     * CABLE_LEVEL : 本地骨干光缆
+     * ID : 5270804
+     * CABL_OP_NAME : 东海城南-东海综合楼光缆段
+     * LATITUDE : 34.52912
+     * CABL_OP_CODE : 东海城南-东海综合楼光缆段
+     * PA_CABLE_ID : 3280085
      */
 
-    private String id;
-    private String cabelOpName;
-    private String cabelOpCode;
-    private String statId;
-    private String areaId;
-    private String roomId;
-    private String capaticy;
-    private String state;
-    private String opString;
-    private String orgId;
-    private String orgUserName;
-    private String opStartTime;
-    private String lastTime;
-    private String paCableId;
-    private String paEquipId;
-    private String createOp;
-    private String areaName;
-    private String remark;
-    private String paCableName;
-    private String paCableLevel;
-    private String stateName;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getCabelOpName() {
-        return cabelOpName;
-    }
-
-    public void setCabelOpName(String cabelOpName) {
-        this.cabelOpName = cabelOpName;
-    }
-
-    public String getCabelOpCode() {
-        return cabelOpCode;
-    }
-
-    public void setCabelOpCode(String cabelOpCode) {
-        this.cabelOpCode = cabelOpCode;
-    }
-
-    public String getStatId() {
-        return statId;
-    }
-
-    public void setStatId(String statId) {
-        this.statId = statId;
-    }
-
-    public String getAreaId() {
-        return areaId;
-    }
-
-    public void setAreaId(String areaId) {
-        this.areaId = areaId;
-    }
-
-    public String getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
-    }
-
-    public String getCapaticy() {
-        return capaticy;
-    }
-
-    public void setCapaticy(String capaticy) {
-        this.capaticy = capaticy;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getOpString() {
-        return opString;
-    }
-
-    public void setOpString(String opString) {
-        this.opString = opString;
-    }
-
-    public String getOrgId() {
-        return orgId;
-    }
-
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
-    }
-
-    public String getOrgUserName() {
-        return orgUserName;
-    }
-
-    public void setOrgUserName(String orgUserName) {
-        this.orgUserName = orgUserName;
-    }
-
-    public String getOpStartTime() {
-        return opStartTime;
-    }
-
-    public void setOpStartTime(String opStartTime) {
-        this.opStartTime = opStartTime;
-    }
-
-    public String getLastTime() {
-        return lastTime;
-    }
-
-    public void setLastTime(String lastTime) {
-        this.lastTime = lastTime;
-    }
-
-    public String getPaCableId() {
-        return paCableId;
-    }
-
-    public void setPaCableId(String paCableId) {
-        this.paCableId = paCableId;
-    }
-
-    public String getPaEquipId() {
-        return paEquipId;
-    }
-
-    public void setPaEquipId(String paEquipId) {
-        this.paEquipId = paEquipId;
-    }
-
-    public String getCreateOp() {
-        return createOp;
-    }
-
-    public void setCreateOp(String createOp) {
-        this.createOp = createOp;
-    }
-
-    public String getAreaName() {
-        return areaName;
-    }
-
-    public void setAreaName(String areaName) {
-        this.areaName = areaName;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public String getPaCableName() {
-        return paCableName;
-    }
-
-    public void setPaCableName(String paCableName) {
-        this.paCableName = paCableName;
-    }
-
-    public String getPaCableLevel() {
-        return paCableLevel;
-    }
-
-    public void setPaCableLevel(String paCableLevel) {
-        this.paCableLevel = paCableLevel;
-    }
-
-    public String getStateName() {
-        return stateName;
-    }
-
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
-    }
-
+    private String STATE_NAME;
+    private String SERIAL_NO;
+    private String LONGITUDE;
+    private String NAME;
+    private String CABLE_NAME;
+    private String R;
+    private String AHOSTNAME;
+    private String ROOM_ID;
+    private String ROOM_NAME;
+    private String CAPATICY;
+    private String CABLE_LEVEL;
+    private String ID;
+    private String CABL_OP_NAME;
+    private String LATITUDE;
+    private String CABL_OP_CODE;
+    private String PA_CABLE_ID;
 
     @Override
     public boolean equals(Object o) {
@@ -234,7 +54,134 @@ public class GuangLanDItemBean implements Serializable {
 
         GuangLanDItemBean that = (GuangLanDItemBean) o;
 
-        return TextUtils.equals(that.id, id);
+        return TextUtils.equals(that.ID, ID);
     }
 
+    public String getSTATE_NAME() {
+        return STATE_NAME;
+    }
+
+    public void setSTATE_NAME(String STATE_NAME) {
+        this.STATE_NAME = STATE_NAME;
+    }
+
+    public String getSERIAL_NO() {
+        return SERIAL_NO;
+    }
+
+    public void setSERIAL_NO(String SERIAL_NO) {
+        this.SERIAL_NO = SERIAL_NO;
+    }
+
+    public String getLONGITUDE() {
+        return LONGITUDE;
+    }
+
+    public void setLONGITUDE(String LONGITUDE) {
+        this.LONGITUDE = LONGITUDE;
+    }
+
+    public String getNAME() {
+        return NAME;
+    }
+
+    public void setNAME(String NAME) {
+        this.NAME = NAME;
+    }
+
+    public String getCABLE_NAME() {
+        return CABLE_NAME;
+    }
+
+    public void setCABLE_NAME(String CABLE_NAME) {
+        this.CABLE_NAME = CABLE_NAME;
+    }
+
+    public String getR() {
+        return R;
+    }
+
+    public void setR(String R) {
+        this.R = R;
+    }
+
+    public String getAHOSTNAME() {
+        return AHOSTNAME;
+    }
+
+    public void setAHOSTNAME(String AHOSTNAME) {
+        this.AHOSTNAME = AHOSTNAME;
+    }
+
+    public String getROOM_ID() {
+        return ROOM_ID;
+    }
+
+    public void setROOM_ID(String ROOM_ID) {
+        this.ROOM_ID = ROOM_ID;
+    }
+
+    public String getROOM_NAME() {
+        return ROOM_NAME;
+    }
+
+    public void setROOM_NAME(String ROOM_NAME) {
+        this.ROOM_NAME = ROOM_NAME;
+    }
+
+    public String getCAPATICY() {
+        return CAPATICY;
+    }
+
+    public void setCAPATICY(String CAPATICY) {
+        this.CAPATICY = CAPATICY;
+    }
+
+    public String getCABLE_LEVEL() {
+        return CABLE_LEVEL;
+    }
+
+    public void setCABLE_LEVEL(String CABLE_LEVEL) {
+        this.CABLE_LEVEL = CABLE_LEVEL;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public String getCABL_OP_NAME() {
+        return CABL_OP_NAME;
+    }
+
+    public void setCABL_OP_NAME(String CABL_OP_NAME) {
+        this.CABL_OP_NAME = CABL_OP_NAME;
+    }
+
+    public String getLATITUDE() {
+        return LATITUDE;
+    }
+
+    public void setLATITUDE(String LATITUDE) {
+        this.LATITUDE = LATITUDE;
+    }
+
+    public String getCABL_OP_CODE() {
+        return CABL_OP_CODE;
+    }
+
+    public void setCABL_OP_CODE(String CABL_OP_CODE) {
+        this.CABL_OP_CODE = CABL_OP_CODE;
+    }
+
+    public String getPA_CABLE_ID() {
+        return PA_CABLE_ID;
+    }
+
+    public void setPA_CABLE_ID(String PA_CABLE_ID) {
+        this.PA_CABLE_ID = PA_CABLE_ID;
+    }
 }

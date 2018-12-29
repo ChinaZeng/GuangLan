@@ -1,7 +1,6 @@
 package com.zzw.guanglan.ui.qianxin;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.dl7.tag.TagLayout;
 import com.dl7.tag.TagView;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
@@ -31,12 +29,11 @@ import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
 import com.zzw.guanglan.bean.RemoveBean;
 import com.zzw.guanglan.bean.SingleChooseBean;
-import com.zzw.guanglan.bean.StationBean;
 import com.zzw.guanglan.bean.StatusInfoBean;
 import com.zzw.guanglan.dialogs.BottomListDialog;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
-import com.zzw.guanglan.manager.LocationManager;
+import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
@@ -66,7 +63,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.reactivex.functions.Consumer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -76,8 +72,7 @@ public class QianXinListActivity extends BaseActivity implements
         SwipeRefreshLayout.OnRefreshListener,
         QianXinListAdapter.OnTestListener,
         QianXinListAdapter.OnUploadListener,
-        QianXinListAdapter.OnStatusListener,
-        LocationManager.OnLocationListener {
+        QianXinListAdapter.OnStatusListener {
     @BindView(R.id.recy)
     RecyclerView recy;
 
@@ -89,15 +84,17 @@ public class QianXinListActivity extends BaseActivity implements
     SwipeRefreshLayout refreshLayout;
 
 
-    private LocationManager locationManager;
-
     private int pageNo = 1;
 
     private final static String ITEM = "item";
+    private final static String LOCATION = "location";
 
 
     private QianXinListAdapter adapter;
+
     private GuangLanDItemBean guangLanDBean;
+    private LocationManager.LocationBean locationBean;
+
 
     private List<SingleChooseBean> juliS;
     private List<SingleChooseBean> bochangS;
@@ -111,9 +108,10 @@ public class QianXinListActivity extends BaseActivity implements
     private TestArgsAndStartBean testArgsAutoModeBean;
 
 
-    public static void open(Context context, GuangLanDItemBean bean) {
+    public static void open(Context context, GuangLanDItemBean bean, LocationManager.LocationBean locationBean) {
         context.startActivity(new Intent(context, QianXinListActivity.class)
                 .putExtra(ITEM, bean)
+                .putExtra(LOCATION, locationBean)
         );
     }
 
@@ -131,6 +129,7 @@ public class QianXinListActivity extends BaseActivity implements
 
         super.initData();
         guangLanDBean = (GuangLanDItemBean) getIntent().getSerializableExtra(ITEM);
+        locationBean = (LocationManager.LocationBean) getIntent().getSerializableExtra(LOCATION);
 
         headerView();
 
@@ -144,19 +143,18 @@ public class QianXinListActivity extends BaseActivity implements
         recy.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this);
 
-        startLocation();
         onRefresh();
     }
 
     void getData() {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .getAppListByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
+                .getAppFiberListByPage(new HashMap<String, String>() {
                     {
-                        put("model.cblOpName", guangLanDBean.getCabelOpName());
-                        put("model.cblOpCode", guangLanDBean.getCabelOpCode());
+                        put("cblOpName", guangLanDBean.getCABLE_NAME());
+                        put("cblOpCode","");
                         put("pageNum", String.valueOf(pageNo));
                     }
-                }))
+                })
                 .compose(LifeObservableTransformer.<ListDataBean<QianXinItemBean>>create(this))
                 .subscribe(new ErrorObserver<ListDataBean<QianXinItemBean>>(this) {
                     @Override
@@ -169,6 +167,7 @@ public class QianXinListActivity extends BaseActivity implements
                                 adapter.loadMoreComplete();
                             }
                         }
+                        refreshLayout.setRefreshing(false);
                     }
                 });
     }
@@ -177,7 +176,7 @@ public class QianXinListActivity extends BaseActivity implements
     @OnClick(R.id.look)
     public void onViewClicked() {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .remove(guangLanDBean.getId())
+                .remove(guangLanDBean.getID())
                 .compose(LifeObservableTransformer.<RemoveBean>create(this))
                 .subscribe(new ErrorObserver<RemoveBean>(this) {
                     @Override
@@ -196,13 +195,18 @@ public class QianXinListActivity extends BaseActivity implements
                             }
                         }).show(getSupportFragmentManager(), "remove");
                     }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        refreshLayout.setRefreshing(false);
+                    }
                 });
     }
 
     void setData(List<QianXinItemBean> datas) {
         if (pageNo == 1) {
             adapter.replaceData(datas);
-            refreshLayout.setRefreshing(false);
         } else {
             adapter.addData(datas);
         }
@@ -442,7 +446,6 @@ public class QianXinListActivity extends BaseActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopLocation();
         EventBus.getDefault().unregister(this);
     }
 
@@ -515,25 +518,20 @@ public class QianXinListActivity extends BaseActivity implements
 
 
     private TagLayout juli, bochang, maikuan, time, zheshelv, mode;
-    TextView location;
     //0 自定义  1上一次  2自动
     int argsMode = 0;
 
     View headerView() {
         final View view = LayoutInflater.from(this).inflate(R.layout.layout_qianxin_header, ll, false);
         ll.addView(view, 0);
-        location = view.findViewById(R.id.location);
-        location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startLocation();
-            }
-        });
+        TextView location = view.findViewById(R.id.location);
+        location.setText(locationBean.addrss);
+
         TextView tv_guanglan_name = view.findViewById(R.id.tv_guanglan_name);
         TextView tv_guanglan_code = view.findViewById(R.id.tv_guanglan_code);
 
-        tv_guanglan_name.setText("光缆名称:" + guangLanDBean.getPaCableName());
-        tv_guanglan_code.setText("光缆编码:" + guangLanDBean.getCabelOpCode());
+        tv_guanglan_name.setText("光缆名称:" + guangLanDBean.getCABL_OP_NAME());
+        tv_guanglan_code.setText("光缆编码:" + guangLanDBean.getCABL_OP_CODE());
 
         final View cutomView = view.findViewById(R.id.content);
         final View lastView = view.findViewById(R.id.content2);
@@ -877,7 +875,7 @@ public class QianXinListActivity extends BaseActivity implements
                 .saveFiberFile(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
                         put("struffix", finalStruffix);
-                        put("fiberId", bean.getFiberId());
+                        put("fiberId", bean.getFIBER_ID());
                         put("userId", UserManager.getInstance().getUserId());
                         put("geoy", String.valueOf(locationBean.latitude));
                         put("geox", String.valueOf(locationBean.longitude));
@@ -953,15 +951,15 @@ public class QianXinListActivity extends BaseActivity implements
 //        }
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .updateFiberState(qianXinItemBean.getFiberId(), statusInfoBean.getStateId())
+                .updateFiberState(qianXinItemBean.getFIBER_ID(), statusInfoBean.getStateId())
                 .map(new ResultBooleanFunction<>())
                 .compose(LifeObservableTransformer.<Boolean>create(this))
                 .subscribe(new ErrorObserver<Boolean>(this) {
                     @Override
                     public void onNext(Boolean b) {
                         if (b) {
-                            qianXinItemBean.setStateId(statusInfoBean.getStateId());
-                            qianXinItemBean.setStateName(statusInfoBean.getName());
+//                            qianXinItemBean.setStateId(statusInfoBean.getStateId());
+                            qianXinItemBean.setSTATENAME(statusInfoBean.getName());
                             int pos = adapter.getData().indexOf(qianXinItemBean);
                             if (pos != -1) {
                                 //1 是header
@@ -976,49 +974,6 @@ public class QianXinListActivity extends BaseActivity implements
                         }
                     }
                 });
-    }
-
-    @SuppressLint("CheckResult")
-    private void startLocation() {
-        location.setText("定位中...");
-        new RxPermissions(this)
-                .request(Manifest.permission.ACCESS_COARSE_LOCATION)
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) throws Exception {
-                        if (aBoolean) {
-                            stopLocation();
-                            locationManager = new LocationManager(QianXinListActivity.this,
-                                    QianXinListActivity.this);
-                            locationManager.start();
-                        } else {
-                            ToastUtils.showToast("请开启定位权限");
-                            location.setText("定位失败，点击重新定位");
-                        }
-                    }
-                });
-    }
-
-
-    private void stopLocation() {
-        if (locationManager != null) {
-            locationManager.stop();
-            locationManager = null;
-        }
-    }
-
-
-    private LocationManager.LocationBean locationBean;
-
-    @Override
-    public void onSuccess(LocationManager.LocationBean bean) {
-        location.setText(bean.addrss);
-        this.locationBean = bean;
-    }
-
-    @Override
-    public void onError(int code, String msg) {
-        location.setText("定位失败，点击重新定位");
     }
 
 

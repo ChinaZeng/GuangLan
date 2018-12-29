@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
@@ -17,7 +16,6 @@ import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.AreaBean;
 import com.zzw.guanglan.bean.BseRoomBean;
 import com.zzw.guanglan.bean.GuangLanItemBean;
-import com.zzw.guanglan.bean.GuangLanParamBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.StationBean;
 import com.zzw.guanglan.bean.StatusInfoBean;
@@ -27,12 +25,11 @@ import com.zzw.guanglan.dialogs.area.AreaDialog;
 import com.zzw.guanglan.dialogs.multilevel.OnConfirmCallback;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
-import com.zzw.guanglan.manager.LocationManager;
+import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.rx.ResultBooleanFunction;
-import com.zzw.guanglan.ui.MainActivity;
 import com.zzw.guanglan.ui.guangland.param.GuangLanParamActivity;
 import com.zzw.guanglan.utils.RequestBodyUtils;
 import com.zzw.guanglan.utils.ToastUtils;
@@ -110,7 +107,6 @@ public class GuangLanDAddActivitty extends BaseActivity implements LocationManag
 
     public void submit() {
 
-
         final String cabelOpNameS = cabelOpName.getText().toString().trim();
         final String cabelOpCodeS = cabelOpCode.getText().toString().trim();
         final String capaticyS = capaticy.getText().toString().trim();
@@ -143,6 +139,37 @@ public class GuangLanDAddActivitty extends BaseActivity implements LocationManag
             ToastUtils.showToast("请选择局站!");
             return;
         }
+
+        /*
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .appAddGldInfo(new HashMap<String, String>() {
+                    {
+//                        put("userId", UserManager.getInstance().getUserId());
+
+                        put("areaId", areaIdStr);
+                        put("cableOpName", cabelOpNameS);
+                        put("capaticy", capaticyS);
+                        put("opLong", opLongS);
+
+                        put("aRoomId", aStationIdStr);
+                        put("zRoomId", zStationIdStr);
+                    }
+                })
+                .map(ResultBooleanFunction.create())
+                .compose(LifeObservableTransformer.<Boolean>create(this))
+                .subscribe(new ErrorObserver<Boolean>(this) {
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if (aBoolean) {
+                            ToastUtils.showToast("新增成功");
+                            finish();
+                        }
+                    }
+                });
+                */
+
+
+
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .duanAppAdd(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {

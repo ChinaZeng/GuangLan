@@ -8,7 +8,7 @@ import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bottomtab.TabBottomNavigation;
 import com.zzw.guanglan.bottomtab.iterator.TabListIterator;
-import com.zzw.guanglan.manager.LocationManager;
+import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.service.SocketService;
 import com.zzw.guanglan.socket.utils.MyLog;
 import com.zzw.guanglan.ui.home.HomeFragment;

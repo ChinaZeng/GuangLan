@@ -41,12 +41,10 @@ import butterknife.OnClick;
  * Create by zzw on 2018/12/7
  */
 public class ResourceSearchActivity extends BaseActivity implements
-        SwipeRefreshLayout.OnRefreshListener, TextView.OnEditorActionListener {
+        SwipeRefreshLayout.OnRefreshListener, TextView.OnEditorActionListener, BaseQuickAdapter.RequestLoadMoreListener {
 
     @BindView(R.id.tv_area)
     TextView tvArea;
-    @BindView(R.id.tv_engine_room)
-    TextView tvEngineRoom;
     @BindView(R.id.et_param)
     EditText etParam;
     @BindView(R.id.recy)
@@ -71,6 +69,8 @@ public class ResourceSearchActivity extends BaseActivity implements
 
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ResourceAdapter(new ArrayList<ResBean>());
+        adapter.setEnableLoadMore(true);
+        adapter.setOnLoadMoreListener(this, recy);
         recy.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
 
@@ -91,21 +91,11 @@ public class ResourceSearchActivity extends BaseActivity implements
         onRefresh();
     }
 
-    @OnClick({R.id.tv_area, R.id.tv_engine_room, R.id.search})
+    @OnClick({R.id.tv_area, R.id.search})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_area:
                 area();
-                break;
-            case R.id.tv_engine_room:
-                PopWindowUtils.showListPop(this, view, types, new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        type = types[position];
-                        tvEngineRoom.setText(type);
-                        hideKeyWordSearch();
-                    }
-                });
                 break;
             case R.id.search:
                 hideKeyWordSearch();
@@ -127,24 +117,35 @@ public class ResourceSearchActivity extends BaseActivity implements
         onRefresh();
     }
 
-
-    private String[] types = new String[]{"机房", "光交"};
-    private String type = types[0];
     private String cityName, areaName;
+    private int pageNum = 1;
 
     @Override
     public void onRefresh() {
-        swipeRefreshLayout.setRefreshing(true);
+        pageNum = 1;
+        getData();
+    }
+
+    void getData() {
+        if (pageNum == 1) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .getAppJfOrGlByOthers(type,
+                .getAppJfByOthers(etParam.getText().toString().trim(),
                         cityName,
-                        areaName,
-                        etParam.getText().toString().trim())
+                        areaName, pageNum)
                 .compose(LifeObservableTransformer.<ListDataBean<ResBean>>create(this))
                 .subscribe(new ErrorObserver<ListDataBean<ResBean>>(this) {
                     @Override
                     public void onNext(ListDataBean<ResBean> listDataBean) {
-                        adapter.replaceData(listDataBean.getList());
+                        List<ResBean> list = listDataBean.getList();
+                        setData(list);
+
+                        if (adapter.getData().size() >= listDataBean.getTotal()) {
+                            adapter.loadMoreEnd();
+                        } else {
+                            adapter.loadMoreComplete();
+                        }
                         swipeRefreshLayout.setRefreshing(false);
                     }
 
@@ -155,6 +156,14 @@ public class ResourceSearchActivity extends BaseActivity implements
                     }
 
                 });
+    }
+
+    void setData(List<ResBean> list) {
+        if (pageNum == 1) {
+            adapter.replaceData(list);
+        } else {
+            adapter.addData(list);
+        }
     }
 
     private void area() {
@@ -174,5 +183,11 @@ public class ResourceSearchActivity extends BaseActivity implements
                 }
             }
         }).show(getSupportFragmentManager(), "area");
+    }
+
+    @Override
+    public void onLoadMoreRequested() {
+        pageNum++;
+        onRefresh();
     }
 }

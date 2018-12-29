@@ -12,7 +12,6 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp">
 
-
         <TextView
             android:id="@+id/tv_area"
             android:layout_width="0dp"
@@ -21,18 +20,6 @@
             android:gravity="center"
             android:text="地区" />
 
-        <View
-            android:layout_width="1px"
-            android:layout_height="match_parent"
-            android:background="@android:color/darker_gray" />
-
-        <TextView
-            android:id="@+id/tv_engine_room"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="机房" />
     </LinearLayout>
 
     <View

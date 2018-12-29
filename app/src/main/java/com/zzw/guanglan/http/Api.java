@@ -70,20 +70,18 @@ public interface Api {
     @POST("/glcs/cblCable/getAppListByPage")
     Observable<ListDataBean<GuangLanItemBean>> getGuangLanByPage(@PartMap Map<String, RequestBody> s);
 
-    @Multipart
-    @POST("/glcs/cblCable/getAppListDuanByPage")
-    Observable<ListDataBean<GuangLanDItemBean>> getAppListDuanByPage(@PartMap Map<String, RequestBody> requestBodyMap);
+    @GET("/glcs/cblCable/appGetCblCableOpByJf")
+    Observable<ListDataBean<GuangLanDItemBean>> appGetCblCableOpByJf(@QueryMap Map<String, String> s);
 
-    @Multipart
-    @POST("/glcs/cblFiber/getAppListByPage")
-    Observable<ListDataBean<QianXinItemBean>> getAppListByPage(@PartMap Map<String, RequestBody> s);
 
+    @GET("/glcs/cblFiber/getAppFiberListByPage")
+    Observable<ListDataBean<QianXinItemBean>> getAppFiberListByPage(@QueryMap Map<String, String> s);
 
     @GET("/glcs/cblCable/appAddGldInfo")
     Observable<ResultBean<Object>> appAddGldInfo(@QueryMap Map<String, String> s);
 
     @Multipart
-    @POST("/glcs/cblCable/duanAppAdd")
+    @POST("/glcs/cblCable/appAddGldInfo")
     Observable<ResultBean<Object>> duanAppAdd(@PartMap Map<String, RequestBody> s);
 
     @Multipart
@@ -95,29 +93,30 @@ public interface Api {
     Observable<RemoveBean> remove(@Query("id") String id);
 
 
-    @GET("/glcs/bseRoom/getAppJfOrGlByType")
-    Observable<ListDataBean<ResBean>> getAppJfOrGlByType(
-            @Query("type") String type,
-            @Query("LONGITUDE") String LONGITUDE,
-            @Query("LATITUDE") String LATITUDE,
-            @Query("DISTANCE") String DISTANCE
-    );
-
-    @GET("/glcs/bseRoom/getAppJfOrGlByType")
-    Observable<ListDataBean<GuangLanBean>> getAppJfOrGlByTypeGuangLan(
-            @Query("type") String type,
-            @Query("LONGITUDE") String LONGITUDE,
-            @Query("LATITUDE") String LATITUDE,
-            @Query("DISTANCE") String DISTANCE
+    @GET("/glcs/bseRoom/getAppJfInfo")
+    Observable<ListDataBean<ResBean>> getAppJfInfo(
+            @Query("longitude") String longitude,
+            @Query("latitude") String latitude,
+            @Query("distance") String distance,
+            @Query("pageNum") String pageNum
     );
 
 
-    @GET("/glcs/bseRoom/getAppJfOrGlByOthers")
-    Observable<ListDataBean<ResBean>> getAppJfOrGlByOthers(
-            @Query("type") String type,
+    @GET("/glcs/cblCable/getAppGlInfo")
+    Observable<ListDataBean<GuangLanBean>> getAppGlInfo(
+            @Query("longitude") String longitude,
+            @Query("latitude") String latitude,
+            @Query("distance") String distance,
+            @Query("pageNum") String pageNum
+    );
+
+
+    @GET("/glcs/bseRoom/getAppJfByOthers")
+    Observable<ListDataBean<ResBean>> getAppJfByOthers(
+            @Query("jfName") String jfName,
             @Query("cityName") String cityName,
             @Query("areaName") String areaName,
-            @Query("typeName") String typeName
+            @Query("pageNum") int pageNum
     );
 
     @GET("/glcs/bseRoom/getAppTypeJfInfo")

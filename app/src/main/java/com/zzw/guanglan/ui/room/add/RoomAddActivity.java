@@ -1,4 +1,4 @@
-package com.zzw.guanglan.ui.juzhan.add;
+package com.zzw.guanglan.ui.room.add;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -20,7 +20,7 @@ import com.zzw.guanglan.dialogs.area.AreaDialog;
 import com.zzw.guanglan.dialogs.multilevel.OnConfirmCallback;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
-import com.zzw.guanglan.manager.LocationManager;
+import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
@@ -37,7 +37,7 @@ import io.reactivex.functions.Consumer;
 /**
  * Create by zzw on 2018/12/25
  */
-public class JuZhanAddActivity extends BaseActivity implements LocationManager.OnLocationListener {
+public class RoomAddActivity extends BaseActivity implements LocationManager.OnLocationListener {
     @BindView(R.id.tv_location)
     TextView tvLocation;
     @BindView(R.id.tv_room_name)
@@ -51,7 +51,7 @@ public class JuZhanAddActivity extends BaseActivity implements LocationManager.O
 
 
     public static void open(Context context) {
-        context.startActivity(new Intent(context, JuZhanAddActivity.class));
+        context.startActivity(new Intent(context, RoomAddActivity.class));
     }
 
     @Override
@@ -192,8 +192,8 @@ public class JuZhanAddActivity extends BaseActivity implements LocationManager.O
                     public void accept(Boolean aBoolean) throws Exception {
                         if (aBoolean) {
                             stopLocation();
-                            locationManager = new LocationManager(JuZhanAddActivity.this,
-                                    JuZhanAddActivity.this);
+                            locationManager = new LocationManager(RoomAddActivity.this,
+                                    RoomAddActivity.this);
                             locationManager.start();
                         } else {
                             ToastUtils.showToast("请开启定位权限");

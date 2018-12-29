@@ -25,6 +25,7 @@ import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.socket.EventBusTag;
 import com.zzw.guanglan.utils.InputMethodSoftUtil;
 import com.zzw.guanglan.utils.RequestBodyUtils;
+import com.zzw.guanglan.utils.ToastUtils;
 
 import org.simple.eventbus.EventBus;
 
@@ -99,6 +100,10 @@ public class GuangLanSearchActivity extends BaseActivity implements BaseQuickAda
     private void search(String key, final int pageNo) {
         this.searchKey = key;
 
+        //todo  接口？
+
+        ToastUtils.showToast("没有接口");
+        /*
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppListDuanByPage(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
@@ -120,6 +125,7 @@ public class GuangLanSearchActivity extends BaseActivity implements BaseQuickAda
                         }
                     }
                 });
+                */
     }
 
     @Override

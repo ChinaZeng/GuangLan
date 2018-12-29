@@ -41,7 +41,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    sourceSets{
+        main{
+            jniLibs.srcDir 'libs'
+            jni.srcDirs = []    //disable automatic ndk-build
+        }
+    }
 }
+
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -69,7 +77,6 @@ dependencies {
         exclude module: 'rxjava'
     }
     implementation rootProject.ext.dependencies["okHttpLog"]
-
     //image
     implementation rootProject.ext.dependencies["glide"]
     annotationProcessor rootProject.ext.dependencies["glide-compiler"]
@@ -94,11 +101,10 @@ dependencies {
         exclude module: 'rxandroid'
     }
     implementation rootProject.ext.dependencies["timber"]
-
     implementation 'com.amap.api:location:latest.integration'
     implementation 'com.amap.api:map2d:latest.integration'
-//    implementation 'com.amap.api:search:latest.integration'
-
+    //    implementation 'com.amap.api:search:latest.integration'
     api 'com.astuetz:pagerslidingtabstrip:1.0.1'
     implementation 'com.github.Rukey7:TagLayout:1.0.6'
+    implementation files('libs/BaiduLBS_Android.jar')
 }

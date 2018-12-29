@@ -1,11 +1,15 @@
 package com.zzw.guanglan.bean;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
  * Create by zzw on 2018/12/24
  */
 public class ResBean implements Serializable {
+
+
 
 
     /**
@@ -201,4 +205,6 @@ public class ResBean implements Serializable {
     public void setStationId(String stationId) {
         this.stationId = stationId;
     }
+
+
 }

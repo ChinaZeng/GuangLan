@@ -64,8 +64,6 @@ public class HomeFragment extends BaseFragment {
 
                 break;
             case R.id.tv_temp_test:
-                //                GuangLanListActivity.open(getContext());
-                GuangLanDListActivity.open(getContext());
                 break;
 
             case R.id.hot_conn:

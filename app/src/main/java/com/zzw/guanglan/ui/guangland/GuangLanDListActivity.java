@@ -9,7 +9,7 @@ import android.support.v4.view.ViewPager;
 
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
-import com.zzw.guanglan.ui.workorder.WorkOrderListFragment;
+import com.zzw.guanglan.location.LocationManager;
 
 import butterknife.BindView;
 
@@ -20,8 +20,11 @@ public class GuangLanDListActivity extends BaseActivity {
     @BindView(R.id.vp)
     ViewPager vp;
 
-    public static void open(Context context) {
-        context.startActivity(new Intent(context, GuangLanDListActivity.class));
+    public static void open(Context context, String roomId, LocationManager.LocationBean location) {
+        context.startActivity(new Intent(context, GuangLanDListActivity.class)
+                .putExtra("roomId", roomId)
+                .putExtra("location", location)
+        );
     }
 
 
@@ -34,9 +37,13 @@ public class GuangLanDListActivity extends BaseActivity {
     @Override
     protected void initView() {
         super.initView();
-        super.initView();
+
+        Intent intent = getIntent();
+        String roomId = intent.getStringExtra("roomId");
+        LocationManager.LocationBean bean = (LocationManager.LocationBean) intent.getSerializableExtra("location");
+
         final String[] titles = new String[]{"光缆段", "已测试光缆段"};
-        final Fragment[] fragments = new Fragment[]{GuangLanDuanListFragment.newInstance(), HisGuangLanDuanListFragment.newInstance()};
+        final Fragment[] fragments = new Fragment[]{GuangLanDuanListFragment.newInstance(roomId,bean), HisGuangLanDuanListFragment.newInstance()};
 
         FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override

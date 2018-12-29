@@ -22,8 +22,8 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
 
     @Override
     protected void convert(final BaseViewHolder helper, final QianXinItemBean item) {
-        helper.setText(R.id.guang_lan_d_name, "光缆序号:" + item.getNo());
-        helper.setText(R.id.status, "纤芯状态: " + item.getStateName());
+        helper.setText(R.id.guang_lan_d_name, "光缆序号:" + item.getNO());
+        helper.setText(R.id.status, "纤芯状态: " + item.getSTATENAME());
 
         helper.setText(R.id.last_time, "上次测试时间: " + (TextUtils.isEmpty(item.getModifyTimeString())
                 ? "无" : item.getModifyTimeString()));

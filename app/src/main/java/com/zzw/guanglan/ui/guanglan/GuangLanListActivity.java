@@ -36,7 +36,6 @@ public class GuangLanListActivity extends BaseActivity implements BaseQuickAdapt
 
     private GuangLanListAdapter adapter;
 
-
     private final static int PAGE_SIZE = 10;
     private int pageNo = 1;
 
@@ -103,7 +102,7 @@ public class GuangLanListActivity extends BaseActivity implements BaseQuickAdapt
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        GuangLanDListActivity.open(this);
+//        GuangLanDListActivity.open(this);
     }
 
 
