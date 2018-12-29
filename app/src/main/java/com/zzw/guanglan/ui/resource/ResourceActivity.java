@@ -417,8 +417,8 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 //        bean.longitude = 116.450119;
 //        bean.latitude = 39.927381;
 
-        bean.longitude = 118.97677500000000400;
-        bean.latitude = 34.7625090000000014;
+//        bean.longitude = 118.97677500000000400;
+//        bean.latitude = 34.7625090000000014;
 
 
         this.location = bean;
