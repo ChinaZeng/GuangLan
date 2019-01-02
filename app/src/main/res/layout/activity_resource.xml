@@ -15,6 +15,13 @@
             android:layout_height="match_parent" />
 
         <ImageView
+            android:id="@+id/iv_center"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icon_center_location" />
+
+        <ImageView
             android:id="@+id/iv_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,8 +34,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="50dp"
             android:layout_marginRight="14dp"
+            android:layout_marginTop="50dp"
             android:background="@android:color/holo_blue_dark"
             android:padding="10dp"
             android:src="@mipmap/icon_room" />
@@ -37,10 +44,10 @@
             android:id="@+id/tv_guanglan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_room"
             android:layout_alignLeft="@+id/tv_room"
-            android:layout_marginTop="5dp"
+            android:layout_below="@+id/tv_room"
             android:layout_marginRight="14dp"
+            android:layout_marginTop="5dp"
             android:background="@android:color/holo_blue_dark"
             android:padding="10dp"
             android:src="@mipmap/icon_guanglan" />
@@ -54,8 +61,8 @@
         android:layout_height="50dp"
         android:background="@android:color/white"
         android:orientation="horizontal"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp">
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp">
 
 
         <TextView

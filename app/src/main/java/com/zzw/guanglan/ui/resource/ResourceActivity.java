@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -53,14 +54,14 @@ import io.reactivex.functions.Consumer;
 /**
  * Create by zzw on 2018/12/7
  */
-public class ResourceActivity extends BaseActivity implements LocationManager.OnLocationListener {
+public class ResourceActivity extends BaseActivity implements LocationManager.OnLocationListener, BaiduMap.OnMapStatusChangeListener {
     @BindView(R.id.map_view)
     MapView mapView;
 
     private BaiduMap aMap;
 
 
-    private int nowType = 0; //0 机房  1光缆
+    private int nowType = 0, nowDistance = 2; //0 机房  1光缆
 
     public static void open(Context context) {
         context.startActivity(new Intent(context, ResourceActivity.class));
@@ -79,14 +80,14 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                 PopWindowUtils.showListPop(this, view, new String[]{"附近", "查询"}, new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (location == null) {
+                        if (myLocation == null) {
                             ToastUtils.showToast("请您先定位!");
                             return;
                         }
                         if (position == 0) {
-                            NearbyResActivity.open(ResourceActivity.this, location);
+                            NearbyResActivity.open(ResourceActivity.this, myLocation);
                         } else {
-                            ResourceSearchActivity.open(ResourceActivity.this, location);
+                            ResourceSearchActivity.open(ResourceActivity.this, myLocation);
                         }
                     }
                 });
@@ -124,7 +125,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     }
 
 
-    private LocationManager.LocationBean location;
+    private LocationManager.LocationBean centerLocation, myLocation;
     private LocationManager locationManager;
 
     @Override
@@ -134,10 +135,11 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 //        bean.longitude = 116.450119;
 //        bean.latitude = 39.927381;
 
-//        bean.longitude = 118.976775;
-//        bean.latitude = 34.762509;
+        bean.longitude = 118.976775;
+        bean.latitude = 34.762509;
 
-        this.location = bean;
+        this.myLocation = bean;
+
         setLocationMark(bean);
     }
 
@@ -175,7 +177,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 
 
     private void showResDataPop(final int type, View view) {
-        if (location == null) {
+        if (centerLocation == null) {
             ToastUtils.showToast("请先定位!");
         }
         PopWindowUtils.showListPop(this, view,
@@ -184,7 +186,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                 new String[]{"1km", "2km", "3km", "4km"}, new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        getResData(type, position + 1);
+                        getResData(centerLocation, type, position + 1);
                     }
                 });
 
@@ -194,30 +196,38 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
      * @param type     0 机房  1光缆
      * @param distance 千米数
      */
-    private void getResData(final int type, int distance) {
-        if (location == null) return;
+    private void getResData(final LocationManager.LocationBean locationBean, final int type, int distance) {
+        if (locationBean == null) return;
+
+        this.nowType = type;
+        this.nowDistance = distance;
         if (type == 0) {
             RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                    .getAppJfInfo(String.valueOf(location.longitude),
-                            String.valueOf(location.latitude),
+                    .getAppJfInfo(String.valueOf(locationBean.longitude),
+                            String.valueOf(locationBean.latitude),
                             String.valueOf(String.valueOf(distance)), null)
                     .compose(LifeObservableTransformer.<ListDataBean<ResBean>>create(this))
                     .subscribe(new ErrorObserver<ListDataBean<ResBean>>(this) {
                         @Override
                         public void onNext(ListDataBean<ResBean> listDataBean) {
+                            if (centerLocation != locationBean)
+                                return;
                             addRoomMark(type, listDataBean.getList());
                         }
                     });
         } else {
             RetrofitHttpEngine.obtainRetrofitService(Api.class)
                     .getAppGlInfo(
-                            String.valueOf(location.longitude),
-                            String.valueOf(location.latitude),
+                            String.valueOf(locationBean.longitude),
+                            String.valueOf(locationBean.latitude),
                             String.valueOf(String.valueOf(distance)), null)
                     .compose(LifeObservableTransformer.<ListDataBean<GuangLanBean>>create(this))
                     .subscribe(new ErrorObserver<ListDataBean<GuangLanBean>>(this) {
                         @Override
                         public void onNext(ListDataBean<GuangLanBean> listDataBean) {
+                            if (centerLocation != locationBean)
+                                return;
+
                             addGuangLanMark(type, listDataBean.getList());
                         }
                     });
@@ -232,19 +242,10 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         if (bean == null)
             return;
 
-        //第一次的时候默认拉取两千米内的机房
-        if (locationMarker == null) {
-            getResData(0, 2);
-        }
-
         LatLng latLng = new LatLng(bean.latitude, bean.longitude);
         //添加Marker显示定位位置
         if (locationMarker == null) {
-            //如果是空的添加一个新的,icon方法就是设置定位图标，可以自定义
-            OverlayOptions option = new MarkerOptions()
-                    .position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_location_marker_2d));
-            locationMarker = (Marker) aMap.addOverlay(option);
+            locationMarker = addMark(bean.latitude, bean.longitude, bean, R.mipmap.icon_location_marker_2d);
         } else {
             //已经添加过了，修改位置即可
             locationMarker.setPosition(latLng);
@@ -272,7 +273,8 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         LatLng latLng = new LatLng(latitude
                 , longitude);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("bean", bean);
+        if (bean != null)
+            bundle.putSerializable("bean", bean);
         OverlayOptions aOption = new MarkerOptions()
                 .position(latLng)
                 .extraInfo(bundle)
@@ -293,7 +295,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 //                    GuangLanBean bean = (GuangLanBean) bundle.getSerializable("bean");
 //                    if (bean != null) {
 ////                        QianXinListActivity.open(this,bean.get??);
-////                        GuangLanDListActivity.open(ResourceActivity.this, bean.getRoomId(), location);
+////                        GuangLanDListActivity.open(ResourceActivity.this, bean.getRoomId(), centerLocation);
 //                        return true;
 //                    }
 //                }
@@ -366,7 +368,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                 if (bundle != null) {
                     ResBean bean = (ResBean) bundle.getSerializable("bean");
                     if (bean != null) {
-                        GuangLanDListActivity.open(ResourceActivity.this, bean.getRoomId(), location);
+                        GuangLanDListActivity.open(ResourceActivity.this, bean.getRoomId(), centerLocation);
 //                    EngineRoomDetailsActivity.open(ResourceActivity.this, data.get(pos));
                         return true;
                     }
@@ -392,6 +394,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         super.onCreate(savedInstanceState);
         if (aMap == null) {
             aMap = mapView.getMap();
+            aMap.setOnMapStatusChangeListener(this);
         }
     }
 
@@ -424,5 +427,40 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     @Override
     public void onError(int code, String msg) {
         ToastUtils.showToast("定位失败:" + msg);
+    }
+
+    @Override
+    public void onMapStatusChangeStart(MapStatus mapStatus) {
+
+    }
+
+    @Override
+    public void onMapStatusChangeStart(MapStatus mapStatus, int i) {
+
+    }
+
+    @Override
+    public void onMapStatusChange(MapStatus mapStatus) {
+
+    }
+
+
+    //    private Marker centerMarker;
+    @Override
+    public void onMapStatusChangeFinish(MapStatus mapStatus) {
+        LatLng la = aMap.getMapStatus().target;
+
+        LocationManager.LocationBean locationBean = new LocationManager.LocationBean();
+        locationBean.latitude = la.latitude;
+        locationBean.longitude = la.longitude;
+        this.centerLocation = locationBean;
+
+//        if (centerMarker == null) {
+//            centerMarker = addMark(la.latitude, la.longitude, null, R.mipmap.icon_center_location);
+//        } else {
+//            centerMarker.setPosition(la);
+//        }
+
+        getResData(locationBean,nowType, nowDistance);
     }
 }
