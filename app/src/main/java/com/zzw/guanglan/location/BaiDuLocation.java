@@ -1,6 +1,7 @@
 package com.zzw.guanglan.location;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -12,7 +13,7 @@ import com.zzw.guanglan.location.base.AbsLocation;
  * Created by zzw on 2018/12/29.
  * 描述:
  */
-public class BaiDuLocation extends AbsLocation  {
+public class BaiDuLocation extends AbsLocation {
     public LocationClient mLocationClient = null;
 
     public BaiDuLocation(Context context) {
@@ -22,7 +23,7 @@ public class BaiDuLocation extends AbsLocation  {
     @Override
     public void start() {
 
-        if(mLocationClient==null){
+        if (mLocationClient == null) {
             //声明LocationClient类
             mLocationClient = new LocationClient(mContext);
             //注册监听函数
@@ -71,7 +72,7 @@ public class BaiDuLocation extends AbsLocation  {
 
         //可选，V7.2版本新增能力
         //如果设置了该接口，首次启动定位时，会先判断当前Wi-Fi是否超出有效期，若超出有效期，会先重新扫描Wi-Fi，然后定位
-        option.setWifiCacheTimeOut(5*60*1000);
+        option.setWifiCacheTimeOut(5 * 60 * 1000);
 
         //可选，设置是否需要过滤GPS仿真结果，默认需要，即参数为false
         option.setEnableSimulateGps(false);
@@ -91,31 +92,40 @@ public class BaiDuLocation extends AbsLocation  {
         mLocationClient = null;
     }
 
-    public class MyLocationListener extends BDAbstractLocationListener{
+    public class MyLocationListener extends BDAbstractLocationListener {
+
+
         @Override
-        public void onReceiveLocation(BDLocation location){
+        public void onReceiveLocation(BDLocation location) {
             if (location != null) {
                 int locType = location.getLocType();
-                //TODO 具体  code码 什么是成功  什么是失败
-                if (locType == 61 || locType==161) {
+                if (locType == 61 || locType == 161 ) {
                     //可在其中解析amapLocation获取相应内容。
                     if (mLocationListener != null) {
                         mLocationListener.onSuccess(BDLocation2LocationBean(location));
                     }
                 } else {
+                    //http://lbsyun.baidu.com/index.php?title=android-locsdk/guide/addition-func/error-code
                     //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-//                    Log.e("AmapError", "location Error, ErrCode:"
-//                            + amapLocation.getErrorCode() + ", errInfo:"
-//                            + amapLocation.getErrorInfo());
-//                    if (mLocationListener != null) {
-//                        mLocationListener.onError(amapLocation.getErrorCode(), amapLocation.getErrorInfo());
-//                    }
+                    Log.e("AmapError", "location Error, ErrCode:"
+                            + locType);
+                    if (mLocationListener != null) {
+                        mLocationListener.onError(locType, "定位失败，请确认相关权限，网络或者GPS是否正常");
+                    }
+                }
+            }else {
+
+                //http://lbsyun.baidu.com/index.php?title=android-locsdk/guide/addition-func/error-code
+                //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
+                Log.e("AmapError","location is null");
+                if (mLocationListener != null) {
+                    mLocationListener.onError(-1, "定位失败，请确认相关权限，网络或者GPS是否正常");
                 }
             }
         }
     }
 
-    private LocationManager.LocationBean BDLocation2LocationBean(BDLocation location){
+    private LocationManager.LocationBean BDLocation2LocationBean(BDLocation location) {
         LocationManager.LocationBean bean = new LocationManager.LocationBean();
 
         //此处的BDLocation为定位结果信息类，通过它的各种get方法可获取定位相关的全部结果
@@ -124,25 +134,37 @@ public class BaiDuLocation extends AbsLocation  {
 
         //获取纬度信息
         double latitude = location.getLatitude();
+        bean.latitude = latitude;
+
         //获取经度信息
         double longitude = location.getLongitude();
-        //获取定位精度，默认值为0.0f
-        float radius = location.getRadius();
-        //获取经纬度坐标类型，以LocationClientOption中设置过的坐标类型为准
-        String coorType = location.getCoorType();
-        //获取定位类型、定位错误返回码，具体信息可参照类参考中BDLocation类中的说明
-        int errorCode = location.getLocType();
-
+        bean.longitude = longitude;
+//        //获取定位精度，默认值为0.0f
+//        float radius = location.getRadius();
+//        //获取经纬度坐标类型，以LocationClientOption中设置过的坐标类型为准
+//        String coorType = location.getCoorType();
+//        //获取定位类型、定位错误返回码，具体信息可参照类参考中BDLocation类中的说明
+//        int errorCode = location.getLocType();
 
         String addr = location.getAddrStr();    //获取详细地址信息
+        bean.addrss = addr;
         String country = location.getCountry();    //获取国家
+        bean.country = country;
         String province = location.getProvince();    //获取省份
+        bean.province = province;
+
         String city = location.getCity();    //获取城市
+        bean.city = city;
+
         String district = location.getDistrict();    //获取区县
+        bean.district = district;
+
+
         String street = location.getStreet();    //获取街道信息
+        bean.street = street;
 
         String locationDescribe = location.getLocationDescribe();    //获取位置描述信息
-
+        bean.locationDescribe = locationDescribe;
 
         return bean;
     }

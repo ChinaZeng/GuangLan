@@ -1,9 +1,11 @@
 package com.zzw.guanglan.bean;
 
+import java.io.Serializable;
+
 /**
  * Create by zzw on 2018/12/27
  */
-public class GuangLanBean {
+public class GuangLanBean implements Serializable {
 
 
     //光缆名称

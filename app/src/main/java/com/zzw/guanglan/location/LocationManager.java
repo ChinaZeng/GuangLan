@@ -3,7 +3,6 @@ package com.zzw.guanglan.location;
 import android.content.Context;
 
 import com.zzw.guanglan.location.base.AbsLocation;
-import com.zzw.guanglan.location.GaoDeLocation;
 import com.zzw.guanglan.location.base.ILocation;
 
 import java.io.Serializable;
@@ -17,7 +16,7 @@ public class LocationManager implements ILocation {
     private AbsLocation absLocation;
 
     public LocationManager(Context context, OnLocationListener locationListener) {
-        absLocation = new GaoDeLocation(context);
+        absLocation = new BaiDuLocation(context);
         absLocation.setLocationListener(locationListener);
     }
 
@@ -62,6 +61,9 @@ public class LocationManager implements ILocation {
         //定位时间
         public long time;
 
+        //位置描述信息
+        public String locationDescribe;
+
         @Override
         public String toString() {
             return "LocationBean{" +
@@ -77,6 +79,7 @@ public class LocationManager implements ILocation {
                     ", cityCode='" + cityCode + '\'' +
                     ", adCode='" + adCode + '\'' +
                     ", time=" + time +
+                    ", locationDescribe='" + locationDescribe + '\'' +
                     '}';
         }
     }

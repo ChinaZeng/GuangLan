@@ -12,16 +12,18 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.amap.api.maps2d.AMap;
-import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.model.BitmapDescriptorFactory;
-import com.amap.api.maps2d.model.LatLng;
-import com.amap.api.maps2d.model.Marker;
-import com.amap.api.maps2d.model.MarkerOptions;
-import com.amap.api.maps2d.model.Polyline;
-import com.amap.api.maps2d.model.PolylineOptions;
-import com.amap.api.maps2d.model.VisibleRegion;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.model.LatLng;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
@@ -40,6 +42,7 @@ import com.zzw.guanglan.ui.room.add.RoomAddActivity;
 import com.zzw.guanglan.utils.PopWindowUtils;
 import com.zzw.guanglan.utils.ToastUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +57,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     @BindView(R.id.map_view)
     MapView mapView;
 
-    private AMap aMap;
+    private BaiduMap aMap;
 
 
     private int nowType = 0; //0 机房  1光缆
@@ -125,6 +128,20 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     private LocationManager locationManager;
 
     @Override
+    public void onSuccess(LocationManager.LocationBean bean) {
+
+//        todo 这里写死了 测试数据
+//        bean.longitude = 116.450119;
+//        bean.latitude = 39.927381;
+
+//        bean.longitude = 118.976775;
+//        bean.latitude = 34.762509;
+
+        this.location = bean;
+        setLocationMark(bean);
+    }
+
+    @Override
     protected void initData() {
         super.initData();
         startLocation();
@@ -178,6 +195,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
      * @param distance 千米数
      */
     private void getResData(final int type, int distance) {
+        if (location == null) return;
         if (type == 0) {
             RetrofitHttpEngine.obtainRetrofitService(Api.class)
                     .getAppJfInfo(String.valueOf(location.longitude),
@@ -208,26 +226,78 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     }
 
 
+    private Marker locationMarker;
+
+    void setLocationMark(LocationManager.LocationBean bean) {
+        if (bean == null)
+            return;
+
+        //第一次的时候默认拉取两千米内的机房
+        if (locationMarker == null) {
+            getResData(0, 2);
+        }
+
+        LatLng latLng = new LatLng(bean.latitude, bean.longitude);
+        //添加Marker显示定位位置
+        if (locationMarker == null) {
+            //如果是空的添加一个新的,icon方法就是设置定位图标，可以自定义
+            OverlayOptions option = new MarkerOptions()
+                    .position(latLng)
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_location_marker_2d));
+            locationMarker = (Marker) aMap.addOverlay(option);
+        } else {
+            //已经添加过了，修改位置即可
+            locationMarker.setPosition(latLng);
+        }
+
+        //定义地图状态
+        MapStatus mMapStatus = new MapStatus.Builder()
+                //要移动的点
+                .target(latLng)
+                //放大地图到20倍
+                .zoom(12).build();
+        //定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
+        MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapStatus);
+        //改变地图状态
+        aMap.animateMapStatus(mMapStatusUpdate);
+
+    }
+
+
     private List<Marker> nowMarks = new ArrayList<>();
     private List<Polyline> polylines = new ArrayList<>();
-    private List<ResBean> data = new ArrayList<>();
+
+
+    private Marker addMark(double latitude, double longitude, Serializable bean, int resId) {
+        LatLng latLng = new LatLng(latitude
+                , longitude);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bean", bean);
+        OverlayOptions aOption = new MarkerOptions()
+                .position(latLng)
+                .extraInfo(bundle)
+                .icon(BitmapDescriptorFactory.fromResource(resId));
+        return (Marker) aMap.addOverlay(aOption);
+    }
 
     private void addGuangLanMark(final int searchType, List<GuangLanBean> list) {
         cleanNowMark();
 
         this.nowType = searchType;
         aMap.setOnMarkerClickListener(null);
-
-//        aMap.setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
+//        aMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
 //            @Override
 //            public boolean onMarkerClick(Marker marker) {
-//                if (marker == locationMarker)
-//                    return false;
-//
-//                int pos = Integer.parseInt(marker.getSnippet());
-////                    QianXinListActivity.open(this,);
-////                    EngineRoomDetailsActivity.open(ResourceActivity.this, data.get(pos));
-//                return true;
+//                Bundle bundle = marker.getExtraInfo();
+//                if (bundle != null) {
+//                    GuangLanBean bean = (GuangLanBean) bundle.getSerializable("bean");
+//                    if (bean != null) {
+////                        QianXinListActivity.open(this,bean.get??);
+////                        GuangLanDListActivity.open(ResourceActivity.this, bean.getRoomId(), location);
+//                        return true;
+//                    }
+//                }
+//                return false;
 //            }
 //        });
 
@@ -235,28 +305,38 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
             GuangLanBean bean = list.get(i);
 
             if (!TextUtils.isEmpty(bean.getAGEOX()) && !TextUtils.isEmpty(bean.getAGEOY())) {
-                LatLng aLatLng = new LatLng(Double.parseDouble(bean.getAGEOY())
-                        , Double.parseDouble(bean.getAGEOX()));
-                final Marker aMarker = aMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_guanglan))
-                        .position(aLatLng).title(bean.getCABLE_NAME()).snippet(i + ""));
-                nowMarks.add(aMarker);
-
-                if (!TextUtils.isEmpty(bean.getZGEOX()) && !TextUtils.isEmpty(bean.getZGEOY())) {
-                    LatLng zLatLng = new LatLng(Double.parseDouble(bean.getZGEOY())
-                            , Double.parseDouble(bean.getZGEOX()));
-                    final Marker zMarker = aMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_guanglan))
-                            .position(zLatLng).title(bean.getCABLE_NAME()).snippet(i + ""));
-                    nowMarks.add(zMarker);
-
-                    Polyline polyline = aMap.addPolyline(new PolylineOptions().add(aLatLng, zLatLng)
-                            .width(5).color(Color.argb(255, 255, 0, 0)));
-                    polylines.add(polyline);
-                }
+                nowMarks.add(
+                        addMark(Double.parseDouble(bean.getAGEOY()),
+                                Double.parseDouble(bean.getAGEOX()),
+                                bean,
+                                R.mipmap.icon_guanglan));
             }
 
+            if (!TextUtils.isEmpty(bean.getZGEOX()) && !TextUtils.isEmpty(bean.getZGEOY())) {
+
+
+                nowMarks.add(
+                        addMark(Double.parseDouble(bean.getZGEOY()),
+                                Double.parseDouble(bean.getZGEOX()),
+                                bean,
+                                R.mipmap.icon_guanglan));
+
+                LatLng aLatLng = new LatLng(Double.parseDouble(bean.getAGEOY())
+                        , Double.parseDouble(bean.getAGEOX()));
+                LatLng zLatLng = new LatLng(Double.parseDouble(bean.getZGEOY())
+                        , Double.parseDouble(bean.getZGEOX()));
+                List<LatLng> points = new ArrayList<LatLng>();
+                points.add(aLatLng);
+                points.add(zLatLng);
+                PolylineOptions polylineOptions = new PolylineOptions()
+                        .points(points)
+                        .width(5)
+                        .color(Color.argb(255, 255, 0, 0));
+                Polyline polyline = (Polyline) aMap.addOverlay(polylineOptions);
+                polylines.add(polyline);
+            }
         }
+
     }
 
     private void cleanNowMark() {
@@ -269,9 +349,6 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
             polyline.remove();
         }
         polylines.clear();
-
-        data.clear();
-
     }
 
 
@@ -279,155 +356,70 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         cleanNowMark();
 
         this.nowType = searchType;
-        aMap.setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
+        aMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 if (marker == locationMarker)
                     return false;
-                int pos = Integer.parseInt(marker.getSnippet());
-                ResBean bean = data.get(pos);
-                GuangLanDListActivity.open(ResourceActivity.this, bean.getRoomId(), location);
+
+                Bundle bundle = marker.getExtraInfo();
+                if (bundle != null) {
+                    ResBean bean = (ResBean) bundle.getSerializable("bean");
+                    if (bean != null) {
+                        GuangLanDListActivity.open(ResourceActivity.this, bean.getRoomId(), location);
 //                    EngineRoomDetailsActivity.open(ResourceActivity.this, data.get(pos));
-                return true;
+                        return true;
+                    }
+                }
+
+                return false;
             }
         });
 
         for (int i = 0; i < list.size(); i++) {
-            ResBean resBean = list.get(i);
-            LatLng latLng = new LatLng(Double.parseDouble(resBean.getLatitude())
-                    , Double.parseDouble(resBean.getLongitude()));
-            final Marker marker = aMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_room))
-                    .position(latLng).title(resBean.getRoomName()).snippet(i + ""));
-            nowMarks.add(marker);
+            ResBean bean = list.get(i);
+            nowMarks.add(
+                    addMark(Double.parseDouble(bean.getLatitude()),
+                            Double.parseDouble(bean.getLongitude()),
+                            bean,
+                            R.mipmap.icon_room));
         }
-        this.data = list;
-
     }
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
-        mapView.onCreate(savedInstanceState);
         if (aMap == null) {
             aMap = mapView.getMap();
-//            aMap.setOnMyLocationChangeListener(new AMap.OnMyLocationChangeListener() {
-//                @Override
-//                public void onMyLocationChange(Location location) {
-//                    Log.e("zzz", "onMyLocationChange");
-//                    LocationManager.LocationBean bean = new LocationManager.LocationBean();
-//                    bean.latitude = location.getLatitude();
-//                    bean.longitude = location.getLongitude();
-//                    ResourceActivity.this.location = bean;
-//                }
-//            });
         }
-    }
-
-
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        showMySelf();
-    }
-
-    private Marker locationMarker;
-
-    void setLocationMark(LocationManager.LocationBean bean) {
-        if (bean == null)
-            return;
-
-        if (location != null) {
-            getResData(0, 2);
-        }
-
-        //https://lbs.amap.com/api/android-sdk/guide/draw-on-map/draw-marker
-        LatLng latLng = new LatLng(bean.latitude, bean.longitude);
-        //添加Marker显示定位位置
-        if (locationMarker == null) {
-            //如果是空的添加一个新的,icon方法就是设置定位图标，可以自定义
-            locationMarker = aMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.icon_location_marker_2d)));
-        } else {
-            //已经添加过了，修改位置即可
-            locationMarker.setPosition(latLng);
-        }
-        //然后可以移动到定位点,使用animateCamera就有动画效果
-        aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
-        //改变地图的缩放级别
-        aMap.moveCamera(CameraUpdateFactory.zoomBy(4));
-    }
-
-    private void showMySelf() {
-        //初始化定位蓝点样式类myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
-        // 连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。
-        // （1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
-//        MyLocationStyle myLocationStyle = new MyLocationStyle();
-        //定位一次，且将视角移动到地图中心点。
-//        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
-        //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
-//        myLocationStyle.interval(2000);
-        //设置定位蓝点的Style
-//        aMap.setMyLocationStyle(myLocationStyle);
-//        设置默认定位按钮是否显示，非必需设置。
-        aMap.getUiSettings().setMyLocationButtonEnabled(false);
-        // 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
-        aMap.setMyLocationEnabled(false);
-        //改变地图的缩放级别
-        aMap.moveCamera(CameraUpdateFactory.zoomBy(4));
     }
 
     @Override
     protected void onDestroy() {
         //在activity执行onDestroy时执行mMapView.onDestroy()，销毁地图
         mapView.onDestroy();
+        mapView = null;
         stopLocation();
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
         //在activity执行onResume时执行mMapView.onResume ()，重新绘制加载地图
         mapView.onResume();
+        super.onResume();
+
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mapView.onPause();
+        super.onPause();
+
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，保存地图当前的状态
-        mapView.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onSuccess(LocationManager.LocationBean bean) {
-
-//        todo 这里写死了 测试数据
-//        bean.longitude = 116.450119;
-//        bean.latitude = 39.927381;
-
-        bean.longitude = 118.97677500000000400;
-        bean.latitude = 34.7625090000000014;
-
-
-        this.location = bean;
-        setLocationMark(bean);
-    }
-
-    //可以通过可见范围计算距离
-    private void getVisibleRegion() {
-        VisibleRegion region = aMap.getProjection().getVisibleRegion();
-    }
 
     @Override
     public void onError(int code, String msg) {
