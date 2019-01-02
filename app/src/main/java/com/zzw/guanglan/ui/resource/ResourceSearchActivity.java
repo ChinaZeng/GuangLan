@@ -24,8 +24,10 @@ import com.zzw.guanglan.dialogs.area.AreaDialog;
 import com.zzw.guanglan.dialogs.multilevel.OnConfirmCallback;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
 import com.zzw.guanglan.ui.room.EngineRoomDetailsActivity;
 import com.zzw.guanglan.utils.InputMethodSoftUtil;
 import com.zzw.guanglan.utils.PopWindowUtils;
@@ -53,9 +55,13 @@ public class ResourceSearchActivity extends BaseActivity implements
     SwipeRefreshLayout swipeRefreshLayout;
 
     private ResourceAdapter adapter;
+    private LocationManager.LocationBean location;
 
-    public static void open(Context context) {
-        context.startActivity(new Intent(context, ResourceSearchActivity.class));
+
+    public static void open(Context context, LocationManager.LocationBean location) {
+        Intent intent = new Intent(context, ResourceSearchActivity.class);
+        intent.putExtra("location", location);
+        context.startActivity(intent);
     }
 
     @Override
@@ -66,6 +72,7 @@ public class ResourceSearchActivity extends BaseActivity implements
     @Override
     protected void initView() {
         super.initView();
+        location = (LocationManager.LocationBean) getIntent().getSerializableExtra("location");
 
         recy.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ResourceAdapter(new ArrayList<ResBean>());
@@ -76,7 +83,10 @@ public class ResourceSearchActivity extends BaseActivity implements
 
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                EngineRoomDetailsActivity.open(ResourceSearchActivity.this, (ResBean) adapter.getData().get(position));
+                ResBean resBean = (ResBean) adapter.getData().get(position);
+//                EngineRoomDetailsActivity.open(ResourceSearchActivity.this, (ResBean) adapter.getData().get(position));
+                GuangLanDListActivity.open(ResourceSearchActivity.this,resBean.getRoomId(),location);
+
             }
         });
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -188,6 +198,6 @@ public class ResourceSearchActivity extends BaseActivity implements
     @Override
     public void onLoadMoreRequested() {
         pageNum++;
-        onRefresh();
+        getData();
     }
 }

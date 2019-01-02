@@ -19,6 +19,7 @@ import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
 import com.zzw.guanglan.ui.room.EngineRoomDetailsActivity;
 import com.zzw.guanglan.utils.PopWindowUtils;
 
@@ -72,7 +73,9 @@ public class NearbyResActivity extends BaseActivity implements SwipeRefreshLayou
 
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                EngineRoomDetailsActivity.open(NearbyResActivity.this, (ResBean) adapter.getData().get(position));
+                ResBean resBean = (ResBean) adapter.getData().get(position);
+//                EngineRoomDetailsActivity.open(NearbyResActivity.this, resBean);
+                GuangLanDListActivity.open(NearbyResActivity.this,resBean.getRoomId(),location);
             }
         });
 
@@ -155,6 +158,6 @@ public class NearbyResActivity extends BaseActivity implements SwipeRefreshLayou
     @Override
     public void onLoadMoreRequested() {
         pageNum++;
-        onRefresh();
+        getData();
     }
 }
