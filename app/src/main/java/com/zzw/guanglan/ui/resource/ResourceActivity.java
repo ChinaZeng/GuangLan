@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -54,7 +53,8 @@ import io.reactivex.functions.Consumer;
 /**
  * Create by zzw on 2018/12/7
  */
-public class ResourceActivity extends BaseActivity implements LocationManager.OnLocationListener, BaiduMap.OnMapStatusChangeListener {
+public class ResourceActivity extends BaseActivity implements LocationManager.OnLocationListener,
+        BaiduMap.OnMapStatusChangeListener, BaiduMap.OnMarkerClickListener {
     @BindView(R.id.map_view)
     MapView mapView;
 
@@ -135,8 +135,8 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 //        bean.longitude = 116.450119;
 //        bean.latitude = 39.927381;
 
-        bean.longitude = 118.976775;
-        bean.latitude = 34.762509;
+//        bean.longitude = 118.976775;
+//        bean.latitude = 34.762509;
 
         this.myLocation = bean;
 
@@ -239,6 +239,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     private Marker locationMarker;
 
     void setLocationMark(LocationManager.LocationBean bean) {
+
         if (bean == null)
             return;
 
@@ -286,7 +287,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         cleanNowMark();
 
         this.nowType = searchType;
-        aMap.setOnMarkerClickListener(null);
+        aMap.removeMarkerClickListener(this);
 //        aMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
 //            @Override
 //            public boolean onMarkerClick(Marker marker) {
@@ -358,25 +359,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         cleanNowMark();
 
         this.nowType = searchType;
-        aMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                if (marker == locationMarker)
-                    return false;
-
-                Bundle bundle = marker.getExtraInfo();
-                if (bundle != null) {
-                    ResBean bean = (ResBean) bundle.getSerializable("bean");
-                    if (bean != null) {
-                        GuangLanDListActivity.open(ResourceActivity.this, bean.getRoomId(), centerLocation);
-//                    EngineRoomDetailsActivity.open(ResourceActivity.this, data.get(pos));
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        });
+        aMap.setOnMarkerClickListener(this);
 
         for (int i = 0; i < list.size(); i++) {
             ResBean bean = list.get(i);
@@ -386,6 +369,28 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                             bean,
                             R.mipmap.icon_room));
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if (marker == locationMarker)
+            return false;
+
+        Bundle bundle = marker.getExtraInfo();
+        if (bundle != null) {
+            Serializable bean =  bundle.getSerializable("bean");
+
+            if (bean == null) return false;
+
+            if (bean instanceof ResBean) {
+                ResBean resBean = (ResBean) bean;
+                GuangLanDListActivity.open(ResourceActivity.this, resBean.getRoomId(), centerLocation);
+//                    EngineRoomDetailsActivity.open(ResourceActivity.this, data.get(pos));
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
@@ -461,6 +466,8 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 //            centerMarker.setPosition(la);
 //        }
 
-        getResData(locationBean,nowType, nowDistance);
+        getResData(locationBean, nowType, nowDistance);
     }
+
+
 }

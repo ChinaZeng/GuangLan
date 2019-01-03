@@ -150,7 +150,7 @@ public class QianXinListActivity extends BaseActivity implements
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppFiberListByPage(new HashMap<String, String>() {
                     {
-                        put("cblOpName", guangLanDBean.getCABLE_NAME());
+                        put("cblOpName", guangLanDBean.getCABL_OP_NAME());
                         put("cblOpCode","");
                         put("pageNum", String.valueOf(pageNo));
                     }
