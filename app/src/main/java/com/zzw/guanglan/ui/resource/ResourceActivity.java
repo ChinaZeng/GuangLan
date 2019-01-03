@@ -135,8 +135,8 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 //        bean.longitude = 116.450119;
 //        bean.latitude = 39.927381;
 
-//        bean.longitude = 118.976775;
-//        bean.latitude = 34.762509;
+//        bean.longitude = 118.70231499999993;
+//        bean.latitude = 32.157075038623134;
 
         this.myLocation = bean;
 
@@ -252,6 +252,8 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
             locationMarker.setPosition(latLng);
         }
 
+
+
         //定义地图状态
         MapStatus mMapStatus = new MapStatus.Builder()
                 //要移动的点
@@ -313,30 +315,28 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                                 Double.parseDouble(bean.getAGEOX()),
                                 bean,
                                 R.mipmap.icon_guanglan));
-            }
 
-            if (!TextUtils.isEmpty(bean.getZGEOX()) && !TextUtils.isEmpty(bean.getZGEOY())) {
+                if (!TextUtils.isEmpty(bean.getZGEOX()) && !TextUtils.isEmpty(bean.getZGEOY())) {
+                    nowMarks.add(
+                            addMark(Double.parseDouble(bean.getZGEOY()),
+                                    Double.parseDouble(bean.getZGEOX()),
+                                    bean,
+                                    R.mipmap.icon_guanglan));
 
-
-                nowMarks.add(
-                        addMark(Double.parseDouble(bean.getZGEOY()),
-                                Double.parseDouble(bean.getZGEOX()),
-                                bean,
-                                R.mipmap.icon_guanglan));
-
-                LatLng aLatLng = new LatLng(Double.parseDouble(bean.getAGEOY())
-                        , Double.parseDouble(bean.getAGEOX()));
-                LatLng zLatLng = new LatLng(Double.parseDouble(bean.getZGEOY())
-                        , Double.parseDouble(bean.getZGEOX()));
-                List<LatLng> points = new ArrayList<LatLng>();
-                points.add(aLatLng);
-                points.add(zLatLng);
-                PolylineOptions polylineOptions = new PolylineOptions()
-                        .points(points)
-                        .width(5)
-                        .color(Color.argb(255, 255, 0, 0));
-                Polyline polyline = (Polyline) aMap.addOverlay(polylineOptions);
-                polylines.add(polyline);
+                    LatLng aLatLng = new LatLng(Double.parseDouble(bean.getAGEOY())
+                            , Double.parseDouble(bean.getAGEOX()));
+                    LatLng zLatLng = new LatLng(Double.parseDouble(bean.getZGEOY())
+                            , Double.parseDouble(bean.getZGEOX()));
+                    List<LatLng> points = new ArrayList<LatLng>();
+                    points.add(aLatLng);
+                    points.add(zLatLng);
+                    PolylineOptions polylineOptions = new PolylineOptions()
+                            .points(points)
+                            .width(5)
+                            .color(Color.argb(255, 255, 0, 0));
+                    Polyline polyline = (Polyline) aMap.addOverlay(polylineOptions);
+                    polylines.add(polyline);
+                }
             }
         }
 
@@ -378,7 +378,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 
         Bundle bundle = marker.getExtraInfo();
         if (bundle != null) {
-            Serializable bean =  bundle.getSerializable("bean");
+            Serializable bean = bundle.getSerializable("bean");
 
             if (bean == null) return false;
 
