@@ -1006,7 +1006,7 @@ public class QianXinListActivity extends BaseActivity implements
                     public void onNext(Boolean bo) {
                         if (bo) {
                             bean.setUpload(true);
-                            bean.setModifyTimeString(DataUtils.getNowTime());
+                            bean.setMODIFY_DATE_STR(DataUtils.getNowTime());
                             adapter.notifyDataSetChanged();
                             ToastUtils.showToast("上传成功");
 

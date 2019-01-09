@@ -32,17 +32,16 @@ public class QianXinItemBean {
     private String CABL_OP_NAME;
     private String CABLE_ID;
 
-    private String modifyTimeString;
+    private String MODIFY_DATE_STR;
 
-    public String getModifyTimeString() {
-        return modifyTimeString;
+
+    public String getMODIFY_DATE_STR() {
+        return MODIFY_DATE_STR;
     }
 
-    public void setModifyTimeString(String modifyTimeString) {
-        this.modifyTimeString = modifyTimeString;
+    public void setMODIFY_DATE_STR(String MODIFY_DATE_STR) {
+        this.MODIFY_DATE_STR = MODIFY_DATE_STR;
     }
-
-
 
     public String getTestLocalFilePath() {
         return testLocalFilePath;
