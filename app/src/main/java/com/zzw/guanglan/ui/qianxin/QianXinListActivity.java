@@ -263,7 +263,7 @@ public class QianXinListActivity extends BaseActivity implements
                 RequestBody.create(MediaType.parse("multipart/form-data"), aFile);
         String aName = aFile.getName();
         MultipartBody.Part aFileBody =
-                MultipartBody.Part.createFormData("aFilePath", aName, aRequestFile);
+                MultipartBody.Part.createFormData("aFile", aName, aRequestFile);
 
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
