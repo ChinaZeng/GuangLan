@@ -89,6 +89,11 @@ public interface Api {
     Observable<ResultBean<Object>> saveFiberFile(@PartMap Map<String, RequestBody> s, @Part MultipartBody.Part file);
 
 
+    @Multipart
+    @POST("/glcs/cblFiber/saveImgFile")
+    Observable<ResultBean<Object>> saveImgFile(@PartMap Map<String, RequestBody> s, @Part MultipartBody.Part aFile);
+
+
     @GET("/glcs/cblFiber/remove")
     Observable<RemoveBean> remove(@Query("id") String id);
 

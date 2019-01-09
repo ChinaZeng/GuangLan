@@ -5,8 +5,43 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-
     android:padding="14dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/bt_look"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/color1"
+            android:text="纤芯检重"
+            android:textColor="#fff"
+            android:textSize="12sp" />
+
+        <Space
+            android:layout_width="50dp"
+            android:layout_height="40dp" />
+
+        <Button
+            android:id="@+id/bt_upload_img"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/color1"
+            android:text="上传实地照片"
+            android:textColor="#fff"
+            android:textSize="12sp" />
+
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,10 +66,9 @@
     <TextView
         android:id="@+id/tv_guanglan_name"
         android:layout_width="wrap_content"
-        android:textStyle="bold"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
         tools:text="光缆名称:" />
-
 
 
     <TextView
@@ -64,7 +98,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:tag_layout_mode="single_choice"/>
+            app:tag_layout_mode="single_choice" />
 
         <TextView
             android:id="@+id/head_click"

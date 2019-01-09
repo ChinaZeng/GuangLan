@@ -7,6 +7,8 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.CoordinateConverter;
 import com.zzw.guanglan.location.base.AbsLocation;
 
 /**
@@ -41,7 +43,7 @@ public class BaiDuLocation extends AbsLocation {
         //BD09ll：百度经纬度坐标；
         //BD09：百度墨卡托坐标；
         //海外地区定位，无需设置坐标类型，统一返回WGS84类型坐标
-        option.setCoorType("bd09ll");
+//        option.setCoorType("bd09ll");
 
         //可选，设置发起定位请求的间隔，int类型，单位ms
         //如果设置为0，则代表单次定位，即仅定位一次，默认为0
@@ -99,7 +101,7 @@ public class BaiDuLocation extends AbsLocation {
         public void onReceiveLocation(BDLocation location) {
             if (location != null) {
                 int locType = location.getLocType();
-                if (locType == 61 || locType == 161 ) {
+                if (locType == 61 || locType == 161) {
                     //可在其中解析amapLocation获取相应内容。
                     if (mLocationListener != null) {
                         mLocationListener.onSuccess(BDLocation2LocationBean(location));
@@ -113,11 +115,11 @@ public class BaiDuLocation extends AbsLocation {
                         mLocationListener.onError(locType, "定位失败，请确认相关权限，网络或者GPS是否正常");
                     }
                 }
-            }else {
+            } else {
 
                 //http://lbsyun.baidu.com/index.php?title=android-locsdk/guide/addition-func/error-code
                 //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-                Log.e("AmapError","location is null");
+                Log.e("AmapError", "location is null");
                 if (mLocationListener != null) {
                     mLocationListener.onError(-1, "定位失败，请确认相关权限，网络或者GPS是否正常");
                 }
@@ -125,12 +127,30 @@ public class BaiDuLocation extends AbsLocation {
         }
     }
 
+    /**
+     * 将GPS设备采集的原始GPS坐标转换成百度坐标
+     *
+     * @param latitude
+     * @param longitude
+     * @return
+     */
+    private LatLng gps2baiduLocation(double latitude, double longitude) {
+        CoordinateConverter converter = new CoordinateConverter();
+        converter.from(CoordinateConverter.CoordType.GPS);
+        // sourceLatLng待转换坐标
+        LatLng latLng = new LatLng(latitude, longitude);
+        converter.coord(latLng);
+        return converter.convert();
+    }
+
+
     private LocationManager.LocationBean BDLocation2LocationBean(BDLocation location) {
         LocationManager.LocationBean bean = new LocationManager.LocationBean();
 
         //此处的BDLocation为定位结果信息类，通过它的各种get方法可获取定位相关的全部结果
         //以下只列举部分获取经纬度相关（常用）的结果信息
         //更多结果信息获取说明，请参照类参考中BDLocation类中的说明
+
 
         //获取纬度信息
         double latitude = location.getLatitude();

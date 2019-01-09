@@ -107,7 +107,7 @@ public class GuangLanAddActivitty extends BaseActivity {
                         put("areaId", areaIdStr);
                         put("aRoomId", aStationIdStr);
                         put("zRoomId", zStationIdStr);
-                        put("leave", leaveIdStr);
+                        put("serialNo", leaveIdStr);
                     }
                 })
                 .map(ResultBooleanFunction.create())
@@ -154,7 +154,7 @@ public class GuangLanAddActivitty extends BaseActivity {
                                 @Override
                                 public boolean onSelected(GradeBean data, int position) {
                                     leave.setText(data.getDescChina());
-                                    leaveIdStr = data.getDescChina();
+                                    leaveIdStr = data.getSerialNo();
                                     return true;
                                 }
                             }).show(getSupportFragmentManager(), "leave");

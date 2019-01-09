@@ -1,11 +1,15 @@
 package com.zzw.guanglan.ui.qianxin;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,6 +26,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.dl7.tag.TagLayout;
 import com.dl7.tag.TagView;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
@@ -49,6 +54,7 @@ import com.zzw.guanglan.socket.utils.FileHelper;
 import com.zzw.guanglan.socket.utils.MyLog;
 import com.zzw.guanglan.ui.HotConnActivity;
 import com.zzw.guanglan.utils.DataUtils;
+import com.zzw.guanglan.utils.RealPathFromUriUtils;
 import com.zzw.guanglan.utils.RequestBodyUtils;
 import com.zzw.guanglan.utils.SPUtil;
 import com.zzw.guanglan.utils.ToastUtils;
@@ -63,6 +69,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.functions.Consumer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -88,6 +95,7 @@ public class QianXinListActivity extends BaseActivity implements
 
     private final static String ITEM = "item";
     private final static String LOCATION = "location";
+    private final static int GALLERY_REQUEST_CODE = 155;
 
 
     private QianXinListAdapter adapter;
@@ -123,9 +131,11 @@ public class QianXinListActivity extends BaseActivity implements
     @Override
     protected void initData() {
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                new String[]{
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.CHANGE_WIFI_STATE,
-                        Manifest.permission.WRITE_SETTINGS,}, 5);
+                        Manifest.permission.WRITE_SETTINGS}, 5);
 
         super.initData();
         guangLanDBean = (GuangLanDItemBean) getIntent().getSerializableExtra(ITEM);
@@ -151,7 +161,7 @@ public class QianXinListActivity extends BaseActivity implements
                 .getAppFiberListByPage(new HashMap<String, String>() {
                     {
                         put("cblOpName", guangLanDBean.getCABL_OP_NAME());
-                        put("cblOpCode","");
+                        put("cblOpCode", "");
                         put("pageNum", String.valueOf(pageNo));
                     }
                 })
@@ -172,9 +182,8 @@ public class QianXinListActivity extends BaseActivity implements
                 });
     }
 
-
-    @OnClick(R.id.look)
-    public void onViewClicked() {
+    //检测重复信息
+    void look() {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .remove(guangLanDBean.getID())
                 .compose(LifeObservableTransformer.<RemoveBean>create(this))
@@ -200,6 +209,90 @@ public class QianXinListActivity extends BaseActivity implements
                     public void onError(Throwable e) {
                         super.onError(e);
                         refreshLayout.setRefreshing(false);
+                    }
+                });
+    }
+
+
+    private void choosePhoto() {
+
+        // 激活系统图库，选择一张图片
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        startActivityForResult(intent,GALLERY_REQUEST_CODE);
+
+
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+//            startActivityForResult(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), GALLERY_REQUEST_CODE);
+//        } else {
+//            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//            intent.addCategory(Intent.CATEGORY_OPENABLE);
+//            intent.setType("image/*");
+//            startActivityForResult(intent, GALLERY_REQUEST_CODE);
+//        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) return;
+        if (requestCode == GALLERY_REQUEST_CODE) {
+            if (data != null) {
+                String realPathFromUri = RealPathFromUriUtils.getRealPathFromUri(this, data.getData());
+                uploadImg(realPathFromUri);
+            } else {
+                ToastUtils.showToast("图片损坏，请重新选择");
+            }
+
+        }
+    }
+
+    //上传实地照片
+    void uploadImg(String aFilePath) {
+
+        if (progressDialog == null) {
+            initProgress();
+        }
+        progressDialog.setTitle("正在上传图片");
+        progressDialog.show();
+
+
+        final File aFile = new File(aFilePath);
+        RequestBody aRequestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), aFile);
+        String aName = aFile.getName();
+        MultipartBody.Part aFileBody =
+                MultipartBody.Part.createFormData("aFilePath", aName, aRequestFile);
+
+
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .saveImgFile(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
+                    {
+                        put("objectName", "光缆段");//拍照上传类型如”光缆段”，“机房”等
+                        put("notes", "");//备注
+                        put("userId", UserManager.getInstance().getUserId());
+                        put("objectId", guangLanDBean.getROOM_ID());
+                    }
+                }), aFileBody)
+                .map(ResultBooleanFunction.create())
+                .compose(LifeObservableTransformer.<Boolean>create(this))
+                .subscribe(new ErrorObserver<Boolean>(this) {
+                    @Override
+                    public void onNext(Boolean bo) {
+                        if (bo) {
+                            ToastUtils.showToast("上传成功");
+                            finish();
+                        } else {
+                            ToastUtils.showToast("上传失败");
+                        }
+                        progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        progressDialog.dismiss();
                     }
                 });
     }
@@ -526,6 +619,31 @@ public class QianXinListActivity extends BaseActivity implements
         TextView location = view.findViewById(R.id.location);
         location.setText(locationBean.addrss);
 
+        findViewById(R.id.bt_look).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                look();
+            }
+        });
+        findViewById(R.id.bt_upload_img).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // uploadImg();
+                new RxPermissions(QianXinListActivity.this)
+                        .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .subscribe(new Consumer<Boolean>() {
+                            @Override
+                            public void accept(Boolean aBoolean) throws Exception {
+                                if (aBoolean) {
+                                    choosePhoto();
+                                } else {
+                                    ToastUtils.showToast("请开启权限");
+                                }
+                            }
+                        });
+            }
+        });
+
         TextView tv_guanglan_name = view.findViewById(R.id.tv_guanglan_name);
         TextView tv_guanglan_code = view.findViewById(R.id.tv_guanglan_code);
 
@@ -598,6 +716,7 @@ public class QianXinListActivity extends BaseActivity implements
 
         return view;
     }
+
 
     private void initAutoMode(View view) {
         TagLayout juli = view.findViewById(R.id.content3_juli);
@@ -944,7 +1063,8 @@ public class QianXinListActivity extends BaseActivity implements
     }
 
 
-    void changeStatus(final QianXinItemBean qianXinItemBean, final StatusInfoBean statusInfoBean) {
+    void changeStatus(final QianXinItemBean qianXinItemBean,
+                      final StatusInfoBean statusInfoBean) {
 //        if (TextUtils.equals(qianXinItemBean.getStateId(), statusInfoBean.getStateId())){
 //            return ;
 //        }

@@ -43,7 +43,7 @@ public class GuangLanDListActivity extends BaseActivity {
         LocationManager.LocationBean bean = (LocationManager.LocationBean) intent.getSerializableExtra("location");
 
         final String[] titles = new String[]{"光缆段", "已测试光缆段"};
-        final Fragment[] fragments = new Fragment[]{GuangLanDuanListFragment.newInstance(roomId,bean), HisGuangLanDuanListFragment.newInstance()};
+        final Fragment[] fragments = new Fragment[]{GuangLanDuanListFragment.newInstance(roomId,bean), HisGuangLanDuanListFragment.newInstance(bean)};
 
         FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
