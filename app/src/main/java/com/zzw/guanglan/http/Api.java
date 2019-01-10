@@ -91,7 +91,9 @@ public interface Api {
 
     @Multipart
     @POST("/glcs/cblFiber/saveImgFile")
-    Observable<ResultBean<Object>> saveImgFile(@PartMap Map<String, RequestBody> s, @Part MultipartBody.Part aFile);
+    Observable<ResultBean<Object>> saveImgFile(@PartMap Map<String, RequestBody> s,
+                                               @Part MultipartBody.Part aFile,
+                                               @Part MultipartBody.Part zFile);
 
 
     @GET("/glcs/cblFiber/remove")
@@ -133,6 +135,9 @@ public interface Api {
 
 
     @GET("/glcs/bseRoom/getAppJfAZInfo")
-    Observable<ListDataBean<JuZhanBean>> getAppJfAZInfo(@Query("areaId") String areaId);
+    Observable<ListDataBean<JuZhanBean>> getAppJfAZInfo(@Query("areaId") String areaId,
+                                                        @Query("roomName") String roomName,
+                                                        @Query("pageNum") String pageNum
+    );
 
 }

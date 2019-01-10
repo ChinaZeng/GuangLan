@@ -118,13 +118,14 @@ android:id="@+id/xiaoxi"
             android:text="临时测试" />
 
         <TextView
+            android:textSize="10dp"
             android:id="@+id/res_look"
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
             android:drawableTop="@mipmap/ziyuan"
             android:gravity="center"
-            android:text="资源查看" />
+            android:text="光缆纤芯质量管理系统" />
 
     </LinearLayout>
 

@@ -43,39 +43,20 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="定位地址:" />
-
-        <TextView
-            android:id="@+id/location"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:singleLine="true"
-            tools:textColor="@color/color333333" />
-
-    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_guanglan_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        tools:text="光缆名称:" />
+        tools:text="所属光缆:" />
 
 
     <TextView
-        android:id="@+id/tv_guanglan_code"
+        android:id="@+id/tv_guangland_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="光缆编码:" />
+        tools:text="光缆段名称:" />
 
 
     <LinearLayout

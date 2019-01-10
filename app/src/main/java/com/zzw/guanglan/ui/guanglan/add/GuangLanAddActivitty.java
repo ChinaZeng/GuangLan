@@ -167,7 +167,7 @@ public class GuangLanAddActivitty extends BaseActivity {
 
     private void station(final int aOrz) {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .getAppJfAZInfo(areaIdStr)
+                .getAppJfAZInfo(areaIdStr, null, null)
                 .compose(LifeObservableTransformer.<ListDataBean<JuZhanBean>>create(this))
                 .subscribe(new ErrorObserver<ListDataBean<JuZhanBean>>(this) {
                     @Override

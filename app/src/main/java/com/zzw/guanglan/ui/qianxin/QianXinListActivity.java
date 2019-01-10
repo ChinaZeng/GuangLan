@@ -220,7 +220,7 @@ public class QianXinListActivity extends BaseActivity implements
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        startActivityForResult(intent,GALLERY_REQUEST_CODE);
+        startActivityForResult(intent, GALLERY_REQUEST_CODE);
 
 
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
@@ -265,6 +265,13 @@ public class QianXinListActivity extends BaseActivity implements
         MultipartBody.Part aFileBody =
                 MultipartBody.Part.createFormData("aFile", aName, aRequestFile);
 
+        final File zFile = new File(aFilePath);
+        RequestBody zRequestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), aFile);
+        String zName = zFile.getName();
+        MultipartBody.Part zFileBody =
+                MultipartBody.Part.createFormData("zFile", zName, zRequestFile);
+
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .saveImgFile(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
@@ -274,7 +281,7 @@ public class QianXinListActivity extends BaseActivity implements
                         put("userId", UserManager.getInstance().getUserId());
                         put("objectId", guangLanDBean.getROOM_ID());
                     }
-                }), aFileBody)
+                }), aFileBody, null)
                 .map(ResultBooleanFunction.create())
                 .compose(LifeObservableTransformer.<Boolean>create(this))
                 .subscribe(new ErrorObserver<Boolean>(this) {
@@ -616,8 +623,6 @@ public class QianXinListActivity extends BaseActivity implements
     View headerView() {
         final View view = LayoutInflater.from(this).inflate(R.layout.layout_qianxin_header, ll, false);
         ll.addView(view, 0);
-        TextView location = view.findViewById(R.id.location);
-        location.setText(locationBean.addrss);
 
         findViewById(R.id.bt_look).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -645,10 +650,10 @@ public class QianXinListActivity extends BaseActivity implements
         });
 
         TextView tv_guanglan_name = view.findViewById(R.id.tv_guanglan_name);
-        TextView tv_guanglan_code = view.findViewById(R.id.tv_guanglan_code);
+        TextView tv_guangland_name = view.findViewById(R.id.tv_guangland_name);
 
-        tv_guanglan_name.setText("光缆名称:" + guangLanDBean.getCABL_OP_NAME());
-        tv_guanglan_code.setText("光缆编码:" + guangLanDBean.getCABL_OP_CODE());
+        tv_guanglan_name.setText("所属光缆:" + guangLanDBean.getCABLE_NAME());
+        tv_guangland_name.setText("光缆段名称:" + guangLanDBean.getCABL_OP_NAME());
 
         final View cutomView = view.findViewById(R.id.content);
         final View lastView = view.findViewById(R.id.content2);

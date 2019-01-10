@@ -19,7 +19,7 @@ import com.zzw.guanglan.utils.FragmentHelper;
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity
-        implements TabBottomNavigation.OnCheckChangeListener, LocationManager.OnLocationListener {
+        implements TabBottomNavigation.OnCheckChangeListener {
 
 
     @BindView(R.id.tab_bottom)
@@ -35,15 +35,7 @@ public class MainActivity extends BaseActivity
         context.startActivity(new Intent(context, MainActivity.class));
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (SocketService.isConn()) {
-            stopService(new Intent(this, SocketService.class));
-        }
 
-
-    }
 
     @Override
     protected int initLayoutId() {
@@ -98,18 +90,18 @@ public class MainActivity extends BaseActivity
     }
 
 
+
     @Override
     protected boolean backable() {
         return false;
     }
 
-    @Override
-    public void onSuccess(LocationManager.LocationBean bean) {
-        MyLog.e(bean.toString());
-    }
 
     @Override
-    public void onError(int code, String msg) {
-        MyLog.e("error " + msg);
+    protected void onDestroy() {
+        super.onDestroy();
+        if (SocketService.isConn()) {
+            stopService(new Intent(this, SocketService.class));
+        }
     }
 }

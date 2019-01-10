@@ -2,6 +2,7 @@ package com.zzw.guanglan.ui.login;
 
 import android.view.View;
 
+import com.zzw.guanglan.BuildConfig;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.LoginResultBean;
@@ -11,6 +12,7 @@ import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.MainActivity;
+import com.zzw.guanglan.ui.resource.ResourceActivity;
 import com.zzw.guanglan.utils.RequestBodyUtils;
 import com.zzw.guanglan.utils.ToastUtils;
 import com.zzw.guanglan.widgets.MultiFunctionEditText;
@@ -30,6 +32,12 @@ public class LoginActivity extends BaseActivity {
     protected void initView() {
         super.initView();
         setTitle("登录");
+
+        if (BuildConfig.DEBUG) {
+            etPhone.setText("ADMIN");
+            etPwd.setText("njtest");
+        }
+
     }
 
     @Override
@@ -39,6 +47,7 @@ public class LoginActivity extends BaseActivity {
 
 
     public void login(View view) {
+
 
         if (etPhone.getText().toString().trim().length() == 0) {
             ToastUtils.showToast("请输入用户名");
@@ -64,7 +73,8 @@ public class LoginActivity extends BaseActivity {
                         if (bean.getCode() == 0) {
                             UserManager.getInstance().setUserId(bean.getUserId());
                             finish();
-                            MainActivity.open(LoginActivity.this);
+                            ResourceActivity.open(LoginActivity.this);
+//                            MainActivity.open(LoginActivity.this);
                         }
                     }
                 });

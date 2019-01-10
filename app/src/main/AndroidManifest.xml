@@ -123,7 +123,7 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.resource.ResourceActivity"
-            android:label="资源查看"
+            android:label="光缆纤芯质量管理系统"
             android:screenOrientation="portrait" >
         <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN" />-->
