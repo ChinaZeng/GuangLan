@@ -31,9 +31,44 @@ public class QianXinItemBean {
     private String STATENAME;
     private String CABL_OP_NAME;
     private String CABLE_ID;
+    private String ZGEOX;
+    private String ZGEOY;
+    private String AGEOY;
+    private String AGEOX;
 
     private String MODIFY_DATE_STR;
 
+    public String getZGEOX() {
+        return ZGEOX;
+    }
+
+    public void setZGEOX(String ZGEOX) {
+        this.ZGEOX = ZGEOX;
+    }
+
+    public String getZGEOY() {
+        return ZGEOY;
+    }
+
+    public void setZGEOY(String ZGEOY) {
+        this.ZGEOY = ZGEOY;
+    }
+
+    public String getAGEOY() {
+        return AGEOY;
+    }
+
+    public void setAGEOY(String AGEOY) {
+        this.AGEOY = AGEOY;
+    }
+
+    public String getAGEOX() {
+        return AGEOX;
+    }
+
+    public void setAGEOX(String AGEOX) {
+        this.AGEOX = AGEOX;
+    }
 
     public String getMODIFY_DATE_STR() {
         return MODIFY_DATE_STR;

@@ -38,6 +38,7 @@ import com.zzw.guanglan.bean.StatusInfoBean;
 import com.zzw.guanglan.dialogs.BottomListDialog;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.location.GPSUtils;
 import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
@@ -156,6 +157,28 @@ public class QianXinListActivity extends BaseActivity implements
         onRefresh();
     }
 
+    private boolean compareDistance(QianXinItemBean bean) {
+
+        boolean isOk = true;
+
+        if (!TextUtils.isEmpty(bean.getAGEOX()) && !TextUtils.isEmpty(bean.getAGEOY())) {
+            if (GPSUtils.getDistance(locationBean.latitude, locationBean.longitude
+                    , Double.parseDouble(bean.getAGEOY()), Double.parseDouble(bean.getAGEOX())) > 5) {
+                isOk = false;
+            }
+        }
+
+        if (isOk && !TextUtils.isEmpty(bean.getZGEOX()) && !TextUtils.isEmpty(bean.getZGEOY())) {
+            if (GPSUtils.getDistance(locationBean.latitude, locationBean.longitude
+                    , Double.parseDouble(bean.getZGEOY()), Double.parseDouble(bean.getZGEOX())) > 5) {
+                isOk = false;
+            }
+        }
+
+
+        return isOk;
+    }
+
     void getData() {
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppFiberListByPage(new HashMap<String, String>() {
@@ -265,12 +288,12 @@ public class QianXinListActivity extends BaseActivity implements
         MultipartBody.Part aFileBody =
                 MultipartBody.Part.createFormData("aFile", aName, aRequestFile);
 
-        final File zFile = new File(aFilePath);
-        RequestBody zRequestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), aFile);
-        String zName = zFile.getName();
-        MultipartBody.Part zFileBody =
-                MultipartBody.Part.createFormData("zFile", zName, zRequestFile);
+//        final File zFile = new File(aFilePath);
+//        RequestBody zRequestFile =
+//                RequestBody.create(MediaType.parse("multipart/form-data"), aFile);
+//        String zName = zFile.getName();
+//        MultipartBody.Part zFileBody =
+//                MultipartBody.Part.createFormData("zFile", zName, zRequestFile);
 
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
@@ -1041,6 +1064,12 @@ public class QianXinListActivity extends BaseActivity implements
 
     @Override
     public void onStatus(final QianXinItemBean bean) {
+        if (!compareDistance(bean)) {
+            ToastUtils.showToast("超出更改范围!");
+            return;
+        }
+
+
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .quertstatuslistinfo()
                 .compose(LifeObservableTransformer.<List<StatusInfoBean>>create(this))
