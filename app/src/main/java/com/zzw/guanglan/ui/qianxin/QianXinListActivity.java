@@ -1,17 +1,18 @@
 package com.zzw.guanglan.ui.qianxin;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -69,7 +70,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -97,6 +97,7 @@ public class QianXinListActivity extends BaseActivity implements
     private final static String ITEM = "item";
     private final static String LOCATION = "location";
     private final static int GALLERY_REQUEST_CODE = 155;
+    private final static int CAMERA_REQUEST_CODE = 156;
 
 
     private QianXinListAdapter adapter;
@@ -237,6 +238,17 @@ public class QianXinListActivity extends BaseActivity implements
     }
 
 
+    private File tempFile;
+
+    private void takePhoto() {
+        Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String f = System.currentTimeMillis() + ".jpg";
+        tempFile = new File(Environment.getExternalStorageDirectory().getPath() + File.separator + f);
+        Uri uri = FileProvider.getUriForFile(this, "com.zzw.guanglan.fileProvider", tempFile);
+        openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri); //指定图片存放位置，指定后，在onActivityResult里得到的Data将为null
+        startActivityForResult(openCameraIntent, CAMERA_REQUEST_CODE);
+    }
+
     private void choosePhoto() {
 
         // 激活系统图库，选择一张图片
@@ -263,16 +275,23 @@ public class QianXinListActivity extends BaseActivity implements
         if (requestCode == GALLERY_REQUEST_CODE) {
             if (data != null) {
                 String realPathFromUri = RealPathFromUriUtils.getRealPathFromUri(this, data.getData());
-                uploadImg(realPathFromUri);
+                uploadImg(new File(realPathFromUri));
             } else {
                 ToastUtils.showToast("图片损坏，请重新选择");
+            }
+
+        } else if (requestCode == CAMERA_REQUEST_CODE) {
+            if (tempFile != null) {
+                uploadImg(tempFile);
+            } else {
+                ToastUtils.showToast("未知异常");
             }
 
         }
     }
 
     //上传实地照片
-    void uploadImg(String aFilePath) {
+    void uploadImg(File file) {
 
         if (progressDialog == null) {
             initProgress();
@@ -281,7 +300,7 @@ public class QianXinListActivity extends BaseActivity implements
         progressDialog.show();
 
 
-        final File aFile = new File(aFilePath);
+        final File aFile = file;
         RequestBody aRequestFile =
                 RequestBody.create(MediaType.parse("multipart/form-data"), aFile);
         String aName = aFile.getName();
@@ -302,7 +321,7 @@ public class QianXinListActivity extends BaseActivity implements
                         put("objectName", "光缆段");//拍照上传类型如”光缆段”，“机房”等
                         put("notes", "");//备注
                         put("userId", UserManager.getInstance().getUserId());
-                        put("objectId", guangLanDBean.getROOM_ID());
+                        put("objectId", guangLanDBean.getID());
                     }
                 }), aFileBody, null)
                 .map(ResultBooleanFunction.create())
@@ -658,12 +677,15 @@ public class QianXinListActivity extends BaseActivity implements
             public void onClick(View v) {
                 // uploadImg();
                 new RxPermissions(QianXinListActivity.this)
-                        .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .request(
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         .subscribe(new Consumer<Boolean>() {
                             @Override
                             public void accept(Boolean aBoolean) throws Exception {
                                 if (aBoolean) {
-                                    choosePhoto();
+//                                    choosePhoto();
+                                    takePhoto();
                                 } else {
                                     ToastUtils.showToast("请开启权限");
                                 }
