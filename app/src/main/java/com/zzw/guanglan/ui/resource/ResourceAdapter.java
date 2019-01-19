@@ -12,11 +12,9 @@ import java.util.ArrayList;
  * Create by zzw on 2018/12/24
  */
 public class ResourceAdapter extends BaseQuickAdapter<ResBean, BaseViewHolder> {
-    private boolean hideDistance;
 
-    public ResourceAdapter(boolean hideDistance) {
+    public ResourceAdapter() {
         super(R.layout.item_res, new ArrayList<ResBean>());
-        this.hideDistance = hideDistance;
     }
 
     @Override
@@ -28,10 +26,6 @@ public class ResourceAdapter extends BaseQuickAdapter<ResBean, BaseViewHolder> {
         helper.setText(R.id.tv_name, "名称:" + item.getRoomName());
         helper.setText(R.id.tv_type, "机房类型:" +item.getRoomType());
         helper.setText(R.id.tv_distance, "距离:" +item.getDistance());
-
-        if(hideDistance){
-            helper.setVisible(R.id.tv_distance,false);
-        }
 
     }
 }

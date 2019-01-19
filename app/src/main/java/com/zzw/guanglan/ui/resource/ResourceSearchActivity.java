@@ -75,7 +75,7 @@ public class ResourceSearchActivity extends BaseActivity implements
         location = (LocationManager.LocationBean) getIntent().getSerializableExtra("location");
 
         recy.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ResourceAdapter(false);
+        adapter = new ResourceAdapter();
         adapter.setEnableLoadMore(true);
         adapter.setOnLoadMoreListener(this, recy);
         recy.setAdapter(adapter);
