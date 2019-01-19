@@ -606,30 +606,34 @@ public class QianXinListActivity extends BaseActivity implements
         List<SingleChooseBean> maikuanS2 = new ArrayList<>(maikuanS1);
         maikuanS2.add(new SingleChooseBean(4, "80ns", 80));
         maikuanS2.add(new SingleChooseBean(5, "160ns", 160));
-        juliS.add(new SingleChooseBean(2, "5km", 5000, maikuanS2));
+
+        juliS.add(new SingleChooseBean(2, "3km", 3000, maikuanS2));
+        juliS.add(new SingleChooseBean(3, "5km", 5000, maikuanS2));
 
 
         List<SingleChooseBean> maikuanS3 = new ArrayList<>(maikuanS2);
         maikuanS3.add(new SingleChooseBean(6, "320ns", 320));
-        juliS.add(new SingleChooseBean(3, "10km", 10000, maikuanS3));
+        juliS.add(new SingleChooseBean(4, "10km", 10000, maikuanS3));
 
 
         List<SingleChooseBean> maikuanS4 = new ArrayList<>(maikuanS3);
         maikuanS4.add(new SingleChooseBean(7, "640ns", 640));
-        juliS.add(new SingleChooseBean(4, "30km", 30000, maikuanS4));
+
+        juliS.add(new SingleChooseBean(5, "20km", 20000, maikuanS4));
+        juliS.add(new SingleChooseBean(6, "30km", 30000, maikuanS4));
 
 
         List<SingleChooseBean> maikuanS5 = new ArrayList<>(maikuanS4.subList(4, maikuanS4.size()));
         maikuanS5.add(new SingleChooseBean(8, "1.28us", 1280));
-        juliS.add(new SingleChooseBean(5, "60km", 60000, maikuanS5));
+        juliS.add(new SingleChooseBean(7, "60km", 60000, maikuanS5));
 
         List<SingleChooseBean> maikuanS6 = new ArrayList<>(maikuanS5.subList(1, maikuanS5.size()));
         maikuanS6.add(new SingleChooseBean(9, "2.56us", 2560));
         maikuanS6.add(new SingleChooseBean(10, "5.12us", 5120));
         maikuanS6.add(new SingleChooseBean(11, "10.24us", 10240));
         maikuanS6.add(new SingleChooseBean(12, "20.48us", 20480));
-        juliS.add(new SingleChooseBean(6, "100km", 100000, maikuanS6));
-        juliS.add(new SingleChooseBean(7, "180km", 180000, maikuanS6));
+        juliS.add(new SingleChooseBean(8, "100km", 100000, maikuanS6));
+        juliS.add(new SingleChooseBean(9, "180km", 180000, maikuanS6));
         testArgsCustomModeBean.rang = juliS.get(0).getValue();
 
         maiKuanS = juliS.get(0).getNextChooses();
@@ -770,7 +774,7 @@ public class QianXinListActivity extends BaseActivity implements
 
     private void initAutoMode(View view) {
         TagLayout juli = view.findViewById(R.id.content3_juli);
-        juli.addTags("300m", "1km", "5km", "10km", "30km", "60km", "100km", "180km");
+        juli.addTags("300m", "1km", "3km", "5km", "10km", "20km", "30km", "60km", "100km", "180km");
         juli.setCheckTag(0);
         juli.setTagCheckListener(new TagView.OnTagCheckListener() {
             @Override
@@ -791,26 +795,34 @@ public class QianXinListActivity extends BaseActivity implements
                     bean.pw = 20;
                     bean.time = 10;
                 } else if (i == 2) {
+                    bean.rang = 3000;
+                    bean.pw = 20;
+                    bean.time = 10;
+                } else if (i == 3) {
                     bean.rang = 5000;
                     bean.pw = 40;
                     bean.time = 15;
-                } else if (i == 3) {
+                } else if (i == 4) {
                     bean.rang = 10000;
                     bean.pw = 80;
                     bean.time = 15;
-                } else if (i == 4) {
+                } else if (i == 5) {
+                    bean.rang = 200000;
+                    bean.pw = 80;
+                    bean.time = 15;
+                } else if (i == 6) {
                     bean.rang = 30000;
                     bean.pw = 160;
                     bean.time = 15;
-                } else if (i == 5) {
+                } else if (i == 7) {
                     bean.rang = 60000;
                     bean.pw = 320;
                     bean.time = 30;
-                } else if (i == 6) {
+                } else if (i == 8) {
                     bean.rang = 100000;
                     bean.pw = 640;
                     bean.time = 30;
-                } else if (i == 7) {
+                } else if (i == 9) {
                     bean.rang = 180000;
                     bean.pw = 2560;
                     bean.time = 60;
@@ -818,6 +830,7 @@ public class QianXinListActivity extends BaseActivity implements
                 testArgsAutoModeBean = bean;
             }
         });
+        //初始化
         TestArgsAndStartBean bean = new TestArgsAndStartBean();
         bean.mode = 1;
         bean.gi = 146850;

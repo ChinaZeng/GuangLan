@@ -75,7 +75,7 @@ public class ResourceSearchActivity extends BaseActivity implements
         location = (LocationManager.LocationBean) getIntent().getSerializableExtra("location");
 
         recy.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ResourceAdapter(new ArrayList<ResBean>());
+        adapter = new ResourceAdapter(false);
         adapter.setEnableLoadMore(true);
         adapter.setOnLoadMoreListener(this, recy);
         recy.setAdapter(adapter);
@@ -85,7 +85,7 @@ public class ResourceSearchActivity extends BaseActivity implements
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 ResBean resBean = (ResBean) adapter.getData().get(position);
 //                EngineRoomDetailsActivity.open(ResourceSearchActivity.this, (ResBean) adapter.getData().get(position));
-                GuangLanDListActivity.open(ResourceSearchActivity.this,resBean.getRoomId(),location);
+                GuangLanDListActivity.open(ResourceSearchActivity.this, resBean.getRoomId(), location);
 
             }
         });

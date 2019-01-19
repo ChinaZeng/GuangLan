@@ -65,7 +65,7 @@ public class NearbyResActivity extends BaseActivity implements SwipeRefreshLayou
         super.initView();
         location = (LocationManager.LocationBean) getIntent().getSerializableExtra("location");
         recy.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ResourceAdapter(new ArrayList<ResBean>());
+        adapter = new ResourceAdapter(true);
         adapter.setEnableLoadMore(true);
         adapter.setOnLoadMoreListener(this, recy);
         recy.setAdapter(adapter);

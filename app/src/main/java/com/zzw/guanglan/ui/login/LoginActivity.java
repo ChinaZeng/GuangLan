@@ -5,6 +5,7 @@ import android.view.View;
 import com.zzw.guanglan.BuildConfig;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.bean.LoginBean;
 import com.zzw.guanglan.bean.LoginResultBean;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
@@ -14,6 +15,7 @@ import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.MainActivity;
 import com.zzw.guanglan.ui.resource.ResourceActivity;
 import com.zzw.guanglan.utils.RequestBodyUtils;
+import com.zzw.guanglan.utils.SPUtil;
 import com.zzw.guanglan.utils.ToastUtils;
 import com.zzw.guanglan.widgets.MultiFunctionEditText;
 
@@ -38,6 +40,11 @@ public class LoginActivity extends BaseActivity {
             etPwd.setText("njtest");
         }
 
+        LoginBean bean = SPUtil.getInstance().getSerializable("lastLogin", null);
+        if (bean != null) {
+            etPhone.setText(bean.getStaffNbr());
+            etPwd.setText(bean.getPassword());
+        }
     }
 
     @Override
@@ -58,12 +65,13 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
-
+        final String staffNbr = etPhone.getText().toString().trim();
+        final String password = etPwd.getText().toString().trim();
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .login(RequestBodyUtils.generateRequestBody(new HashMap<String, String>() {
                     {
-                        put("staffNbr", etPhone.getText().toString().trim());
-                        put("password", etPwd.getText().toString().trim());
+                        put("staffNbr", staffNbr);
+                        put("password", password);
                     }
                 }))
                 .compose(LifeObservableTransformer.<LoginResultBean>create(this))
@@ -71,6 +79,11 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void onNext(LoginResultBean bean) {
                         if (bean.getCode() == 0) {
+                            LoginBean bean1 = new LoginBean();
+                            bean1.setStaffNbr(staffNbr);
+                            bean1.setPassword(password);
+                            SPUtil.getInstance().put("lastLogin",bean1 );
+
                             UserManager.getInstance().setUserId(bean.getUserId());
                             finish();
                             ResourceActivity.open(LoginActivity.this);

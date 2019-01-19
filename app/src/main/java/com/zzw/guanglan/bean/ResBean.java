@@ -36,6 +36,7 @@ public class ResBean implements Serializable {
 
     private String modifyDate;
     private String roomNo;
+    private String distance;
     private String createOpName;
     private String latitude;
     private String modifyOp;
@@ -53,6 +54,14 @@ public class ResBean implements Serializable {
     private String createDate;
     private String longitude;
     private String stationId;
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
 
     public String getModifyDate() {
         return modifyDate;
