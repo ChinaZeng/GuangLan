@@ -9,10 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -30,9 +33,8 @@ import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.guanglan.add.GuangLanAddActivitty;
-import com.zzw.guanglan.ui.guangland.add.GuangLanDAddActivitty;
 import com.zzw.guanglan.ui.qianxin.QianXinListActivity;
-import com.zzw.guanglan.ui.resource.ResourceActivity;
+import com.zzw.guanglan.utils.InputMethodSoftUtil;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
@@ -42,11 +44,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 
 public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener,
-        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
+        BaseQuickAdapter.RequestLoadMoreListener,
+        SwipeRefreshLayout.OnRefreshListener,TextView.OnEditorActionListener {
 
     @BindView(R.id.recy)
     RecyclerView recy;
@@ -55,6 +60,8 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
 
     @BindView(R.id.root)
     View root;
+    @BindView(R.id.et_param)
+    EditText etParam;
 
     private GuangLanDListAdapter adapter;
 
@@ -92,6 +99,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
         roomId = getArguments().getString("roomId");
         locationBean = (LocationManager.LocationBean) getArguments().getSerializable("location");
 
+        etParam.setOnEditorActionListener(this);
         recy.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new GuangLanDListAdapter(new ArrayList<GuangLanDItemBean>());
         adapter.setOnItemClickListener(this);
@@ -163,7 +171,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
 
     private PopupWindow popupWindow;
 
-    private TextView location, name, area;
+    private TextView location, area;
     private TagLayout juli, jibie;
 
     private void showSel() {
@@ -174,7 +182,6 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
             location = v.findViewById(R.id.location);
             juli = v.findViewById(R.id.juli);
             jibie = v.findViewById(R.id.jibie);
-            name = v.findViewById(R.id.name);
             area = v.findViewById(R.id.area);
 
             location.setText("定位地址: " + locationBean.addrss);
@@ -186,19 +193,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                 }
             });
 
-            v.findViewById(R.id.clean_name).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    name.setText("");
-                }
-            });
 
-            v.findViewById(R.id.choose_name).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    GuangLanSearchActivity.open(getContext());
-                }
-            });
             v.findViewById(R.id.choose_area).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -234,10 +229,9 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                         }
                     }
 
-                    String nameStr = name.getText().toString().trim();
                     String areaStr = area.getText().toString().trim();
 
-                    selection(nameStr, areaStr, juliStr, jibieStr);
+                    selection(areaStr, juliStr, jibieStr);
                     popupWindow.dismiss();
                 }
             });
@@ -299,20 +293,18 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
         animator.start();
     }
 
-    private void selection(String nameStr, String areaStr, String juliStr, String jibieStr) {
+    private void selection( String areaStr, String juliStr, String jibieStr) {
 
         searchJibie = jibieStr;
         searchJuli = juliStr;
-        searchKey = nameStr;
-
-        pageNo = 1;
 
         refreshLayout.setRefreshing(true);
-        search();
+        onRefresh();
+
     }
 
 
-    @OnClick({R.id.add, R.id.sel,})
+    @OnClick({R.id.add, R.id.sel, R.id.search})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.add:
@@ -322,8 +314,18 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
             case R.id.sel:
                 showSel();
                 break;
+            case R.id.search:
+                hideKeyWordFresh();
+                break;
 
         }
+    }
+
+    void hideKeyWordFresh() {
+        searchKey = etParam.getText().toString().trim();
+        InputMethodSoftUtil.hideSoftInput(etParam);
+        refreshLayout.setRefreshing(true);
+        onRefresh();
     }
 
     @Override
@@ -348,7 +350,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                         put("latitude", String.valueOf(locationBean.latitude));
                         put("distance", searchJuli == null ? "" : searchJuli);
                         put("descChina", searchJibie == null ? "" : searchJibie);
-                        put("cabelName",searchKey==null?"": searchKey);
+                        put("cabelName", searchKey == null ? "" : searchKey);
                         put("pageNum", String.valueOf(pageNo));
                     }
                 })
@@ -377,23 +379,12 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Subscriber(tag = GuangLanSearchActivity.TAG_GUANG_LAN_D_NAME)
-    public void name(GuangLanDItemBean bean) {
-        if (bean != null && name != null) {
-            name.setText(bean.getCABLE_NAME());
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            hideKeyWordFresh();
+            return true;
         }
+        return false;
     }
-
 
 }

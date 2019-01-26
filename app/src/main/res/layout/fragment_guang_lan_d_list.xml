@@ -1,50 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
+    <include layout="@layout/layout_search" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
+    <FrameLayout
+
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#f1eeee">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recy"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="#f1eeee">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recy"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/sel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="80dp"
-        android:layout_marginRight="15dp"
-        android:src="@drawable/ic_mode_edit_black_24dp"
-        app:backgroundTint="#31bfcf"
-        app:elevation="5dp"
-        app:fabSize="normal"
-        app:rippleColor="#e7d161" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/sel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="80dp"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/ic_mode_edit_black_24dp"
+            app:backgroundTint="#31bfcf"
+            app:elevation="5dp"
+            app:fabSize="normal"
+            app:rippleColor="#e7d161" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="15dp"
-        android:src="@drawable/ic_add_black_24dp"
-        app:backgroundTint="#31bfcf"
-        app:elevation="5dp"
-        app:fabSize="normal"
-        app:rippleColor="#e7d161" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/ic_add_black_24dp"
+            app:backgroundTint="#31bfcf"
+            app:elevation="5dp"
+            app:fabSize="normal"
+            app:rippleColor="#e7d161" />
 
-</FrameLayout>
+    </FrameLayout>
+
+</LinearLayout>
+
+
 

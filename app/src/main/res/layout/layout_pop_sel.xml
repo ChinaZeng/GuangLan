@@ -56,47 +56,6 @@
                 app:tag_layout_mode="single_choice"
                 app:tag_layout_shape="round_rect" />
 
-            <LinearLayout
-                android:layout_marginTop="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:text="光缆名称"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/clean_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="清除"
-                    android:textColor="@color/color1" />
-
-                <TextView
-                    android:id="@+id/choose_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="选择"
-                    android:textColor="@color/color1" />
-
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                tools:text="光缆名称" />
-
 
             <LinearLayout
                 android:layout_width="match_parent"

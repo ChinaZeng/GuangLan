@@ -812,7 +812,7 @@ public class QianXinListActivity extends BaseActivity implements
                     bean.pw = 80;
                     bean.time = 15;
                 } else if (i == 5) {
-                    bean.rang = 200000;
+                    bean.rang = 20000;
                     bean.pw = 80;
                     bean.time = 15;
                 } else if (i == 6) {
