@@ -1,0 +1,148 @@
+package com.zzw.guanglan.location;
+
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.print.PrinterId;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+
+
+import com.zzw.guanglan.location.base.AbsLocation;
+
+import java.util.List;
+
+
+/**
+ * Created by zzw on 2019/1/26.
+ * 描述:
+ */
+public class LocalGPSLocation extends AbsLocation {
+    private static final String TAG = "LocalGPSLocation";
+    private LocationManager locationManager;
+
+    public LocalGPSLocation(Context mContext) {
+        super(mContext);
+    }
+
+    @Override
+    public void start() {
+        //1.获取位置管理器
+        locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider;
+        //2.获取位置提供器，GPS或是NetWork
+        List<String> providers = locationManager.getProviders(true);
+
+
+        if (providers.contains(LocationManager.GPS_PROVIDER)) {
+            //如果是网络定位
+            Log.d(TAG, "如果是GPS定位");
+            locationProvider = LocationManager.GPS_PROVIDER;
+        } else if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
+            //如果是GPS定位
+            Log.d(TAG, "如果是网络定位");
+            locationProvider = LocationManager.NETWORK_PROVIDER;
+        } else {
+            Log.d(TAG, "没有可用的位置提供器");
+            if (mLocationListener != null) {
+                mLocationListener.onError(-1, "没有开启GPS定位权限或者手机不支持GPS定位");
+            }
+            return;
+        }
+        // 需要检查权限,否则编译报错,想抽取成方法都不行,还是会报错。只能这样重复 code 了。
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        //3.获取上次的位置，一般第一次运行，此值为null
+//        Location location = locationManager.getLastKnownLocation(locationProvider);
+//        if (location != null) {
+//            notifyListener(location);
+//        }
+        // 监视地理位置变化，第二个和第三个参数分别为更新的最短时间minTime和最短距离minDistace
+        locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+    }
+
+    @Override
+    public void stop() {
+        // 需要检查权限,否则编译不过
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        if (locationManager != null) {
+            locationManager.removeUpdates(locationListener);
+        }
+    }
+
+    void notifyListener(Location location) {
+        if (mLocationListener != null) {
+            mLocationListener.onSuccess(Location2LocationBen(location));
+        }
+    }
+
+    /**
+     * LocationListern监听器
+     * 参数：地理位置提供器、监听位置变化的时间间隔、位置变化的距离间隔、LocationListener监听器
+     */
+    LocationListener locationListener = new LocationListener() {
+
+        /**
+         * 当某个位置提供者的状态发生改变时
+         */
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle arg2) {
+            Log.d(TAG, "onStatusChanged");
+        }
+
+        /**
+         * 某个设备打开时
+         */
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.d(TAG, "onProviderEnabled");
+        }
+
+        /**
+         * 某个设备关闭时
+         */
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.d(TAG, "onProviderDisabled");
+        }
+
+        /**
+         * 手机位置发生变动
+         */
+        @Override
+        public void onLocationChanged(Location location) {
+            Log.d(TAG, "onLocationChanged");
+            location.getAccuracy();//精确度
+            notifyListener(location);
+        }
+    };
+
+
+    private com.zzw.guanglan.location.LocationManager.LocationBean
+    Location2LocationBen(Location location) {
+
+        if (location == null) {
+            return null;
+        }
+        com.zzw.guanglan.location.LocationManager.LocationBean bean = new com.zzw.guanglan.location.LocationManager.LocationBean();
+        bean.latitude = location.getLatitude();
+        bean.longitude = location.getLongitude();
+
+        return bean;
+    }
+}

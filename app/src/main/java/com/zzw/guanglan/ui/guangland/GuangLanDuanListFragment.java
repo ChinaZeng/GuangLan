@@ -157,7 +157,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        QianXinListActivity.open(getContext(), (GuangLanDItemBean) adapter.getData().get(position), locationBean);
+        QianXinListActivity.open(getContext(), (GuangLanDItemBean) adapter.getData().get(position));
     }
 
 

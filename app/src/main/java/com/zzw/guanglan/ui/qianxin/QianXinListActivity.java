@@ -1,6 +1,7 @@
 package com.zzw.guanglan.ui.qianxin;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -55,6 +56,7 @@ import com.zzw.guanglan.socket.utils.ByteUtil;
 import com.zzw.guanglan.socket.utils.FileHelper;
 import com.zzw.guanglan.socket.utils.MyLog;
 import com.zzw.guanglan.ui.HotConnActivity;
+import com.zzw.guanglan.ui.room.add.RoomAddActivity;
 import com.zzw.guanglan.utils.DataUtils;
 import com.zzw.guanglan.utils.RealPathFromUriUtils;
 import com.zzw.guanglan.utils.RequestBodyUtils;
@@ -80,13 +82,15 @@ public class QianXinListActivity extends BaseActivity implements
         SwipeRefreshLayout.OnRefreshListener,
         QianXinListAdapter.OnTestListener,
         QianXinListAdapter.OnUploadListener,
-        QianXinListAdapter.OnStatusListener {
+        QianXinListAdapter.OnStatusListener,
+        LocationManager.OnLocationListener {
     @BindView(R.id.recy)
     RecyclerView recy;
 
     @BindView(R.id.ll)
     LinearLayout ll;
 
+    TextView tvLocation;
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refreshLayout;
@@ -95,7 +99,6 @@ public class QianXinListActivity extends BaseActivity implements
     private int pageNo = 1;
 
     private final static String ITEM = "item";
-    private final static String LOCATION = "location";
     private final static int GALLERY_REQUEST_CODE = 155;
     private final static int CAMERA_REQUEST_CODE = 156;
 
@@ -104,6 +107,7 @@ public class QianXinListActivity extends BaseActivity implements
 
     private GuangLanDItemBean guangLanDBean;
     private LocationManager.LocationBean locationBean;
+    private LocationManager locationManager;
 
 
     private List<SingleChooseBean> juliS;
@@ -118,10 +122,9 @@ public class QianXinListActivity extends BaseActivity implements
     private TestArgsAndStartBean testArgsAutoModeBean;
 
 
-    public static void open(Context context, GuangLanDItemBean bean, LocationManager.LocationBean locationBean) {
+    public static void open(Context context, GuangLanDItemBean bean) {
         context.startActivity(new Intent(context, QianXinListActivity.class)
                 .putExtra(ITEM, bean)
-                .putExtra(LOCATION, locationBean)
         );
     }
 
@@ -141,7 +144,6 @@ public class QianXinListActivity extends BaseActivity implements
 
         super.initData();
         guangLanDBean = (GuangLanDItemBean) getIntent().getSerializableExtra(ITEM);
-        locationBean = (LocationManager.LocationBean) getIntent().getSerializableExtra(LOCATION);
 
         headerView();
 
@@ -584,12 +586,6 @@ public class QianXinListActivity extends BaseActivity implements
         EventBus.getDefault().register(this);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
-
 
     void initArgsData() {
         testArgsCustomModeBean = new TestArgsAndStartBean();
@@ -670,13 +666,22 @@ public class QianXinListActivity extends BaseActivity implements
         final View view = LayoutInflater.from(this).inflate(R.layout.layout_qianxin_header, ll, false);
         ll.addView(view, 0);
 
-        findViewById(R.id.bt_look).setOnClickListener(new View.OnClickListener() {
+        tvLocation = view.findViewById(R.id.tv_location);
+        startLocation();
+        tvLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startLocation();
+            }
+        });
+
+        view.findViewById(R.id.bt_look).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 look();
             }
         });
-        findViewById(R.id.bt_upload_img).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.bt_upload_img).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // uploadImg();
@@ -1099,6 +1104,11 @@ public class QianXinListActivity extends BaseActivity implements
 
     @Override
     public void onStatus(final QianXinItemBean bean) {
+        if (locationBean == null) {
+            ToastUtils.showToast("请先定位");
+            return;
+        }
+
         if (!compareDistance(bean)) {
             ToastUtils.showToast("超出更改范围!");
             return;
@@ -1164,5 +1174,51 @@ public class QianXinListActivity extends BaseActivity implements
                 });
     }
 
+
+    @SuppressLint("CheckResult")
+    private void startLocation() {
+        tvLocation.setText("定位中...");
+        new RxPermissions(this)
+                .request(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            stopLocation();
+                            locationManager = new LocationManager(QianXinListActivity.this,
+                                    QianXinListActivity.this);
+                            locationManager.start();
+                        } else {
+                            ToastUtils.showToast("请开启定位权限");
+                            tvLocation.setText("定位失败，点击重新定位");
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopLocation();
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    private void stopLocation() {
+        if (locationManager != null) {
+            locationManager.stop();
+            locationManager = null;
+        }
+    }
+
+    @Override
+    public void onSuccess(LocationManager.LocationBean bean) {
+        this.locationBean = bean;
+        tvLocation.setText("定位位置:" + bean.addrss);
+    }
+
+    @Override
+    public void onError(int code, String msg) {
+        tvLocation.setText("定位失败，点击重新定位");
+    }
 
 }

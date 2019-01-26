@@ -38,5 +38,4 @@ public class GPSUtils {
         // s = s*1000;    乘以1000是换算成米
         return s;
     }
-
 }

@@ -100,7 +100,7 @@ dependencies {
         exclude module: 'rxandroid'
     }
     implementation rootProject.ext.dependencies["timber"]
-    //    implementation 'com.amap.api:location:latest.integration'
+    implementation 'com.amap.api:location:latest.integration'
     //    implementation 'com.amap.api:map2d:latest.integration'
     //    implementation 'com.amap.api:search:latest.integration'
     api 'com.astuetz:pagerslidingtabstrip:1.0.1'

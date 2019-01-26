@@ -1,6 +1,5 @@
 package com.zzw.guanglan.ui.guangland;
 
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -24,17 +23,16 @@ public class HisGuangLanDuanListFragment extends BaseFragment implements BaseQui
 
     private GuangLanDListAdapter adapter;
 
-    private LocationManager.LocationBean locationBean;
 
 
-    public static HisGuangLanDuanListFragment newInstance(LocationManager.LocationBean location) {
+    public static HisGuangLanDuanListFragment newInstance() {
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("location", location);
-        HisGuangLanDuanListFragment fragment = new HisGuangLanDuanListFragment();
-        fragment.setArguments(bundle);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("location", location);
+//        HisGuangLanDuanListFragment fragment = new HisGuangLanDuanListFragment();
+//        fragment.setArguments(bundle);
 
-        return fragment;
+        return  new HisGuangLanDuanListFragment();
     }
 
     @Override
@@ -45,9 +43,6 @@ public class HisGuangLanDuanListFragment extends BaseFragment implements BaseQui
     @Override
     protected void initData() {
         super.initData();
-        locationBean = (LocationManager.LocationBean) getArguments().getSerializable("location");
-
-
         recy.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new GuangLanDListAdapter(new ArrayList<GuangLanDItemBean>());
         adapter.setOnItemClickListener(this);
@@ -66,6 +61,6 @@ public class HisGuangLanDuanListFragment extends BaseFragment implements BaseQui
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        QianXinListActivity.open(getContext(), (GuangLanDItemBean) adapter.getData().get(position), locationBean);
+        QianXinListActivity.open(getContext(), (GuangLanDItemBean) adapter.getData().get(position));
     }
 }
