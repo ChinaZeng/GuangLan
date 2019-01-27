@@ -133,7 +133,7 @@ public class GuangLanAddActivitty extends BaseActivity {
                     areaIdStr = bean.getId();
                 }
             }
-        }).show(getSupportFragmentManager(), "area");
+        },true).show(getSupportFragmentManager(), "area");
     }
 
     private void leave() {

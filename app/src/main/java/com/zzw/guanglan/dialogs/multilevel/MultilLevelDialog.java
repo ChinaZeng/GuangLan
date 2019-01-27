@@ -26,10 +26,11 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class MultilLevelDialog <T extends INamedEntity>extends DialogFragment {
     private ViewPager viewPager;
-    private TextView tvTitle;
+    private TextView tvTitle,tvLeft,tvRight;
     private FixPagerSlidingTabStrip pagerTitleStrip;
     private IDataSet dataset;
     private String title;
+    private boolean showAction;
     private MultiLevelPagerAdapter pagerAdapter;
     private OnConfirmCallback onConfirmCallback;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -45,7 +46,11 @@ public class MultilLevelDialog <T extends INamedEntity>extends DialogFragment {
     };
 
     public static MultilLevelDialog newInstance(IDataSet dataset, String title) {
-        return new MultilLevelDialog().setTitle(title).setDataset(dataset);
+        return newInstance(dataset,title,false);
+    }
+
+    public static MultilLevelDialog newInstance(IDataSet dataset, String title,boolean showAction) {
+        return new MultilLevelDialog().setTitle(title).setDataset(dataset).setShowAction(showAction);
     }
 
     @Override
@@ -67,12 +72,19 @@ public class MultilLevelDialog <T extends INamedEntity>extends DialogFragment {
         return this;
     }
 
+    private MultilLevelDialog setShowAction(boolean showAction) {
+        this.showAction = showAction;
+        return this;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_multilevel, container, false);
         viewPager = view.findViewById(R.id.view_pager);
         tvTitle = view.findViewById(R.id.tv_title);
+        tvLeft = view.findViewById(R.id.tv_left);
+        tvRight = view.findViewById(R.id.tv_right);
         pagerTitleStrip = view.findViewById(R.id.pst_titles);
         pagerTitleStrip.setTypeface(null, Typeface.NORMAL);
         init();
@@ -95,6 +107,32 @@ public class MultilLevelDialog <T extends INamedEntity>extends DialogFragment {
 
     private void init() {
         tvTitle.setText(title);
+        if(showAction){
+            tvLeft.setVisibility(View.VISIBLE);
+            tvRight.setVisibility(View.VISIBLE);
+
+            tvLeft.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+            tvRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(pagerAdapter!=null){
+                        //触发选择回调
+                        pagerAdapter.onSelectedLastLevel();
+                    }
+                }
+            });
+
+        }else {
+            tvLeft.setVisibility(View.GONE);
+            tvRight.setVisibility(View.GONE);
+        }
+
         pagerAdapter = new MultiLevelPagerAdapter(compositeDisposable, dataset, viewPager, pagerTitleStrip);
         pagerAdapter.setOnConfirmCallback(confirmCallback);
         viewPager.setAdapter(pagerAdapter);

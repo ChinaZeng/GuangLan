@@ -17,7 +17,14 @@ import io.reactivex.Observable;
 
 public class AreaDialog {
 
-    public static MultilLevelDialog createCityDialog(final LifecycleProvider provider, String title, OnConfirmCallback<AreaBean> confirmCallback) {
+
+        public static MultilLevelDialog createCityDialog(final LifecycleProvider provider, String title, OnConfirmCallback<AreaBean> confirmCallback) {
+        return createCityDialog(provider,title,confirmCallback,false);
+    }
+
+
+
+    public static MultilLevelDialog createCityDialog(final LifecycleProvider provider, String title, OnConfirmCallback<AreaBean> confirmCallback,boolean showAction) {
         return MultilLevelDialog.newInstance(new IDataSet<AreaBean>() {
 
             @Override
@@ -31,15 +38,13 @@ public class AreaDialog {
             public Observable<List<AreaBean>> provideChildren(List<AreaBean> parents) {
                 List<AreaBean> children = parents.get(parents.size() - 1).getChildren();
                 if(children !=null && children.size()!=0){
-                   return Observable.just(children);
+                    return Observable.just(children);
                 }else {
                     List<AreaBean> children2  = new ArrayList<>();
                     return Observable.just(children2);
                 }
             }
-        },title).setConfirmCallback(confirmCallback);
+        },title,showAction).setConfirmCallback(confirmCallback);
     }
-
-
 
 }

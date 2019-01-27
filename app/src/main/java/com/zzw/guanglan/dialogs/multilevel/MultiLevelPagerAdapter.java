@@ -145,7 +145,7 @@ public class MultiLevelPagerAdapter<T extends INamedEntity> extends PagerAdapter
         compositeDisposable.add(req);
     }
 
-    private void onSelectedLastLevel() {
+    public void onSelectedLastLevel() {
         if (onConfirmCallback != null) {
             onConfirmCallback.onConfirm(selectedItems);
         }
