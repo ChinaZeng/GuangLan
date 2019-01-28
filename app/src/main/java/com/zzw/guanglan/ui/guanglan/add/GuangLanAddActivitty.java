@@ -1,8 +1,10 @@
 package com.zzw.guanglan.ui.guanglan.add;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -24,6 +26,7 @@ import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.rx.ResultBooleanFunction;
+import com.zzw.guanglan.ui.resource.SelResActivity;
 import com.zzw.guanglan.utils.ToastUtils;
 
 import java.util.HashMap;
@@ -65,6 +68,7 @@ public class GuangLanAddActivitty extends BaseActivity {
     }
 
     private String areaIdStr, leaveIdStr, aStationIdStr, zStationIdStr;
+
 
     public void submit() {
         final String cabelOpNameS = cabelName.getText().toString().trim();
@@ -133,7 +137,7 @@ public class GuangLanAddActivitty extends BaseActivity {
                     areaIdStr = bean.getId();
                 }
             }
-        },true).show(getSupportFragmentManager(), "area");
+        }, true).show(getSupportFragmentManager(), "area");
     }
 
     private void leave() {
@@ -166,38 +170,55 @@ public class GuangLanAddActivitty extends BaseActivity {
     }
 
     private void station(final int aOrz) {
-        RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .getAppJfAZInfo(areaIdStr, null, null)
-                .compose(LifeObservableTransformer.<ListDataBean<JuZhanBean>>create(this))
-                .subscribe(new ErrorObserver<ListDataBean<JuZhanBean>>(this) {
-                    @Override
-                    public void onNext(ListDataBean<JuZhanBean> list) {
-                        List<JuZhanBean> data = list.getList();
+        int code = aOrz == 0 ? 5 : 6;
+        startActivityForResult(new Intent(this, SelResActivity.class), code);
+//        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+//                .getAppJfAZInfo(areaIdStr, null, null)
+//                .compose(LifeObservableTransformer.<ListDataBean<JuZhanBean>>create(this))
+//                .subscribe(new ErrorObserver<ListDataBean<JuZhanBean>>(this) {
+//                    @Override
+//                    public void onNext(ListDataBean<JuZhanBean> list) {
+//                        List<JuZhanBean> data = list.getList();
+//
+//                        if (data != null && data.size() > 0) {
+//                            BottomListDialog.newInstance(data, new BottomListDialog.Convert<JuZhanBean>() {
+//                                @Override
+//                                public String convert(JuZhanBean data) {
+//                                    return data.getROOM_NAME();
+//                                }
+//                            }).setCallback(new BottomListDialog.Callback<JuZhanBean>() {
+//                                @Override
+//                                public boolean onSelected(JuZhanBean data, int position) {
+//                                    if (aOrz == 0) {
+//                                        aStation.setText(data.getROOM_NAME());
+//                                        aStationIdStr = data.getROOM_ID();
+//                                    } else {
+//                                        zStation.setText(data.getROOM_NAME());
+//                                        zStationIdStr = data.getROOM_ID();
+//                                    }
+//                                    return true;
+//                                }
+//                            }).show(getSupportFragmentManager(), "juzhan");
+//                        } else {
+//                            ToastUtils.showToast("当前地区无局站");
+//                        }
+//                    }
+//                });
+    }
 
-                        if (data != null && data.size() > 0) {
-                            BottomListDialog.newInstance(data, new BottomListDialog.Convert<JuZhanBean>() {
-                                @Override
-                                public String convert(JuZhanBean data) {
-                                    return data.getROOM_NAME();
-                                }
-                            }).setCallback(new BottomListDialog.Callback<JuZhanBean>() {
-                                @Override
-                                public boolean onSelected(JuZhanBean data, int position) {
-                                    if (aOrz == 0) {
-                                        aStation.setText(data.getROOM_NAME());
-                                        aStationIdStr = data.getROOM_ID();
-                                    } else {
-                                        zStation.setText(data.getROOM_NAME());
-                                        zStationIdStr = data.getROOM_ID();
-                                    }
-                                    return true;
-                                }
-                            }).show(getSupportFragmentManager(), "juzhan");
-                        } else {
-                            ToastUtils.showToast("当前地区无局站");
-                        }
-                    }
-                });
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) return;
+
+        ResBean resBean = (ResBean) data.getSerializableExtra("bean");
+        if (requestCode == 5) {//a段
+            aStation.setText(resBean.getRoomName());
+            aStationIdStr = resBean.getRoomId();
+        } else {//z端
+            zStation.setText(resBean.getRoomName());
+            zStationIdStr = resBean.getRoomId();
+        }
     }
 
     @OnClick({R.id.area_id, R.id.leave, R.id.a_station, R.id.z_station, R.id.add})
@@ -210,18 +231,10 @@ public class GuangLanAddActivitty extends BaseActivity {
                 leave();
                 break;
             case R.id.a_station:
-                if (TextUtils.isEmpty(areaIdStr)) {
-                    ToastUtils.showToast("请先选地区");
-                    return;
-                }
                 station(0);
                 break;
 
             case R.id.z_station:
-                if (TextUtils.isEmpty(areaIdStr)) {
-                    ToastUtils.showToast("请先选地区");
-                    return;
-                }
                 station(1);
                 break;
             case R.id.add:

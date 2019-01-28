@@ -10,4 +10,7 @@ public class Contacts {
     public static String connKey;
     public static String loaclIp;
 
+
+    public final static String BASE_URL = "http://47.97.167.95:7088";
+
 }

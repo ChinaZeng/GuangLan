@@ -29,8 +29,11 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.dl7.tag.TagLayout;
 import com.dl7.tag.TagView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.zzw.guanglan.BuildConfig;
+import com.zzw.guanglan.Contacts;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.base.WebActivity;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
@@ -333,7 +336,6 @@ public class QianXinListActivity extends BaseActivity implements
                     public void onNext(Boolean bo) {
                         if (bo) {
                             ToastUtils.showToast("上传成功");
-                            finish();
                         } else {
                             ToastUtils.showToast("上传失败");
                         }
@@ -675,6 +677,15 @@ public class QianXinListActivity extends BaseActivity implements
             }
         });
 
+
+        view.findViewById(R.id.bt_look_img).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String path = Contacts.BASE_URL + "/glcs/cblFiber/appShowImgInfo?objectId="
+                        + guangLanDBean.getID() + "&objectName=光缆段";
+                WebActivity.open(QianXinListActivity.this, "查看图片",path );
+            }
+        });
         view.findViewById(R.id.bt_look).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
