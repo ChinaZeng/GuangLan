@@ -16,7 +16,8 @@ public class LocationManager implements ILocation {
     private AbsLocation absLocation;
 
     public LocationManager(Context context, OnLocationListener locationListener) {
-        absLocation = new GaoDeLocation(context);
+//        absLocation = new GaoDeLocation(context);
+        absLocation = new BaiDuLocation(context);
         absLocation.setLocationListener(locationListener);
     }
 
