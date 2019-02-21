@@ -26,16 +26,21 @@ public class RetrofitHttpEngine {
     private static Map<String, Object> mRetrofitServiceCache = new LinkedHashMap<>();
 
     private static final int TOME_OUT = 300; //s  秒
-    private HttpUrl mBaseUrl;
+    private static HttpUrl mBaseUrl;
     private Interceptor[] mInterceptors;
     private GlobeHttpHandler mHandler;
 
 
     public RetrofitHttpEngine(Builder builder) {
-        this.mBaseUrl = builder.baseUrl;
+        mBaseUrl = builder.baseUrl;
         this.mHandler = builder.handler;
         this.mInterceptors = builder.interceptors;
+        mRetrofitServiceCache.clear();
         mRetrofit = configureRetrofit();
+    }
+
+    public static HttpUrl getBaseUrl() {
+        return mBaseUrl;
     }
 
     public static Builder builder() {

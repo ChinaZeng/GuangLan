@@ -12,7 +12,7 @@ import okhttp3.Interceptor;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 
-public class BaseApplication extends Application implements HttpLoggingInterceptor.Logger {
+public class BaseApplication extends Application   {
 
 
     private static BaseApplication application;
@@ -27,7 +27,12 @@ public class BaseApplication extends Application implements HttpLoggingIntercept
         RetrofitHttpEngine.builder()
                 .baseUrl(Contacts.BASE_URL)
                 .interceptors(new Interceptor[]{
-                        new HttpLoggingInterceptor(this)
+                        new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                            @Override
+                            public void log(String message) {
+                                Timber.tag("okhttp").w(message);
+                            }
+                        })
                                 .setLevel(HttpLoggingInterceptor.Level.BODY)
                 })
                 .build();
@@ -43,8 +48,5 @@ public class BaseApplication extends Application implements HttpLoggingIntercept
         return application;
     }
 
-    @Override
-    public void log(String message) {
-        Timber.tag("okhttp").w(message);
-    }
+
 }

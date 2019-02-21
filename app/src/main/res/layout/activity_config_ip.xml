@@ -10,22 +10,13 @@
     tools:mContext=".ui.login.LoginActivity">
 
 
-    <ImageView
-        android:id="@+id/iv_logo"
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:onClick="logo"
-        android:layout_gravity="center_horizontal"
-        android:src="@mipmap/img_yd" />
-
-
     <com.zzw.guanglan.widgets.MultiFunctionEditText
-        android:id="@+id/et_phone"
+        android:id="@+id/et_ip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:background="@android:color/transparent"
-        android:hint="请输入账号"
+        android:hint="请输入ip"
         android:maxLines="1"
         android:paddingLeft="10dp"
         android:textColor="@color/color333333"
@@ -42,52 +33,31 @@
 
 
     <com.zzw.guanglan.widgets.MultiFunctionEditText
-        android:id="@+id/et_pwd"
+        android:id="@+id/et_port"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@android:color/transparent"
-        android:hint="请输入密码"
-        android:inputType="textPassword"
-        android:maxLength="32"
-        android:maxLines="1"
+        android:hint="请输入端口"
+        android:inputType="number"
         android:paddingLeft="10dp"
         android:textColor="@color/color333333"
         android:textSize="18sp"
         app:clearButtonEnable="true"
         app:clearButtonIcon="@mipmap/ic_clear"
-        app:iconPadding="5dp"
-        app:togglePasswordEnable="true"
-        app:togglePasswordHideIcon="@mipmap/icon_login_ycmm"
-        app:togglePasswordVisibleIcon="@mipmap/icon_login_xsmm" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginTop="5dp"
-        android:background="@color/colorDivider" />
-
-    <TextView
-        android:id="@+id/forget_pwd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginTop="5dp"
-        android:text="忘记密码?"
-        android:textColor="@color/color333333"
-        android:textSize="12dp" />
+        app:iconPadding="5dp" />
 
 
     <Button
-        android:id="@+id/login"
+        android:id="@+id/bt_sure"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:background="@color/color1"
         android:gravity="center"
         android:minHeight="40dp"
-        android:onClick="login"
-        android:text="登录"
+        android:onClick="save"
+        android:text="保存"
         android:textColor="@android:color/white" />
 
 </LinearLayout>

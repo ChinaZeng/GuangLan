@@ -12,6 +12,7 @@ import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.ui.ConfigIpActivity;
 import com.zzw.guanglan.ui.MainActivity;
 import com.zzw.guanglan.ui.resource.ResourceActivity;
 import com.zzw.guanglan.utils.RequestBodyUtils;
@@ -52,6 +53,24 @@ public class LoginActivity extends BaseActivity {
         return R.layout.activity_login;
     }
 
+    private int clickCount;
+    private long lastClickTime;
+
+    public void logo(View view) {
+
+        long nowTime = System.currentTimeMillis();
+        if (nowTime - lastClickTime > 200) {
+            clickCount = 1;
+        } else {
+            clickCount++;
+        }
+        lastClickTime = nowTime;
+
+        if (clickCount > 5) {
+            ConfigIpActivity.open(this);
+        }
+    }
+
 
     public void login(View view) {
 
@@ -82,7 +101,7 @@ public class LoginActivity extends BaseActivity {
                             LoginBean bean1 = new LoginBean();
                             bean1.setStaffNbr(staffNbr);
                             bean1.setPassword(password);
-                            SPUtil.getInstance().put("lastLogin",bean1 );
+                            SPUtil.getInstance().put("lastLogin", bean1);
 
                             UserManager.getInstance().setUserId(bean.getUserId());
                             finish();
