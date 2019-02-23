@@ -43,7 +43,7 @@ public class BaiDuLocation extends AbsLocation {
         //BD09ll：百度经纬度坐标；
         //BD09：百度墨卡托坐标；
         //海外地区定位，无需设置坐标类型，统一返回WGS84类型坐标
-//        option.setCoorType("bd09ll");
+        option.setCoorType("bd09ll");
 
         //可选，设置发起定位请求的间隔，int类型，单位ms
         //如果设置为0，则代表单次定位，即仅定位一次，默认为0
@@ -104,7 +104,9 @@ public class BaiDuLocation extends AbsLocation {
                 if (locType == 61 || locType == 161) {
                     //可在其中解析amapLocation获取相应内容。
                     if (mLocationListener != null) {
-                        mLocationListener.onSuccess(BDLocation2LocationBean(location));
+                        LocationManager.LocationBean bean = BDLocation2LocationBean(location);
+                        Log.e("zzz",bean.toString());
+                        mLocationListener.onSuccess(bean);
                     }
                 } else {
                     //http://lbsyun.baidu.com/index.php?title=android-locsdk/guide/addition-func/error-code
