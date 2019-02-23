@@ -219,19 +219,31 @@ public class QianXinListActivity extends BaseActivity implements
                 .subscribe(new ErrorObserver<RemoveBean>(this) {
                     @Override
                     public void onNext(RemoveBean removeBean) {
-                        List<String> remove = removeBean.getRemove();
+                        List<RemoveBean.RemoveObjBean> remove = removeBean.getRemove();
 
                         if (remove == null || remove.size() == 0) {
                             ToastUtils.showToast("无纤芯重复信息");
                             return;
                         }
 
-                        BottomListDialog.newInstance(remove, new BottomListDialog.Convert<String>() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(QianXinListActivity.this);
+                        builder.setTitle("温馨提示");
+
+//                        builder.setMessage(removeBean.getDbkm() + "KM附近，" +
+//                                "共有" + remove.size() + "根上传纤芯存在衰耗点或断芯，其中0.3dB（即中衰耗点）以上衰耗点或断芯"
+//                                + remove.size() + "根，建议进行修复处理");
+
+                        builder.setMessage(removeBean.getDbkm() + "KM附近，" +
+                                "共有" + remove.size() + "根上传纤芯存在衰耗点或断芯，建议进行修复处理");
+
+                        builder.setNegativeButton("知道了", new DialogInterface.OnClickListener() {
                             @Override
-                            public String convert(String data) {
-                                return data;
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
                             }
-                        }).show(getSupportFragmentManager(), "remove");
+                        });
+                        builder.setCancelable(false);
+                        builder.create().show();
                     }
 
                     @Override
@@ -683,7 +695,7 @@ public class QianXinListActivity extends BaseActivity implements
             public void onClick(View v) {
                 String path = Contacts.BASE_URL + "/glcs/cblFiber/appShowImgInfo?objectId="
                         + guangLanDBean.getID() + "&objectName=光缆段";
-                WebActivity.open(QianXinListActivity.this, "查看图片",path );
+                WebActivity.open(QianXinListActivity.this, "查看图片", path);
             }
         });
         view.findViewById(R.id.bt_look).setOnClickListener(new View.OnClickListener() {

@@ -110,7 +110,7 @@ public class GuangLanAddActivitty extends BaseActivity {
                         put("opLong", longS);
                         put("areaId", areaIdStr);
                         put("aRoomId", aStationIdStr);
-                        put("zRoomId", zStationIdStr);
+                        put("zRoomId", zStationIdStr == null ? "" : zStationIdStr);
                         put("serialNo", leaveIdStr);
                     }
                 })
