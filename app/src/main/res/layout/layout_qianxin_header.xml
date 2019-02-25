@@ -20,7 +20,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:background="@color/color1"
-            android:text="测试提交"
+            android:text="测试结果校验"
             android:textColor="#fff"
             android:textSize="12sp" />
 
