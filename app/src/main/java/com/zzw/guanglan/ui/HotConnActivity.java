@@ -24,6 +24,8 @@ import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.service.SocketService;
 import com.zzw.guanglan.socket.EventBusTag;
+import com.zzw.guanglan.socket.resolve.Packet;
+import com.zzw.guanglan.socket.utils.ByteUtil;
 import com.zzw.guanglan.socket.utils.MyLog;
 import com.zzw.guanglan.utils.WifiAPManager;
 
@@ -43,6 +45,8 @@ public class HotConnActivity extends BaseActivity {
     TextView tvHint2;
     @BindView(R.id.tv_deveice_num)
     TextView tvDeveiceNum;
+    @BindView(R.id.tv_deveice_packet)
+    TextView tvDeveicePacket;
     @BindView(R.id.start)
     Button start;
 
@@ -133,10 +137,24 @@ public class HotConnActivity extends BaseActivity {
         initData();
     }
 
+
+    //todo 正确的接收到序列号的处理逻辑
+//    @Subscriber(tag = EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER)
+//    public void recieveDeviceNum(String deviceNum) {
+//        tvDeveiceNum.setText("序列号: " + deviceNum);
+//    }
+
     @Subscriber(tag = EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER)
-    public void recieveDeviceNum(String deviceNum) {
+    public void recieveDeviceNum(Packet packet) {
+        tvDeveicePacket.setText(ByteUtil.bytesToHexSpaceString(packet.data));
+
+        if (packet.data.length < 16 + 16) return;
+        byte[] data = ByteUtil.subBytes(packet.data, 16, 16);
+        String deviceNum = ByteUtil.bytes2Str(data);
+        EventBus.getDefault().post(deviceNum, EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER);
         tvDeveiceNum.setText("序列号: " + deviceNum);
     }
+
 
 
     String hintS = "";

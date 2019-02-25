@@ -239,11 +239,17 @@ public class SocketService extends Service implements StatusListener {
         } else if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
             //正常是这样的 设备厂家(16) + 序列号(16) + 设备版本(8),但是这里只要序列号  所以没判断设备版本
 //            if (packet.data.length < 16 + 16 + 8) return;
+            //TODO 这里是主逻辑
+            /*
             if (packet.data.length < 16 + 16) return;
 
             byte[] data = ByteUtil.subBytes(packet.data, 16, 16);
             String deviceNum = ByteUtil.bytes2Str(data);
             EventBus.getDefault().post(deviceNum, EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER);
+            */
+
+            EventBus.getDefault().post(packet, EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER);
+
         }
     }
 
