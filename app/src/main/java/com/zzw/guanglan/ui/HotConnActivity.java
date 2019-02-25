@@ -41,6 +41,8 @@ public class HotConnActivity extends BaseActivity {
     TextView tvHint;
     @BindView(R.id.tv_hint2)
     TextView tvHint2;
+    @BindView(R.id.tv_deveice_num)
+    TextView tvDeveiceNum;
     @BindView(R.id.start)
     Button start;
 
@@ -97,6 +99,7 @@ public class HotConnActivity extends BaseActivity {
                     initData();
                 }
             });
+            getDevicesNum();
         } else {
             start.setText("开启共享建立链接");
             start.setOnClickListener(new View.OnClickListener() {
@@ -112,16 +115,27 @@ public class HotConnActivity extends BaseActivity {
         }
     }
 
+    //获取设备序列号
+    private void getDevicesNum() {
+        EventBus.getDefault().post(0, EventBusTag.GET_DEVICE_SERIAL_NUMBER);
+    }
+
 
     @Subscriber(tag = EventBusTag.SOCKET_CONN_STATUS_CHANGE)
     public void socketConnChange(boolean change) {
-        if(change){
+        if (change) {
             hintS = "与" + Contacts.connKey + "建立连接";
-        }else {
-            hintS ="断开连接";
+            getDevicesNum();
+        } else {
+            hintS = "断开连接";
         }
         hint();
         initData();
+    }
+
+    @Subscriber(tag = EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER)
+    public void recieveDeviceNum(String deviceNum) {
+        tvDeveiceNum.setText("序列号: " + deviceNum);
     }
 
 

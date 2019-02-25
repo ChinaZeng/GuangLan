@@ -236,6 +236,12 @@ public class SocketService extends Service implements StatusListener {
             heartFlog++;
             MyLog.e("heartFlog = " + heartFlog);
             reHeart(1);
+        } else if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
+            if (packet.data.length > 0) {
+                String deviceNum = ByteUtil.bytes2Str(packet.data);
+                EventBus.getDefault().post(deviceNum, EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER);
+            }
+
         }
     }
 

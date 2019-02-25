@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseViewHolder> {
     private HashSet<String> arginData;
+    private HashSet<String> exceptionData;
 
     public QianXinListAdapter(@Nullable List<QianXinItemBean> data) {
         super(R.layout.item_qianxin, data);
@@ -70,11 +71,14 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
 
         View itemRoot = helper.getView(R.id.item_root);
 
-        if (arginData != null) {
-            itemRoot.setBackgroundColor(arginData.contains(item.getFIBER_ID()) ? Color.argb(255, 12, 214, 211) : Color.WHITE);
-        } else {
-            itemRoot.setBackgroundColor(Color.WHITE);
+        int backColor = Color.WHITE;
+        if (arginData != null && arginData.contains(item.getFIBER_ID())) {
+            backColor = Color.argb(255, 12, 214, 211);
         }
+        if (exceptionData != null && exceptionData.contains(item.getFIBER_ID())) {
+            backColor = Color.argb(125, 255, 0, 0);
+        }
+        itemRoot.setBackgroundColor(backColor);
 
     }
 
@@ -94,9 +98,15 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
         this.onTestListener = onTestListener;
     }
 
+    public QianXinListAdapter setExceptionData(HashSet<String> exceptionData) {
+        this.exceptionData = exceptionData;
+        return this;
+    }
+
     public void setArginData(HashSet<String> arginData) {
         this.arginData = arginData;
     }
+
 
     public interface OnTestListener {
         void onTest(QianXinItemBean bean);

@@ -222,27 +222,28 @@ public class QianXinListActivity extends BaseActivity implements
                     @Override
                     public void onNext(RemoveBean removeBean) {
                         List<RemoveBean.RemoveObjBean> remove = removeBean.getRemove();
+                        List<RemoveBean.AbnormalBean> error = removeBean.getAbnormal();
 
-                        if (remove == null || remove.size() == 0) {
-                            ToastUtils.showToast("无纤芯重复信息");
+                        if ((remove == null || remove.size() == 0) && (error == null || error.size() == 0)) {
+                            ToastUtils.showToast("无纤芯重复和异常信息");
                             return;
-//                            remove = new ArrayList<>();
-//                            RemoveBean.RemoveObjBean e = new RemoveBean.RemoveObjBean();
-//                            e.setFiberId("10000004821046");
-//                            e.setText("111");
-//                            remove.add(e);
-//                            RemoveBean.RemoveObjBean e1 = new RemoveBean.RemoveObjBean();
-//                            e1.setFiberId("10000004821047");
-//                            e1.setText("222");
-//                            remove.add(e1);
                         }
-                        if (adapter != null) {
-                            HashSet<String> arginTestIds = new HashSet<>();
-                            for (RemoveBean.RemoveObjBean removeObjBean : remove) {
-                                arginTestIds.add(removeObjBean.getFiberId());
-                            }
 
-                            adapter.setArginData(arginTestIds);
+                        if (adapter != null) {
+                            if (remove != null) {
+                                HashSet<String> arginTestIds = new HashSet<>();
+                                for (RemoveBean.RemoveObjBean removeObjBean : remove) {
+                                    arginTestIds.add(removeObjBean.getFiberId());
+                                    adapter.setArginData(arginTestIds);
+                                }
+                            }
+                            if (error != null) {
+                                HashSet<String> errorDataIds = new HashSet<>();
+                                for (RemoveBean.AbnormalBean bean : error) {
+                                    errorDataIds.add(bean.getFiberId());
+                                    adapter.setExceptionData(errorDataIds);
+                                }
+                            }
                             adapter.notifyDataSetChanged();
                         }
 
