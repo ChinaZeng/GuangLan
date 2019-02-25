@@ -18,7 +18,7 @@ public class RemoveBean {
     private int code;
     private String dbkm;
     private List<RemoveObjBean> remove;
-    private List<AbnormalBean> abnormal;
+    private List<RemoveObjBean> abnormal;
 
     public String getMsg() {
         return msg;
@@ -52,11 +52,11 @@ public class RemoveBean {
         this.remove = remove;
     }
 
-    public List<AbnormalBean> getAbnormal() {
+    public List<RemoveObjBean> getAbnormal() {
         return abnormal;
     }
 
-    public void setAbnormal(List<AbnormalBean> abnormal) {
+    public void setAbnormal(List<RemoveObjBean> abnormal) {
         this.abnormal = abnormal;
     }
 
@@ -86,29 +86,5 @@ public class RemoveBean {
         }
     }
 
-    public static class AbnormalBean {
-        /**
-         * fiberId : 10000004821050
-         * text : 编号5芯检测情况：与1，2，3，4测试结果完全相同
-         */
 
-        private String fiberId;
-        private String text;
-
-        public String getFiberId() {
-            return fiberId;
-        }
-
-        public void setFiberId(String fiberId) {
-            this.fiberId = fiberId;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
-    }
 }

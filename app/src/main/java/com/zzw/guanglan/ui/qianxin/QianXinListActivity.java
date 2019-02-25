@@ -222,7 +222,7 @@ public class QianXinListActivity extends BaseActivity implements
                     @Override
                     public void onNext(RemoveBean removeBean) {
                         List<RemoveBean.RemoveObjBean> remove = removeBean.getRemove();
-                        List<RemoveBean.AbnormalBean> error = removeBean.getAbnormal();
+                        List<RemoveBean.RemoveObjBean> error = removeBean.getAbnormal();
 
                         if ((remove == null || remove.size() == 0) && (error == null || error.size() == 0)) {
                             ToastUtils.showToast("无纤芯重复和异常信息");
@@ -239,7 +239,7 @@ public class QianXinListActivity extends BaseActivity implements
                             }
                             if (error != null) {
                                 HashSet<String> errorDataIds = new HashSet<>();
-                                for (RemoveBean.AbnormalBean bean : error) {
+                                for (RemoveBean.RemoveObjBean bean : error) {
                                     errorDataIds.add(bean.getFiberId());
                                     adapter.setExceptionData(errorDataIds);
                                 }
@@ -247,8 +247,15 @@ public class QianXinListActivity extends BaseActivity implements
                             adapter.notifyDataSetChanged();
                         }
 
+                        List<RemoveBean.RemoveObjBean> da = new ArrayList<>();
+                        if(remove!=null){
+                            da.addAll(remove);
+                        }
+                        if(error!=null){
+                            da.addAll(error);
+                        }
 
-                        final BottomActionListDialog<RemoveBean.RemoveObjBean> dialog = BottomActionListDialog.newInstance(remove, new BottomActionListDialog.Convert<RemoveBean.RemoveObjBean>() {
+                        final BottomActionListDialog<RemoveBean.RemoveObjBean> dialog = BottomActionListDialog.newInstance(da, new BottomActionListDialog.Convert<RemoveBean.RemoveObjBean>() {
                             @Override
                             public String convert(RemoveBean.RemoveObjBean data) {
                                 return data.getText();
