@@ -1,5 +1,6 @@
 package com.zzw.guanglan.ui.qianxin;
 
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,6 +10,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.bean.QianXinItemBean;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -16,6 +18,8 @@ import java.util.List;
  * 描述:
  */
 public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseViewHolder> {
+    private HashSet<String> arginData;
+
     public QianXinListAdapter(@Nullable List<QianXinItemBean> data) {
         super(R.layout.item_qianxin, data);
     }
@@ -64,6 +68,14 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
             }
         });
 
+        View itemRoot = helper.getView(R.id.item_root);
+
+        if (arginData != null) {
+            itemRoot.setBackgroundColor(arginData.contains(item.getFIBER_ID()) ? Color.argb(255, 12, 214, 211) : Color.WHITE);
+        } else {
+            itemRoot.setBackgroundColor(Color.WHITE);
+        }
+
     }
 
     private OnTestListener onTestListener;
@@ -82,6 +94,10 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
         this.onTestListener = onTestListener;
     }
 
+    public void setArginData(HashSet<String> arginData) {
+        this.arginData = arginData;
+    }
+
     public interface OnTestListener {
         void onTest(QianXinItemBean bean);
     }
@@ -94,8 +110,6 @@ public class QianXinListAdapter extends BaseQuickAdapter<QianXinItemBean, BaseVi
     public interface OnStatusListener {
         void onStatus(QianXinItemBean bean);
     }
-
-
 
 
 }

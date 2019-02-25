@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    android:background="#fff"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -38,10 +38,10 @@
         android:background="@color/colorDivider" />
 
     <LinearLayout
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tv_gl_name"
@@ -75,9 +75,9 @@
             android:id="@+id/last_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="上次测试时间:2018-10-16"
             android:textColor="#20894a"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            tools:text="上次测试时间:2018-10-16" />
     </LinearLayout>
 
     <LinearLayout
@@ -92,18 +92,18 @@
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:textSize="12sp"
             android:background="@color/color1"
             android:text="纤芯测试"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:textSize="12sp" />
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/test_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_done_black_24dp" />
+            android:src="@drawable/ic_done_black_24dp"
+            android:visibility="gone" />
 
         <Space
             android:layout_width="0dp"
@@ -118,16 +118,16 @@
             android:layout_weight="1"
             android:background="@color/color1"
             android:text="上传文件"
-            android:textSize="12sp"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:textSize="12sp" />
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/upload_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_done_black_24dp" />
+            android:src="@drawable/ic_done_black_24dp"
+            android:visibility="gone" />
 
         <Space
             android:layout_width="0dp"
@@ -140,10 +140,10 @@
             android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:textSize="12sp"
             android:background="@color/color1"
             android:text="纤芯状态"
-            android:textColor="#fff" />
+            android:textColor="#fff"
+            android:textSize="12sp" />
 
     </LinearLayout>
 

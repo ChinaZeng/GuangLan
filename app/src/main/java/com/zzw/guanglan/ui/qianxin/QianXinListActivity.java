@@ -40,6 +40,7 @@ import com.zzw.guanglan.bean.QianXinItemBean;
 import com.zzw.guanglan.bean.RemoveBean;
 import com.zzw.guanglan.bean.SingleChooseBean;
 import com.zzw.guanglan.bean.StatusInfoBean;
+import com.zzw.guanglan.dialogs.BottomActionListDialog;
 import com.zzw.guanglan.dialogs.BottomListDialog;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
@@ -72,6 +73,7 @@ import org.simple.eventbus.Subscriber;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
@@ -224,26 +226,66 @@ public class QianXinListActivity extends BaseActivity implements
                         if (remove == null || remove.size() == 0) {
                             ToastUtils.showToast("无纤芯重复信息");
                             return;
+//                            remove = new ArrayList<>();
+//                            RemoveBean.RemoveObjBean e = new RemoveBean.RemoveObjBean();
+//                            e.setFiberId("10000004821046");
+//                            e.setText("111");
+//                            remove.add(e);
+//                            RemoveBean.RemoveObjBean e1 = new RemoveBean.RemoveObjBean();
+//                            e1.setFiberId("10000004821047");
+//                            e1.setText("222");
+//                            remove.add(e1);
+                        }
+                        if (adapter != null) {
+                            HashSet<String> arginTestIds = new HashSet<>();
+                            for (RemoveBean.RemoveObjBean removeObjBean : remove) {
+                                arginTestIds.add(removeObjBean.getFiberId());
+                            }
+
+                            adapter.setArginData(arginTestIds);
+                            adapter.notifyDataSetChanged();
                         }
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(QianXinListActivity.this);
-                        builder.setTitle("温馨提示");
 
-//                        builder.setMessage(removeBean.getDbkm() + "KM附近，" +
-//                                "共有" + remove.size() + "根上传纤芯存在衰耗点或断芯，其中0.3dB（即中衰耗点）以上衰耗点或断芯"
-//                                + remove.size() + "根，建议进行修复处理");
-
-                        builder.setMessage(removeBean.getDbkm() + "KM附近，" +
-                                "共有" + remove.size() + "根上传纤芯存在衰耗点或断芯，建议进行修复处理");
-
-                        builder.setNegativeButton("知道了", new DialogInterface.OnClickListener() {
+                        final BottomActionListDialog<RemoveBean.RemoveObjBean> dialog = BottomActionListDialog.newInstance(remove, new BottomActionListDialog.Convert<RemoveBean.RemoveObjBean>() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            public String convert(RemoveBean.RemoveObjBean data) {
+                                return data.getText();
+                            }
+                        });
+                        dialog.setTitle("温馨提示");
+                        dialog.setRightTitle("关闭");
+                        dialog.setItemActionName("重新测试");
+                        dialog.setCallback(new BottomActionListDialog.Callback<RemoveBean.RemoveObjBean>() {
+                            @Override
+                            public boolean onSelected(RemoveBean.RemoveObjBean data, int position) {
+                                return true;
+                            }
+
+                            @Override
+                            public boolean onClickAction(RemoveBean.RemoveObjBean data, int position) {
+                                if (adapter != null) {
+                                    List<QianXinItemBean> qianXinItemBeans = adapter.getData();
+                                    QianXinItemBean testQianXinItemBean = null;
+                                    for (QianXinItemBean qianXinItemBean : qianXinItemBeans) {
+                                        if (TextUtils.equals(data.getFiberId(), qianXinItemBean.getFIBER_ID())) {
+                                            testQianXinItemBean = qianXinItemBean;
+                                            break;
+                                        }
+                                    }
+                                    if (testQianXinItemBean != null) {
+                                        onTest(testQianXinItemBean);
+                                    }
+                                }
+                                return true;
+                            }
+
+                            @Override
+                            public void onRightClick() {
                                 dialog.dismiss();
                             }
                         });
-                        builder.setCancelable(false);
-                        builder.create().show();
+                        dialog.show(getSupportFragmentManager(), "remove");
                     }
 
                     @Override
@@ -670,7 +712,6 @@ public class QianXinListActivity extends BaseActivity implements
         zheshelvS.add(new SingleChooseBean(0, "146850", 146850));
         testArgsCustomModeBean.gi = zheshelvS.get(0).getValue();
     }
-
 
     private TagLayout juli, bochang, maikuan, time, zheshelv, mode;
     //0 自定义  1上一次  2自动
