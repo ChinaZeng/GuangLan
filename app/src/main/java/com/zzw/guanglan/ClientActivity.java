@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -107,6 +108,8 @@ public class ClientActivity extends AppCompatActivity {
             builder.append("数据长度:" + Arrays.toString(ByteUtil.intToBytes(packet.cmdDataLength)) + "\n");
             builder.append("数据:" + Arrays.toString(packet.data) + "\n");
             builder.append("结尾值:" + Arrays.toString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
+            Log.e("zzz",builder.toString());
+
             tvContent.setText(builder.toString());
         }
     }
@@ -115,7 +118,46 @@ public class ClientActivity extends AppCompatActivity {
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
         if (TextUtils.equals(packet.key(), key)) {
-
+            StringBuilder builder = new StringBuilder();
+            if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
+                builder.append("发送到APP询问设备序列号设备命令\n");
+            } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_START_TEST) {
+                builder.append("发送到APP给设备下发OTDR测试参数并启动测试命令\n");
+                sendSorInfo();
+            } else if (packet.cmd == CMD.GET_SOR_FILE) {
+                builder.append("发送到APP向设备请求传输sor文件命令\n");
+                if (packet.data.length >= (32 + 16)) {
+                    byte[] fileNameB = ByteUtil.subBytes(packet.data, 0, 32);
+                    byte[] fileLocB = ByteUtil.subBytes(packet.data, 32, 16);
+                    String fileName = ByteUtil.bytes2Str(fileNameB);
+                    String fileDir = ByteUtil.bytes2Str(fileLocB);
+                    MyLog.e("发送到APP向设备请求传输sor文件命令 fileName = " + fileName + "  fileLoc = " + fileDir);
+                    String name = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "dir" + File.separator + "test.sor";
+                    sendSorFile(name);
+                }
+            } else if (packet.cmd == CMD.HEART_SEND) {
+                builder.append("发送到心跳包命令\n");
+            } else if (packet.cmd == CMD.HEART_RE) {
+                builder.append("发送到回复心跳包命令\n");
+            } else if (packet.cmd == CMD._RE) {
+                builder.append("发送到错误代码命令\n");
+            } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_STOP_TEST) {
+                builder.append("发送到APP向设备发送停止OTDR测试命令\n");
+            }
+            builder.append("起始值:" + Arrays.toString(ByteUtil.intToBytes(Packet.START_FRAME)) + "\n");
+            builder.append("总帧长度:" + Arrays.toString(ByteUtil.intToBytes(packet.pkAllLen)) + "\n");
+            builder.append("版本号:" + Arrays.toString(ByteUtil.intToBytes(packet.rev)) + "\n");
+            builder.append("源地址:" + Arrays.toString(ByteUtil.intToBytes(packet.src)) + "\n");
+            builder.append("目标地址:" + Arrays.toString(ByteUtil.intToBytes(packet.dst)) + "\n");
+            builder.append("帧类型:" + Arrays.toString(ByteUtil.shortToBytes(packet.pkType)) + "\n");
+            builder.append("流水号:" + Arrays.toString(ByteUtil.shortToBytes((short) packet.pktId)) + "\n");
+            builder.append("保留字节:" + Arrays.toString(ByteUtil.intToBytes(packet.keep)) + "\n");
+            builder.append("cmd:" + Arrays.toString(ByteUtil.intToBytes(packet.cmd)) + "\n");
+            builder.append("数据长度:" + Arrays.toString(ByteUtil.intToBytes(packet.cmdDataLength)) + "\n");
+            builder.append("数据:" + Arrays.toString(packet.data) + "\n");
+            builder.append("结尾值:" + Arrays.toString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
+            Log.e("zzz",builder.toString());
+            tvContent.setText(builder.toString());
         }
     }
 
