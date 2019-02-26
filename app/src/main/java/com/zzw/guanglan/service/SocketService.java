@@ -236,7 +236,7 @@ public class SocketService extends Service implements StatusListener {
             heartFlog++;
             MyLog.e("heartFlog = " + heartFlog);
             reHeart(1);
-        } else if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
+        } else if (packet.cmd == CMD.RECIVE_DEVICE_SERIAL_NUMBER) {
             //正常是这样的 设备厂家(16) + 序列号(16) + 设备版本(8),但是这里只要序列号  所以没判断设备版本
 //            if (packet.data.length < 16 + 16 + 8) return;
 

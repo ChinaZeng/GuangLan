@@ -153,6 +153,7 @@ public class HotConnActivity extends BaseActivity {
     }
 
 
+
     String hintS = "";
 
     private class HotBroadcastReceiver extends BroadcastReceiver {
@@ -288,7 +289,7 @@ public class HotConnActivity extends BaseActivity {
             }
         }
     }
-
+    /*
     @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
     public void sendMsg(Packet packet) {
         StringBuilder builder = new StringBuilder();
@@ -363,6 +364,7 @@ public class HotConnActivity extends BaseActivity {
         tvRecive.setText(builder.toString());
     }
 
+    */
 
     private void hint() {
         runOnUiThread(new Runnable() {
