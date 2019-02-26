@@ -11,10 +11,13 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,6 +26,7 @@ import com.zzw.guanglan.Contacts;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.service.SocketService;
+import com.zzw.guanglan.socket.CMD;
 import com.zzw.guanglan.socket.EventBusTag;
 import com.zzw.guanglan.socket.resolve.Packet;
 import com.zzw.guanglan.socket.utils.ByteUtil;
@@ -31,6 +35,9 @@ import com.zzw.guanglan.utils.WifiAPManager;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
+
+import java.io.File;
+import java.util.Arrays;
 
 import butterknife.BindView;
 
@@ -45,8 +52,10 @@ public class HotConnActivity extends BaseActivity {
     TextView tvHint2;
     @BindView(R.id.tv_deveice_num)
     TextView tvDeveiceNum;
-    @BindView(R.id.tv_deveice_packet)
-    TextView tvDeveicePacket;
+    @BindView(R.id.tv_recive)
+    TextView tvRecive;
+    @BindView(R.id.tv_send)
+    TextView tvSend;
     @BindView(R.id.start)
     Button start;
 
@@ -138,23 +147,10 @@ public class HotConnActivity extends BaseActivity {
     }
 
 
-    //todo 正确的接收到序列号的处理逻辑
-//    @Subscriber(tag = EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER)
-//    public void recieveDeviceNum(String deviceNum) {
-//        tvDeveiceNum.setText("序列号: " + deviceNum);
-//    }
-
     @Subscriber(tag = EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER)
-    public void recieveDeviceNum(Packet packet) {
-        tvDeveicePacket.setText(ByteUtil.bytesToHexSpaceString(packet.data));
-
-        if (packet.data.length < 16 + 16) return;
-        byte[] data = ByteUtil.subBytes(packet.data, 16, 16);
-        String deviceNum = ByteUtil.bytes2Str(data);
-        EventBus.getDefault().post(deviceNum, EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER);
+    public void recieveDeviceNum(String deviceNum) {
         tvDeveiceNum.setText("序列号: " + deviceNum);
     }
-
 
 
     String hintS = "";
@@ -291,6 +287,80 @@ public class HotConnActivity extends BaseActivity {
                 getIp();
             }
         }
+    }
+
+    @Subscriber(tag = EventBusTag.TAG_SEND_MSG)
+    public void sendMsg(Packet packet) {
+        StringBuilder builder = new StringBuilder();
+        if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
+            builder.append("发送到APP询问设备序列号设备命令\n");
+        } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_START_TEST) {
+            builder.append("发送到APP给设备下发OTDR测试参数并启动测试命令\n");
+        } else if (packet.cmd == CMD.GET_SOR_FILE) {
+            builder.append("发送到APP向设备请求传输sor文件命令\n");
+        } else if (packet.cmd == CMD.HEART_SEND) {  //屏蔽心跳
+            builder.append("发送到心跳包命令\n");
+            return;
+        } else if (packet.cmd == CMD.HEART_RE) {  //屏蔽心跳
+            builder.append("发送到回复心跳包命令\n");
+            return;
+        } else if (packet.cmd == CMD._RE) {
+            builder.append("发送到错误代码命令\n");
+        } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_STOP_TEST) {
+            builder.append("发送到APP向设备发送停止OTDR测试命令\n");
+        }
+        builder.append("起始值:" + Arrays.toString(ByteUtil.intToBytes(Packet.START_FRAME)) + "\n");
+        builder.append("总帧长度:" + Arrays.toString(ByteUtil.intToBytes(packet.pkAllLen)) + "\n");
+        builder.append("版本号:" + Arrays.toString(ByteUtil.intToBytes(packet.rev)) + "\n");
+        builder.append("源地址:" + Arrays.toString(ByteUtil.intToBytes(packet.src)) + "\n");
+        builder.append("目标地址:" + Arrays.toString(ByteUtil.intToBytes(packet.dst)) + "\n");
+        builder.append("帧类型:" + Arrays.toString(ByteUtil.shortToBytes(packet.pkType)) + "\n");
+        builder.append("流水号:" + Arrays.toString(ByteUtil.shortToBytes((short) packet.pktId)) + "\n");
+        builder.append("保留字节:" + Arrays.toString(ByteUtil.intToBytes(packet.keep)) + "\n");
+        builder.append("cmd:" + Arrays.toString(ByteUtil.intToBytes(packet.cmd)) + "\n");
+        builder.append("数据长度:" + Arrays.toString(ByteUtil.intToBytes(packet.cmdDataLength)) + "\n");
+        builder.append("数据:" + Arrays.toString(packet.data) + "\n");
+        builder.append("结尾值:" + Arrays.toString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
+        MyLog.e(builder.toString());
+        tvSend.setText(builder.toString());
+    }
+
+
+    @Subscriber(tag = EventBusTag.TAG_RECIVE_MSG)
+    public void reciverMsg(Packet packet) {
+        StringBuilder builder = new StringBuilder();
+        if (packet.cmd == CMD.GET_DEVICE_SERIAL_NUMBER) {
+            builder.append("接收到APP询问设备序列号设备命令\n");
+        } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_START_TEST) {
+            builder.append("接收到APP给设备下发OTDR测试参数并启动测试命令\n");
+        } else if (packet.cmd == CMD.GET_SOR_FILE) {
+            builder.append("接收到APP向设备请求传输sor文件命令\n");
+        } else if (packet.cmd == CMD.HEART_SEND) {//屏蔽心跳
+            builder.append("接收到心跳包命令\n");
+            return;
+        } else if (packet.cmd == CMD.HEART_RE) { //屏蔽心跳
+            builder.append("接收到回复心跳包命令\n");
+            return;
+        } else if (packet.cmd == CMD._RE) {
+            builder.append("接收到错误代码命令\n");
+        } else if (packet.cmd == CMD.SEND_TEST_ARGS_AND_STOP_TEST) {
+            builder.append("接收到APP向设备发送停止OTDR测试命令\n");
+        }
+        builder.append("起始值:" + Arrays.toString(ByteUtil.intToBytes(Packet.START_FRAME)) + "\n");
+        builder.append("总帧长度:" + Arrays.toString(ByteUtil.intToBytes(packet.pkAllLen)) + "\n");
+        builder.append("版本号:" + Arrays.toString(ByteUtil.intToBytes(packet.rev)) + "\n");
+        builder.append("源地址:" + Arrays.toString(ByteUtil.intToBytes(packet.src)) + "\n");
+        builder.append("目标地址:" + Arrays.toString(ByteUtil.intToBytes(packet.dst)) + "\n");
+        builder.append("帧类型:" + Arrays.toString(ByteUtil.shortToBytes(packet.pkType)) + "\n");
+        builder.append("流水号:" + Arrays.toString(ByteUtil.shortToBytes((short) packet.pktId)) + "\n");
+        builder.append("保留字节:" + Arrays.toString(ByteUtil.intToBytes(packet.keep)) + "\n");
+        builder.append("cmd:" + Arrays.toString(ByteUtil.intToBytes(packet.cmd)) + "\n");
+        builder.append("数据长度:" + Arrays.toString(ByteUtil.intToBytes(packet.cmdDataLength)) + "\n");
+        builder.append("数据:" + Arrays.toString(packet.data) + "\n");
+        builder.append("结尾值:" + Arrays.toString(ByteUtil.intToBytes(Packet.END_FRAME)) + "\n");
+
+        MyLog.e(builder.toString());
+        tvRecive.setText(builder.toString());
     }
 
 
