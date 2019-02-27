@@ -139,7 +139,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 //        bean.latitude = 32.157075038623134;
 
         this.myLocation = bean;
-
+        stopLocation();
         setLocationMark(bean);
     }
 
@@ -238,6 +238,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 
     private Marker locationMarker;
 
+
     void setLocationMark(LocationManager.LocationBean bean) {
 
         if (bean == null)
@@ -252,8 +253,6 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
             locationMarker.setPosition(latLng);
         }
 
-
-
         //定义地图状态
         MapStatus mMapStatus = new MapStatus.Builder()
                 //要移动的点
@@ -264,7 +263,6 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapStatus);
         //改变地图状态
         aMap.animateMapStatus(mMapStatusUpdate);
-
     }
 
 
