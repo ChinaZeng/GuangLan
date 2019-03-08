@@ -428,6 +428,7 @@ public class QianXinListActivity extends BaseActivity implements
 
     @Override
     public void onRefresh() {
+        pageNo=1;
         getData();
     }
 
