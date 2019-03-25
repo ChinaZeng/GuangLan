@@ -2,8 +2,10 @@ package com.zzw.guanglan.http.retrofit.error;
 
 import android.app.Activity;
 import android.net.ParseException;
+import android.text.TextUtils;
 
 import com.google.gson.JsonParseException;
+import com.zzw.guanglan.rx.CodeException;
 import com.zzw.guanglan.utils.ToastUtils;
 
 import org.json.JSONException;
@@ -23,6 +25,11 @@ public class DefaultExceptionHandler implements IExceptionHandler {
             msg = "网络不可用";
         } else if (e instanceof SocketTimeoutException) {
             msg = "请求网络超时";
+        }else if (e instanceof CodeException) {
+            String msg1 = ((CodeException) e).getMsg();
+            if(TextUtils.isEmpty(msg1)){
+                msg = msg1;
+            }
         } else if (e instanceof HttpException) {
             HttpException httpException = (HttpException) e;
             msg = convertStatusCode(httpException);
