@@ -19,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -165,25 +166,30 @@ public class QianXinListActivity extends BaseActivity implements
         onRefresh();
     }
 
-    private boolean compareDistance(QianXinItemBean bean) {
-
+    private boolean compareDistance(QianXinItemBean bean,int val) {
         boolean isOk = true;
-
+        boolean aOk = true;
+        boolean zOk = true;
         if (!TextUtils.isEmpty(bean.getAGEOX()) && !TextUtils.isEmpty(bean.getAGEOY())) {
             if (GPSUtils.getDistance(locationBean.latitude, locationBean.longitude
-                    , Double.parseDouble(bean.getAGEOY()), Double.parseDouble(bean.getAGEOX())) > 5) {
-                isOk = false;
+                    , Double.parseDouble(bean.getAGEOY()), Double.parseDouble(bean.getAGEOX())) > val) {
+                aOk= false;
             }
         }
-
-        if (isOk && !TextUtils.isEmpty(bean.getZGEOX()) && !TextUtils.isEmpty(bean.getZGEOY())) {
+        Log.e("距離====A",""+GPSUtils.getDistance(locationBean.latitude, locationBean.longitude
+                , Double.parseDouble(bean.getAGEOY()), Double.parseDouble(bean.getAGEOX())));
+        if (!TextUtils.isEmpty(bean.getZGEOX()) && !TextUtils.isEmpty(bean.getZGEOY())) {
             if (GPSUtils.getDistance(locationBean.latitude, locationBean.longitude
-                    , Double.parseDouble(bean.getZGEOY()), Double.parseDouble(bean.getZGEOX())) > 5) {
-                isOk = false;
+                    , Double.parseDouble(bean.getZGEOY()), Double.parseDouble(bean.getZGEOX())) > val) {
+
+                zOk= false;
             }
         }
-
-
+        if (aOk || zOk) {
+            isOk = true;
+        } else {
+            isOk = false;
+        }
         return isOk;
     }
 
@@ -432,11 +438,18 @@ public class QianXinListActivity extends BaseActivity implements
         getData();
     }
 
-
     private QianXinItemBean testBean;
 
     @Override
     public void onTest(QianXinItemBean bean) {
+        if (locationBean == null) {
+            ToastUtils.showToast("请先定位");
+            return;
+        }
+        if (!compareDistance(bean,1)) {
+            ToastUtils.showToast("当前位置和该光缆的位置大于1公里，请确认定位位置!");
+            return;
+        }
         TestArgsAndStartBean testArgsAndStartBean;
         if (argsMode == 0) {
             testArgsAndStartBean = testArgsCustomModeBean;
@@ -801,7 +814,7 @@ public class QianXinListActivity extends BaseActivity implements
                 }
                 content.setVisibility(content.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 if (content.getVisibility() == View.VISIBLE) {
-                    head_click.setText("关闭");
+                    head_click.setText("确定");
                     if (argsMode == 1) {
                         initLastMode(view);
                     }
@@ -820,7 +833,7 @@ public class QianXinListActivity extends BaseActivity implements
             @Override
             public void onTagCheck(int i, String s, boolean b) {
                 if (b) {
-                    head_click.setText("关闭");
+                    head_click.setText("确定");
                     argsMode = i;
                     //自定义
                     if (i == 0) {
@@ -1182,7 +1195,7 @@ public class QianXinListActivity extends BaseActivity implements
             return;
         }
 
-        if (!compareDistance(bean)) {
+        if (!compareDistance(bean,5)) {
             ToastUtils.showToast("超出更改范围!");
             return;
         }

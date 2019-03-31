@@ -106,4 +106,5 @@ dependencies {
     api 'com.astuetz:pagerslidingtabstrip:1.0.1'
     implementation 'com.github.Rukey7:TagLayout:1.0.6'
     implementation files('libs/BaiduLBS_Android.jar')
+    implementation 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
 }

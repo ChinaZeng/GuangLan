@@ -168,3 +168,7 @@
 #-libraryjars libs/BaiduLBS_Android.jar
 -keep class com.baidu.** { *; }
 -keep class mapsdkvi.com.gdi.bgl.android.**{*;}
+
+#bugly
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}

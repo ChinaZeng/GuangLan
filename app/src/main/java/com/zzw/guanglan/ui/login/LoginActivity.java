@@ -3,6 +3,7 @@ package com.zzw.guanglan.ui.login;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -41,7 +42,7 @@ public class LoginActivity extends BaseActivity {
         setTitle("登录");
 
         if (BuildConfig.DEBUG) {
-            etPhone.setText("ADMIN");
+            etPhone.setText("njtest");
             etPwd.setText("njtest");
         }
 
@@ -142,6 +143,8 @@ public class LoginActivity extends BaseActivity {
                             finish();
                             ResourceActivity.open(LoginActivity.this);
 //                            MainActivity.open(LoginActivity.this);
+                        }else{
+                            ToastUtils.showToast(TextUtils.isEmpty(bean.getMsg())?"未知错误":bean.getMsg());
                         }
                     }
                 });

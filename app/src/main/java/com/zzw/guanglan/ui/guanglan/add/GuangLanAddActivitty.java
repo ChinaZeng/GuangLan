@@ -1,5 +1,7 @@
 package com.zzw.guanglan.ui.guanglan.add;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.AreaBean;
@@ -22,6 +25,7 @@ import com.zzw.guanglan.dialogs.area.AreaDialog;
 import com.zzw.guanglan.dialogs.multilevel.OnConfirmCallback;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
@@ -35,12 +39,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by zzw on 2018/10/13.
  * 描述:
  */
-public class GuangLanAddActivitty extends BaseActivity {
+public class GuangLanAddActivitty extends BaseActivity implements LocationManager.OnLocationListener {
 
 
     @BindView(R.id.cabel_name)
@@ -57,9 +62,18 @@ public class GuangLanAddActivitty extends BaseActivity {
     TextView aStation;
     @BindView(R.id.z_station)
     TextView zStation;
+    @BindView(R.id.tv_location)
+    TextView tvLocation;
+    private LocationManager locationManager;
 
     public static void open(Context context) {
         context.startActivity(new Intent(context, GuangLanAddActivitty.class));
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
+        startLocation();
     }
 
     @Override
@@ -221,9 +235,12 @@ public class GuangLanAddActivitty extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.area_id, R.id.leave, R.id.a_station, R.id.z_station, R.id.add})
+    @OnClick({R.id.tv_location,R.id.area_id, R.id.leave, R.id.a_station, R.id.z_station, R.id.add})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.tv_location:
+                startLocation();
+                break;
             case R.id.area_id:
                 area();
                 break;
@@ -243,4 +260,50 @@ public class GuangLanAddActivitty extends BaseActivity {
         }
     }
 
+    @SuppressLint("CheckResult")
+    private void startLocation() {
+        tvLocation.setText("定位中...");
+        new RxPermissions(this)
+                .request(Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            stopLocation();
+                            locationManager = new LocationManager(GuangLanAddActivitty.this,
+                                    GuangLanAddActivitty.this);
+                            locationManager.start();
+                        } else {
+                            ToastUtils.showToast("请开启定位权限");
+                            tvLocation.setText("定位失败，点击重新定位");
+                        }
+                    }
+                });
+    }
+
+    private void stopLocation() {
+        if (locationManager != null) {
+            locationManager.stop();
+            locationManager = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopLocation();
+    }
+
+    private LocationManager.LocationBean locationBean;
+
+    @Override
+    public void onSuccess(LocationManager.LocationBean bean) {
+        tvLocation.setText(bean.addrss);
+        this.locationBean = bean;
+    }
+
+    @Override
+    public void onError(int code, String msg) {
+        tvLocation.setText("定位失败，点击重新定位");
+    }
 }
