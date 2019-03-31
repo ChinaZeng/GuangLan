@@ -167,7 +167,6 @@ public class QianXinListActivity extends BaseActivity implements
     }
 
     private boolean compareDistance(QianXinItemBean bean,int val) {
-        boolean isOk = true;
         boolean aOk = true;
         boolean zOk = true;
         if (!TextUtils.isEmpty(bean.getAGEOX()) && !TextUtils.isEmpty(bean.getAGEOY())) {
@@ -176,8 +175,6 @@ public class QianXinListActivity extends BaseActivity implements
                 aOk= false;
             }
         }
-        Log.e("距離====A",""+GPSUtils.getDistance(locationBean.latitude, locationBean.longitude
-                , Double.parseDouble(bean.getAGEOY()), Double.parseDouble(bean.getAGEOX())));
         if (!TextUtils.isEmpty(bean.getZGEOX()) && !TextUtils.isEmpty(bean.getZGEOY())) {
             if (GPSUtils.getDistance(locationBean.latitude, locationBean.longitude
                     , Double.parseDouble(bean.getZGEOY()), Double.parseDouble(bean.getZGEOX())) > val) {
@@ -185,12 +182,7 @@ public class QianXinListActivity extends BaseActivity implements
                 zOk= false;
             }
         }
-        if (aOk || zOk) {
-            isOk = true;
-        } else {
-            isOk = false;
-        }
-        return isOk;
+        return aOk || zOk;
     }
 
     void getData() {
