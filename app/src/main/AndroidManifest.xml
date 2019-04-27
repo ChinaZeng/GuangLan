@@ -180,7 +180,12 @@
             android:name=".ui.resource.SelResActivity"
             android:label="选择局战"
             android:screenOrientation="portrait" />
-        <activity android:name=".base.WebActivity" />
+        <activity android:name=".base.WebActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.gongdan.GongDanListActivity"
+            android:screenOrientation="portrait"
+            android:label="我的工单"
+            />
 
 
     </application>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/tv_guangdan_num"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="工单001" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="3dp"
+        android:background="@color/colorDivider" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/tv_guangdan_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="工单名称:xxxxx" />
+
+        <TextView
+            android:layout_below="@+id/tv_guangdan_name"
+            android:id="@+id/tv_gongdan_test_gl_name"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_height="match_parent"
+            tools:text="测试光缆名称:xxxxx" />
+
+        <TextView
+            android:id="@+id/tv_bianma"
+            android:layout_width="170dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/tv_gongdan_test_gl_name"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            tools:text="工单编码:xxxxx" />
+
+
+        <TextView
+            android:id="@+id/tv_gongdan_test_gl_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tv_bianma"
+            android:layout_toRightOf="@+id/tv_bianma"
+            android:singleLine="true"
+            tools:text="测试光缆编码:xxxxx" />
+
+
+        <TextView
+            android:id="@+id/tv_gongdan_test_gl_len"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tv_bianma"
+            android:layout_below="@+id/tv_bianma"
+            android:layout_marginTop="5dp"
+            android:singleLine="true"
+            tools:text="测试光缆长度:xxxxx" />
+
+
+        <TextView
+            android:id="@+id/tv_gongdan_test_gl_qianxin_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tv_gongdan_test_gl_len"
+            android:layout_toRightOf="@+id/tv_gongdan_test_gl_len"
+            android:singleLine="true"
+            tools:text="测试光缆纤芯数:xxxxx" />
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

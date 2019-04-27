@@ -2,6 +2,7 @@ package com.zzw.guanglan.http;
 
 import com.zzw.guanglan.bean.AreaBean;
 import com.zzw.guanglan.bean.BseRoomBean;
+import com.zzw.guanglan.bean.GongDanBean;
 import com.zzw.guanglan.bean.GradeBean;
 import com.zzw.guanglan.bean.GuangLanBean;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
@@ -139,5 +140,13 @@ public interface Api {
                                                         @Query("roomName") String roomName,
                                                         @Query("pageNum") String pageNum
     );
+
+
+    @GET("/glcs/cableWorkOrder/getAppWorkOrderByPage")
+    Observable<ListDataBean<GongDanBean>> getAppWorkOrderByPage(@Query("userId") String userId,
+                                                                @Query("pageNum") String pageNum,
+                                                                @Query("searchKey") String searchKey
+    );
+
 
 }

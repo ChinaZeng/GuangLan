@@ -36,6 +36,7 @@ import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.HotConnActivity;
+import com.zzw.guanglan.ui.gongdan.GongDanListActivity;
 import com.zzw.guanglan.ui.guanglan.add.GuangLanAddActivitty;
 import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
 import com.zzw.guanglan.ui.room.add.RoomAddActivity;
@@ -93,7 +94,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                 });
                 break;
             case R.id.tv_my_gd:
-                ToastUtils.showToast("我的工单");
+                GongDanListActivity.open(this);
                 break;
             case R.id.tv_room:
                 showResDataPop(0, view);
