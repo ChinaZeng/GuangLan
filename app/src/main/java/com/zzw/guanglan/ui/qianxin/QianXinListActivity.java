@@ -433,7 +433,7 @@ public class QianXinListActivity extends BaseActivity implements
     private QianXinItemBean testBean;
 
     @Override
-    public void onTest(QianXinItemBean bean) {
+    public void onTest(final QianXinItemBean bean) {
         if (locationBean == null) {
             ToastUtils.showToast("请先定位");
             return;
@@ -442,7 +442,13 @@ public class QianXinListActivity extends BaseActivity implements
             ToastUtils.showToast("当前位置和该光缆的位置大于1公里，请确认定位位置!");
             return;
         }
-        TestArgsAndStartBean testArgsAndStartBean;
+
+        if(TextUtils.equals(bean.getSTATENAME(),"损坏")){
+            ToastUtils.showToast("当前纤芯已损坏，不能测试！");
+            return;
+        }
+
+        final TestArgsAndStartBean testArgsAndStartBean;
         if (argsMode == 0) {
             testArgsAndStartBean = testArgsCustomModeBean;
         } else if (argsMode == 1) {
@@ -455,14 +461,50 @@ public class QianXinListActivity extends BaseActivity implements
             testArgsAndStartBean = testArgsAutoModeBean;
         }
 
-        SPUtil.getInstance("testArgs").put("args", testArgsAndStartBean);
 
         if (!SocketService.isConn()) {
             ToastUtils.showToast("请和设备建立链接");
             HotConnActivity.open(this);
             return;
         }
-        this.testBean = bean;
+
+        if (SocketService.getDeviceNum()==null) {
+            ToastUtils.showToast("设备号没有获取，请先获取设备号");
+            HotConnActivity.open(this);
+            return;
+        }
+
+
+        if (progressDialog == null) {
+            initProgress();
+        }
+        progressDialog.setTitle("正在校验参数");
+        progressDialog.show();
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .checkSeria(SocketService.getDeviceNum())
+                .map(ResultBooleanFunction.create())
+                .compose(LifeObservableTransformer.<Boolean>create(this))
+                .subscribe(new ErrorObserver<Boolean>(this) {
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if (aBoolean) {
+                            SPUtil.getInstance("testArgs").put("args", testArgsAndStartBean);
+                            QianXinListActivity.this.testBean = bean;
+                            realTest(testArgsAndStartBean);
+                        } else {
+                            ToastUtils.showToast("新增失败");
+                        }
+                        if (progressDialog != null) {
+                            progressDialog.dismiss();
+                        }
+
+                    }
+                });
+    }
+
+
+
+    private void  realTest(TestArgsAndStartBean testArgsAndStartBean){
 
         if (progressDialog == null) {
             initProgress();
@@ -470,11 +512,11 @@ public class QianXinListActivity extends BaseActivity implements
         progressDialog.setTitle("正在获取相关参数");
         progressDialog.show();
 
-
         EventBus.getDefault().post(testArgsAndStartBean, EventBusTag.SEND_TEST_ARGS_AND_START_TEST);
 
 //        chooseArgs();
     }
+
 
     private void initProgress() {
         progressDialog = new ProgressDialog(QianXinListActivity.this);
@@ -719,7 +761,7 @@ public class QianXinListActivity extends BaseActivity implements
 
         modeS = new ArrayList<>();
         modeS.add(new SingleChooseBean(0, "平均", 1));
-        modeS.add(new SingleChooseBean(1, "实时", 2));
+//        modeS.add(new SingleChooseBean(1, "实时", 2));
         testArgsCustomModeBean.mode = modeS.get(0).getValue();
 
         zheshelvS = new ArrayList<>();

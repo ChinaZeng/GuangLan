@@ -153,7 +153,6 @@ public class HotConnActivity extends BaseActivity {
     }
 
 
-
     String hintS = "";
 
     private class HotBroadcastReceiver extends BroadcastReceiver {

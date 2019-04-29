@@ -30,6 +30,7 @@ import com.zzw.guanglan.bean.SingleChooseBean;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.location.LocationManager;
+import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.guanglan.add.GuangLanAddActivitty;
@@ -352,6 +353,7 @@ public class GuangLanDuanListFragment extends BaseFragment implements BaseQuickA
                         put("descChina", searchJibie == null ? "" : searchJibie);
                         put("cabelName", searchKey == null ? "" : searchKey);
                         put("pageNum", String.valueOf(pageNo));
+                        put("areaId", UserManager.getInstance().getAreaId());
                     }
                 })
                 .compose(LifeObservableTransformer.<ListDataBean<GuangLanDItemBean>>create(this))

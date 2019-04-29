@@ -24,6 +24,7 @@ import com.zzw.guanglan.dialogs.area.AreaDialog;
 import com.zzw.guanglan.dialogs.multilevel.OnConfirmCallback;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
@@ -50,7 +51,6 @@ public class SelResActivity extends BaseActivity implements
 
 
     private ResourceAdapter adapter;
-
 
 
     @Override
@@ -123,7 +123,9 @@ public class SelResActivity extends BaseActivity implements
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppJfByOthers(etParam.getText().toString().trim(),
                         "",
-                        "", pageNum)
+                        "",
+                        UserManager.getInstance().getAreaId(),
+                        pageNum)
                 .compose(LifeObservableTransformer.<ListDataBean<ResBean>>create(this))
                 .subscribe(new ErrorObserver<ListDataBean<ResBean>>(this) {
                     @Override

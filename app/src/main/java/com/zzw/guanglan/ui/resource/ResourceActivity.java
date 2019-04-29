@@ -33,6 +33,7 @@ import com.zzw.guanglan.bean.ResBean;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.location.LocationManager;
+import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.HotConnActivity;
@@ -206,7 +207,8 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
             RetrofitHttpEngine.obtainRetrofitService(Api.class)
                     .getAppJfInfo(String.valueOf(locationBean.longitude),
                             String.valueOf(locationBean.latitude),
-                            String.valueOf(String.valueOf(distance)), null)
+                            String.valueOf(String.valueOf(distance)), null,
+                            UserManager.getInstance().getAreaId())
                     .compose(LifeObservableTransformer.<ListDataBean<ResBean>>create(this))
                     .subscribe(new ErrorObserver<ListDataBean<ResBean>>(this) {
                         @Override
@@ -221,7 +223,9 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                     .getAppGlInfo(
                             String.valueOf(locationBean.longitude),
                             String.valueOf(locationBean.latitude),
-                            String.valueOf(String.valueOf(distance)), null)
+                            String.valueOf(String.valueOf(distance)),
+                            UserManager.getInstance().getAreaId(),
+                            null)
                     .compose(LifeObservableTransformer.<ListDataBean<GuangLanBean>>create(this))
                     .subscribe(new ErrorObserver<ListDataBean<GuangLanBean>>(this) {
                         @Override

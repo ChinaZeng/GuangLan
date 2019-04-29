@@ -1,8 +1,10 @@
 package com.zzw.guanglan.manager;
 
-import com.zzw.guanglan.utils.SPUtil;
+import com.zzw.guanglan.bean.UserBean;
 
 public class UserManager {
+
+    private UserBean userBean;
 
     private UserManager() {
     }
@@ -15,13 +17,18 @@ public class UserManager {
         private static volatile UserManager mInstance = new UserManager();
     }
 
-
-    public void setUserId(String userId) {
-        SPUtil.getInstance().put("userId", userId);
+    public void setUserBean(UserBean userBean) {
+        this.userBean = userBean;
     }
 
     public String getUserId() {
-        return SPUtil.getInstance().getString("userId");
+        if(userBean == null) return null;
+        return userBean.getUserId();
+    }
+
+    public String getAreaId() {
+        if(userBean == null) return null;
+        return userBean.getAreaId();
     }
 
 }

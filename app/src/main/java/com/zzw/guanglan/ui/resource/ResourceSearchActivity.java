@@ -25,6 +25,7 @@ import com.zzw.guanglan.dialogs.multilevel.OnConfirmCallback;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.location.LocationManager;
+import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
@@ -143,7 +144,9 @@ public class ResourceSearchActivity extends BaseActivity implements
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
                 .getAppJfByOthers(etParam.getText().toString().trim(),
                         cityName,
-                        areaName, pageNum)
+                        areaName,
+                        UserManager.getInstance().getAreaId(),
+                        pageNum)
                 .compose(LifeObservableTransformer.<ListDataBean<ResBean>>create(this))
                 .subscribe(new ErrorObserver<ListDataBean<ResBean>>(this) {
                     @Override

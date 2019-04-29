@@ -8,6 +8,7 @@ public class Contacts {
 
     public static boolean isConn = false;
     public static String connKey;
+    public static String deviceNum;
     public static String loaclIp;
 
 

@@ -30,7 +30,7 @@ public class GongDanListAdapter extends BaseQuickAdapter<GongDanBean, BaseViewHo
                 .setText(R.id.tv_gongdan_test_gl_num,"测试光缆编码:"+(TextUtils.isEmpty(item.getCABL_OP_CODE())?"":item.getCABL_OP_CODE()))
 
                 //TODO 测试光缆长度  测试光缆纤芯数
-                .setText(R.id.tv_gongdan_test_gl_len,"测试光缆长度:"+(TextUtils.isEmpty(item.getCABL_OP_CODE())?"":item.getCABL_OP_CODE()))
+                    .setText(R.id.tv_gongdan_test_gl_len,"测试光缆长度:"+(TextUtils.isEmpty(item.getCABL_OP_CODE())?"":item.getCABL_OP_CODE()))
                 .setText(R.id.tv_gongdan_test_gl_qianxin_num,"测试光缆纤芯数:"+(TextUtils.isEmpty(item.getCABL_OP_CODE())?"":item.getCABL_OP_CODE()));
 
 

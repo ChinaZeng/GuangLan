@@ -62,6 +62,10 @@ public class SocketService extends Service implements StatusListener {
         return Contacts.isConn && !TextUtils.isEmpty(Contacts.connKey);
     }
 
+    public static String getDeviceNum() {
+        return Contacts.deviceNum;
+    }
+
     @Override
     public void onDestroy() {
         MyLog.e("status", "onDestroy");
@@ -81,6 +85,7 @@ public class SocketService extends Service implements StatusListener {
     private void socketDisConnFlog() {
         Contacts.isConn = false;
         Contacts.connKey = null;
+        Contacts.deviceNum = null;
         EventBus.getDefault().post(false, EventBusTag.SOCKET_CONN_STATUS_CHANGE);
     }
 
@@ -244,6 +249,7 @@ public class SocketService extends Service implements StatusListener {
 
             byte[] data = ByteUtil.subBytes(packet.data, 16, 16);
             String deviceNum = ByteUtil.bytes2Str(data);
+            Contacts.deviceNum = deviceNum;
             EventBus.getDefault().post(deviceNum, EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER);
         }
     }

@@ -17,6 +17,7 @@ import com.zzw.guanglan.bean.ResBean;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.location.LocationManager;
+import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
@@ -122,7 +123,10 @@ public class NearbyResActivity extends BaseActivity implements SwipeRefreshLayou
                 .getAppJfInfo(
                         String.valueOf(location.longitude),
                         String.valueOf(location.latitude),
-                        String.valueOf(String.valueOf(distance)), String.valueOf(pageNum))
+                        String.valueOf(String.valueOf(distance)),
+                        String.valueOf(pageNum),
+                        UserManager.getInstance().getAreaId()
+                        )
                 .compose(LifeObservableTransformer.<ListDataBean<ResBean>>create(this))
                 .subscribe(new ErrorObserver<ListDataBean<ResBean>>(this) {
                     @Override

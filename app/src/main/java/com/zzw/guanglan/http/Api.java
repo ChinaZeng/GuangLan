@@ -7,10 +7,9 @@ import com.zzw.guanglan.bean.GradeBean;
 import com.zzw.guanglan.bean.GuangLanBean;
 import com.zzw.guanglan.bean.GuangLanDItemBean;
 import com.zzw.guanglan.bean.GuangLanItemBean;
-import com.zzw.guanglan.bean.GuangLanParamBean;
 import com.zzw.guanglan.bean.JuZhanBean;
 import com.zzw.guanglan.bean.ListDataBean;
-import com.zzw.guanglan.bean.LoginResultBean;
+import com.zzw.guanglan.bean.UserBean;
 import com.zzw.guanglan.bean.QianXinItemBean;
 import com.zzw.guanglan.bean.RemoveBean;
 import com.zzw.guanglan.bean.ResBean;
@@ -38,7 +37,7 @@ public interface Api {
 
     @Multipart
     @POST("/glcs/staffmgr/appLogin")
-    Observable<LoginResultBean> login(@PartMap Map<String, RequestBody> s);
+    Observable<UserBean> login(@PartMap Map<String, RequestBody> s);
 
 
     @GET("/glcs/bseRoom/getAreaTree")
@@ -106,7 +105,8 @@ public interface Api {
             @Query("longitude") String longitude,
             @Query("latitude") String latitude,
             @Query("distance") String distance,
-            @Query("pageNum") String pageNum
+            @Query("pageNum") String pageNum,
+            @Query("areaId") String areaId
     );
 
 
@@ -115,6 +115,7 @@ public interface Api {
             @Query("longitude") String longitude,
             @Query("latitude") String latitude,
             @Query("distance") String distance,
+            @Query("areaId") String areaId,
             @Query("pageNum") String pageNum
     );
 
@@ -124,6 +125,7 @@ public interface Api {
             @Query("jfName") String jfName,
             @Query("cityName") String cityName,
             @Query("areaName") String areaName,
+            @Query("areaId") String areaId,
             @Query("pageNum") int pageNum
     );
 
@@ -143,10 +145,16 @@ public interface Api {
 
 
     @GET("/glcs/cableWorkOrder/getAppWorkOrderByPage")
-    Observable<ListDataBean<GongDanBean>> getAppWorkOrderByPage(@Query("userId") String userId,
-                                                                @Query("pageNum") String pageNum,
-                                                                @Query("searchKey") String searchKey
+    Observable<ListDataBean<GongDanBean>> getAppWorkOrderByPage(
+            @Query("userId") String userId,
+            @Query("areaId") String areaId,
+            @Query("pageNum") String pageNum,
+            @Query("cableOpName") String cableOpName
     );
+
+
+    @GET("/glcs/cblCable/checkSeria")
+    Observable<ResultBean<Object>> checkSeria(@Query("serial") String serial);
 
 
 }

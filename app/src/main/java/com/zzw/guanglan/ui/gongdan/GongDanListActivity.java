@@ -21,6 +21,7 @@ import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.ui.qianxin.QianXinListActivity;
 import com.zzw.guanglan.utils.InputMethodSoftUtil;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import butterknife.OnClick;
  * 描述:
  */
 public class GongDanListActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener,
-        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener,TextView.OnEditorActionListener {
+        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener, TextView.OnEditorActionListener {
     @BindView(R.id.et_param)
     EditText etParam;
     @BindView(R.id.recy)
@@ -78,7 +79,9 @@ public class GongDanListActivity extends BaseActivity implements BaseQuickAdapte
     void getData() {
 
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .getAppWorkOrderByPage(UserManager.getInstance().getUserId(), String.valueOf(pageNo),searchKey)
+                .getAppWorkOrderByPage(UserManager.getInstance().getUserId(),
+                        UserManager.getInstance().getAreaId(),
+                        String.valueOf(pageNo), searchKey)
                 .compose(LifeObservableTransformer.<ListDataBean<GongDanBean>>create(this))
                 .subscribe(new ErrorObserver<ListDataBean<GongDanBean>>(this) {
                     @Override
@@ -128,8 +131,14 @@ public class GongDanListActivity extends BaseActivity implements BaseQuickAdapte
         pageNo = 1;
         getData();
     }
+
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+        GongDanBean bean = (GongDanBean) adapter.getData().get(position);
+        if (bean.getGUANG_LAN_DUAN() != null) {
+            QianXinListActivity.open(this, bean.getGUANG_LAN_DUAN().get(0));
+        }
 
     }
 

@@ -11,7 +11,7 @@ import com.zzw.guanglan.BuildConfig;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.bean.LoginBean;
-import com.zzw.guanglan.bean.LoginResultBean;
+import com.zzw.guanglan.bean.UserBean;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.manager.UserManager;
@@ -129,17 +129,17 @@ public class LoginActivity extends BaseActivity {
                         put("password", password);
                     }
                 }))
-                .compose(LifeObservableTransformer.<LoginResultBean>create(this))
-                .subscribe(new ErrorObserver<LoginResultBean>(this) {
+                .compose(LifeObservableTransformer.<UserBean>create(this))
+                .subscribe(new ErrorObserver<UserBean>(this) {
                     @Override
-                    public void onNext(LoginResultBean bean) {
+                    public void onNext(UserBean bean) {
                         if (bean.getCode() == 0) {
                             LoginBean bean1 = new LoginBean();
                             bean1.setStaffNbr(staffNbr);
                             bean1.setPassword(password);
                             SPUtil.getInstance().put("lastLogin", bean1);
 
-                            UserManager.getInstance().setUserId(bean.getUserId());
+                            UserManager.getInstance().setUserBean(bean);
                             finish();
                             ResourceActivity.open(LoginActivity.this);
 //                            MainActivity.open(LoginActivity.this);
