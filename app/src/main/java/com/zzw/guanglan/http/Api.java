@@ -153,8 +153,8 @@ public interface Api {
     );
 
 
-    @GET("/glcs/cblCable/checkSeria")
-    Observable<ResultBean<Object>> checkSeria(@Query("serial") String serial);
+    @GET("/glcs/cblCable/checkSerial")
+    Observable<ResultBean<Object>> checkSerial(@Query("serial") String serial);
 
 
 }

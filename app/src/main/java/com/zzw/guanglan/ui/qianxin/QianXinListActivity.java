@@ -481,7 +481,7 @@ public class QianXinListActivity extends BaseActivity implements
         progressDialog.setTitle("正在校验参数");
         progressDialog.show();
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .checkSeria(SocketService.getDeviceNum())
+                .checkSerial(SocketService.getDeviceNum())
                 .map(ResultBooleanFunction.create())
                 .compose(LifeObservableTransformer.<Boolean>create(this))
                 .subscribe(new ErrorObserver<Boolean>(this) {

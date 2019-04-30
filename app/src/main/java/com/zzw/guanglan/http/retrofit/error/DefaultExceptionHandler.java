@@ -27,7 +27,7 @@ public class DefaultExceptionHandler implements IExceptionHandler {
             msg = "请求网络超时";
         }else if (e instanceof CodeException) {
             String msg1 = ((CodeException) e).getMsg();
-            if(TextUtils.isEmpty(msg1)){
+            if(!TextUtils.isEmpty(msg1)){
                 msg = msg1;
             }
         } else if (e instanceof HttpException) {
