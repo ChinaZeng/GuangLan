@@ -25,6 +25,11 @@ import android.widget.TextView;
 import com.zzw.guanglan.Contacts;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.http.Api;
+import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.rx.ErrorObserver;
+import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.rx.ResultBooleanFunction;
 import com.zzw.guanglan.service.SocketService;
 import com.zzw.guanglan.socket.CMD;
 import com.zzw.guanglan.socket.EventBusTag;
@@ -150,6 +155,24 @@ public class HotConnActivity extends BaseActivity {
     @Subscriber(tag = EventBusTag.RECIVE_DEVICE_SERIAL_NUMBER)
     public void recieveDeviceNum(String deviceNum) {
         tvDeveiceNum.setText("序列号: " + deviceNum);
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .checkSerial(SocketService.getDeviceNum())
+                .map(ResultBooleanFunction.create())
+                .compose(LifeObservableTransformer.<Boolean>create(this))
+                .subscribe(new ErrorObserver<Boolean>(this) {
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        tvDeveiceNum.append("  验证不通过");
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if (aBoolean) {
+                            tvDeveiceNum.append("  验证通过");
+                        }
+                    }
+                });
     }
 
 

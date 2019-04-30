@@ -27,6 +27,7 @@ import com.baidu.mapapi.model.LatLng;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
+import com.zzw.guanglan.bean.GongDanBean;
 import com.zzw.guanglan.bean.GuangLanBean;
 import com.zzw.guanglan.bean.ListDataBean;
 import com.zzw.guanglan.bean.ResBean;
@@ -36,10 +37,13 @@ import com.zzw.guanglan.location.LocationManager;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.rx.ResultBooleanFunction;
+import com.zzw.guanglan.service.SocketService;
 import com.zzw.guanglan.ui.HotConnActivity;
 import com.zzw.guanglan.ui.gongdan.GongDanListActivity;
 import com.zzw.guanglan.ui.guanglan.add.GuangLanAddActivitty;
 import com.zzw.guanglan.ui.guangland.GuangLanDListActivity;
+import com.zzw.guanglan.ui.qianxin.QianXinListActivity;
 import com.zzw.guanglan.ui.room.add.RoomAddActivity;
 import com.zzw.guanglan.utils.PopWindowUtils;
 import com.zzw.guanglan.utils.ToastUtils;
@@ -76,23 +80,26 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
 
 
     @OnClick({R.id.tv_res_look, R.id.tv_my_gd, R.id.tv_add, R.id.tv_room, R.id.tv_guanglan, R.id.tv_hot_conn, R.id.iv_location})
-    public void onViewClicked(View view) {
+    public void onViewClicked(final View view) {
         switch (view.getId()) {
             case R.id.tv_res_look:
-                PopWindowUtils.showListPop(this, view, new String[]{"附近", "查询"}, new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (myLocation == null) {
-                            ToastUtils.showToast("请您先定位!");
-                            return;
-                        }
-                        if (position == 0) {
-                            NearbyResActivity.open(ResourceActivity.this, myLocation);
-                        } else {
-                            ResourceSearchActivity.open(ResourceActivity.this, myLocation);
-                        }
-                    }
-                });
+                if (SocketService.getDeviceNum() == null) {
+                    ToastUtils.showToast("设备号没有获取，请先获取设备号");
+                    HotConnActivity.open(this);
+                    return;
+                }
+                RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                        .checkSerial(SocketService.getDeviceNum())
+                        .map(ResultBooleanFunction.create())
+                        .compose(LifeObservableTransformer.<Boolean>create(this))
+                        .subscribe(new ErrorObserver<Boolean>(this) {
+                            @Override
+                            public void onNext(Boolean aBoolean) {
+                                if (aBoolean) {
+                                    showPop(view);
+                                }
+                            }
+                        });
                 break;
             case R.id.tv_my_gd:
                 GongDanListActivity.open(this);
@@ -126,6 +133,23 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
         }
     }
 
+
+    private void showPop(View view) {
+        PopWindowUtils.showListPop(this, view, new String[]{"附近", "查询"}, new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (myLocation == null) {
+                    ToastUtils.showToast("请您先定位!");
+                    return;
+                }
+                if (position == 0) {
+                    NearbyResActivity.open(ResourceActivity.this, myLocation);
+                } else {
+                    ResourceSearchActivity.open(ResourceActivity.this, myLocation);
+                }
+            }
+        });
+    }
 
     private LocationManager.LocationBean centerLocation, myLocation;
     private LocationManager locationManager;

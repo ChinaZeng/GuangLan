@@ -21,8 +21,13 @@ import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
 import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
+import com.zzw.guanglan.rx.ResultBooleanFunction;
+import com.zzw.guanglan.service.SocketService;
+import com.zzw.guanglan.ui.HotConnActivity;
 import com.zzw.guanglan.ui.qianxin.QianXinListActivity;
 import com.zzw.guanglan.utils.InputMethodSoftUtil;
+import com.zzw.guanglan.utils.SPUtil;
+import com.zzw.guanglan.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,13 +138,28 @@ public class GongDanListActivity extends BaseActivity implements BaseQuickAdapte
     }
 
     @Override
-    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+    public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
 
-        GongDanBean bean = (GongDanBean) adapter.getData().get(position);
-        if (bean.getGUANG_LAN_DUAN() != null) {
-            QianXinListActivity.open(this, bean.getGUANG_LAN_DUAN().get(0));
+        if (SocketService.getDeviceNum() == null) {
+            ToastUtils.showToast("设备号没有获取，请先获取设备号");
+            HotConnActivity.open(this);
+            return;
         }
-
+        RetrofitHttpEngine.obtainRetrofitService(Api.class)
+                .checkSerial(SocketService.getDeviceNum())
+                .map(ResultBooleanFunction.create())
+                .compose(LifeObservableTransformer.<Boolean>create(this))
+                .subscribe(new ErrorObserver<Boolean>(this) {
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if (aBoolean) {
+                            GongDanBean bean = (GongDanBean) adapter.getData().get(position);
+                            if (bean.getGUANG_LAN_DUAN() != null) {
+                                QianXinListActivity.open(GongDanListActivity.this, bean.getGUANG_LAN_DUAN().get(0));
+                            }
+                        }
+                    }
+                });
     }
 
     @Override
