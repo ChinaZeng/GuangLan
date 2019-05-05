@@ -492,11 +492,18 @@ public class QianXinListActivity extends BaseActivity implements
                             QianXinListActivity.this.testBean = bean;
                             realTest(testArgsAndStartBean);
                         } else {
-                            ToastUtils.showToast("新增失败");
+                            ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
                         }
                         if (progressDialog != null) {
                             progressDialog.dismiss();
                         }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+//                        super.onError(e);
+                        ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
 
                     }
                 });

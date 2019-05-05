@@ -36,6 +36,7 @@ import com.zzw.guanglan.socket.EventBusTag;
 import com.zzw.guanglan.socket.resolve.Packet;
 import com.zzw.guanglan.socket.utils.ByteUtil;
 import com.zzw.guanglan.socket.utils.MyLog;
+import com.zzw.guanglan.utils.ToastUtils;
 import com.zzw.guanglan.utils.WifiAPManager;
 
 import org.simple.eventbus.EventBus;
@@ -162,7 +163,8 @@ public class HotConnActivity extends BaseActivity {
                 .subscribe(new ErrorObserver<Boolean>(this) {
                     @Override
                     public void onError(Throwable e) {
-                        super.onError(e);
+//                        super.onError(e);
+                        ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
                         tvDeveiceNum.append("  验证不通过");
                     }
 
@@ -170,6 +172,9 @@ public class HotConnActivity extends BaseActivity {
                     public void onNext(Boolean aBoolean) {
                         if (aBoolean) {
                             tvDeveiceNum.append("  验证通过");
+                        }else {
+                            ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
+
                         }
                     }
                 });

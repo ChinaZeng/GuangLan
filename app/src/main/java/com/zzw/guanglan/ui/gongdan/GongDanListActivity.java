@@ -157,7 +157,16 @@ public class GongDanListActivity extends BaseActivity implements BaseQuickAdapte
                             if (bean.getGUANG_LAN_DUAN() != null) {
                                 QianXinListActivity.open(GongDanListActivity.this, bean.getGUANG_LAN_DUAN().get(0));
                             }
+                        }else {
+                            ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
                         }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+//                        super.onError(e);
+                        ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
+
                     }
                 });
     }

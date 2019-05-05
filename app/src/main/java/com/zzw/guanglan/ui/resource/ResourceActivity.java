@@ -97,7 +97,15 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                             public void onNext(Boolean aBoolean) {
                                 if (aBoolean) {
                                     showPop(view);
+                                } else {
+                                    ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
                                 }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+//                                super.onError(e);
+                                ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
                             }
                         });
                 break;
