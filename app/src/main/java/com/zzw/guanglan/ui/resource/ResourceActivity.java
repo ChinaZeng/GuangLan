@@ -83,7 +83,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
     public void onViewClicked(final View view) {
         switch (view.getId()) {
             case R.id.tv_res_look:
-                if (SocketService.getDeviceNum() == null) {
+                if (TextUtils.isEmpty(SocketService.getDeviceNum())) {
                     ToastUtils.showToast("设备号没有获取，请先获取设备号");
                     HotConnActivity.open(this);
                     return;

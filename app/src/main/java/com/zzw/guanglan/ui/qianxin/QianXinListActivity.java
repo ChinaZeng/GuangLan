@@ -468,7 +468,7 @@ public class QianXinListActivity extends BaseActivity implements
             return;
         }
 
-        if (SocketService.getDeviceNum()==null) {
+        if (TextUtils.isEmpty(SocketService.getDeviceNum())) {
             ToastUtils.showToast("设备号没有获取，请先获取设备号");
             HotConnActivity.open(this);
             return;
@@ -493,18 +493,19 @@ public class QianXinListActivity extends BaseActivity implements
                             realTest(testArgsAndStartBean);
                         } else {
                             ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
+                            if (progressDialog != null) {
+                                progressDialog.dismiss();
+                            }
                         }
-                        if (progressDialog != null) {
-                            progressDialog.dismiss();
-                        }
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
 //                        super.onError(e);
                         ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
-
+                        if (progressDialog != null) {
+                            progressDialog.dismiss();
+                        }
                     }
                 });
     }
@@ -512,7 +513,6 @@ public class QianXinListActivity extends BaseActivity implements
 
 
     private void  realTest(TestArgsAndStartBean testArgsAndStartBean){
-
         if (progressDialog == null) {
             initProgress();
         }

@@ -63,7 +63,7 @@ public class SocketService extends Service implements StatusListener {
     }
 
     public static String getDeviceNum() {
-        return Contacts.deviceNum;
+        return TextUtils.isEmpty(Contacts.deviceNum)?"":Contacts.deviceNum.trim();
     }
 
     @Override

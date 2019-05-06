@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -140,7 +141,7 @@ public class GongDanListActivity extends BaseActivity implements BaseQuickAdapte
     @Override
     public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
 
-        if (SocketService.getDeviceNum() == null) {
+        if (TextUtils.isEmpty(SocketService.getDeviceNum())) {
             ToastUtils.showToast("设备号没有获取，请先获取设备号");
             HotConnActivity.open(this);
             return;
