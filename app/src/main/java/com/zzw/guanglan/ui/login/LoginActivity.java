@@ -139,6 +139,7 @@ public class LoginActivity extends BaseActivity {
                             bean1.setPassword(password);
                             SPUtil.getInstance().put("lastLogin", bean1);
 
+                            bean.setStaffNbr(staffNbr);
                             UserManager.getInstance().setUserBean(bean);
                             finish();
                             ResourceActivity.open(LoginActivity.this);

@@ -147,7 +147,7 @@ public class GongDanListActivity extends BaseActivity implements BaseQuickAdapte
             return;
         }
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .checkSerial(SocketService.getDeviceNum())
+                .checkSerial(SocketService.getDeviceNum(), UserManager.getInstance().getUserName())
                 .map(ResultBooleanFunction.create())
                 .compose(LifeObservableTransformer.<Boolean>create(this))
                 .subscribe(new ErrorObserver<Boolean>(this) {
@@ -158,7 +158,7 @@ public class GongDanListActivity extends BaseActivity implements BaseQuickAdapte
                             if (bean.getGUANG_LAN_DUAN() != null) {
                                 QianXinListActivity.open(GongDanListActivity.this, bean.getGUANG_LAN_DUAN().get(0));
                             }
-                        }else {
+                        } else {
                             ToastUtils.showToast("该设备没有授权无法测试，请联系管理员。");
                         }
                     }

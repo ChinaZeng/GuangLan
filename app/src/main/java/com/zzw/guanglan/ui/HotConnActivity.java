@@ -27,6 +27,7 @@ import com.zzw.guanglan.R;
 import com.zzw.guanglan.base.BaseActivity;
 import com.zzw.guanglan.http.Api;
 import com.zzw.guanglan.http.retrofit.RetrofitHttpEngine;
+import com.zzw.guanglan.manager.UserManager;
 import com.zzw.guanglan.rx.ErrorObserver;
 import com.zzw.guanglan.rx.LifeObservableTransformer;
 import com.zzw.guanglan.rx.ResultBooleanFunction;
@@ -157,7 +158,7 @@ public class HotConnActivity extends BaseActivity {
     public void recieveDeviceNum(String deviceNum) {
         tvDeveiceNum.setText("序列号: " + deviceNum);
         RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                .checkSerial(SocketService.getDeviceNum())
+                .checkSerial(SocketService.getDeviceNum(), UserManager.getInstance().getUserName())
                 .map(ResultBooleanFunction.create())
                 .compose(LifeObservableTransformer.<Boolean>create(this))
                 .subscribe(new ErrorObserver<Boolean>(this) {

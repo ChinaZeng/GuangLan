@@ -89,7 +89,7 @@ public class ResourceActivity extends BaseActivity implements LocationManager.On
                     return;
                 }
                 RetrofitHttpEngine.obtainRetrofitService(Api.class)
-                        .checkSerial(SocketService.getDeviceNum())
+                        .checkSerial(SocketService.getDeviceNum(), UserManager.getInstance().getUserName())
                         .map(ResultBooleanFunction.create())
                         .compose(LifeObservableTransformer.<Boolean>create(this))
                         .subscribe(new ErrorObserver<Boolean>(this) {

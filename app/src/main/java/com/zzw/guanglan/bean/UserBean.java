@@ -4,7 +4,16 @@ public class UserBean extends ResultBean{
 
     private String userId;
     private String areaId;
+    private String staffNbr;
 
+
+    public String getStaffNbr() {
+        return staffNbr;
+    }
+
+    public void setStaffNbr(String staffNbr) {
+        this.staffNbr = staffNbr;
+    }
 
     public String getAreaId() {
         return areaId;

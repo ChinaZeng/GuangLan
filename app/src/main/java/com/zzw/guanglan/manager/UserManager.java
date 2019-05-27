@@ -26,6 +26,11 @@ public class UserManager {
         return userBean.getUserId();
     }
 
+    public String getUserName() {
+        if(userBean == null) return null;
+        return userBean.getStaffNbr();
+    }
+
     public String getAreaId() {
         if(userBean == null) return null;
         return userBean.getAreaId();
