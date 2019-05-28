@@ -4,7 +4,7 @@ buildscript {
     
     repositories {
         maven { url 'http://maven.aliyun.com/repository/public/' }
-        maven { url 'http://maven.6xyun.cn/' }
+//        maven { url 'http://maven.6xyun.cn/' }
         maven { url "https://jitpack.io" }
         jcenter()
         google()
@@ -21,7 +21,7 @@ buildscript {
 allprojects {
     repositories {
         maven { url 'http://maven.aliyun.com/repository/public/' }
-        maven { url 'http://maven.6xyun.cn/' }
+//        maven { url 'http://maven.6xyun.cn/' }
         maven { url "https://jitpack.io" }
         jcenter()
         google()
